@@ -6,21 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://blog.hsujee.io">
-  <title>Android自定义可拖拽ListView | 徐彦杰的博客</title>
+  <title>Hexo博客yilia模板配置 | 徐彦杰的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Android自定义可拖拽ListView">
-<meta name="keywords" content="编程,Android">
+  <meta name="description" content="配置环境 安装Node（必须） 作用：用来生成静态页面的 到Node.js官网下载相应平台的最新版本，一路安装即可。">
+<meta name="keywords" content="工具,应用">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android自定义可拖拽ListView">
-<meta property="og:url" content="http://blog.hsujee.io/2017/02/18/Android/CustemView/2017-02-18-Android自定义可拖拽ListView/index.html">
+<meta property="og:title" content="Hexo博客yilia模板配置">
+<meta property="og:url" content="http://blog.hsujee.io/2015/05/10/Hoxe/2015-05-10-Hexo博客yilia模板配置/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
-<meta property="og:description" content="Android自定义可拖拽ListView">
-<meta property="og:image" content="http://blog.hsujee.io/assets/images/android/android自定义可拖拽ListView.gif">
-<meta property="og:updated_time" content="2017-04-12T02:18:13.226Z">
+<meta property="og:description" content="配置环境 安装Node（必须） 作用：用来生成静态页面的 到Node.js官网下载相应平台的最新版本，一路安装即可。">
+<meta property="og:updated_time" content="2017-06-13T09:15:58.464Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android自定义可拖拽ListView">
-<meta name="twitter:description" content="Android自定义可拖拽ListView">
-<meta name="twitter:image" content="http://blog.hsujee.io/assets/images/android/android自定义可拖拽ListView.gif">
+<meta name="twitter:title" content="Hexo博客yilia模板配置">
+<meta name="twitter:description" content="配置环境 安装Node（必须） 作用：用来生成静态页面的 到Node.js官网下载相应平台的最新版本，一路安装即可。">
   
     <link rel="alternative" href="/atom.xml" title="徐彦杰的博客" type="application/atom+xml">
   
@@ -165,610 +163,80 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Android/CustemView/2017-02-18-Android自定义可拖拽ListView" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Hoxe/2015-05-10-Hexo博客yilia模板配置" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Android自定义可拖拽ListView
+      Hexo博客yilia模板配置
     </h1>
   
 
         
-        <a href="/2017/02/18/Android/CustemView/2017-02-18-Android自定义可拖拽ListView/" class="archive-article-date">
-  	<time datetime="2017-02-17T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-18</time>
+        <a href="/2015/05/10/Hoxe/2015-05-10-Hexo博客yilia模板配置/" class="archive-article-date">
+  	<time datetime="2015-05-09T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2015-05-10</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>如下图所示，下面开始自定义一个可拖拽的ListView</p>
-<p><img src="/assets/images/android/android自定义可拖拽ListView.gif" alt="自定义可拖拽ListView"></p>
+        <p>配置环境</p>
+<p>安装Node（必须）</p>
+<p>作用：用来生成静态页面的</p>
+<p>到Node.js官网下载相应平台的最新版本，一路安装即可。</p>
 <a id="more"></a>
-<p>下面先罗列出此自定义view中所用到的主要方法，在这些基础上我们进行如题所说的控件，会变得简单起来</p>
-<blockquote>
-<p>映射一个点到列表的位置。就是说：参数是手指按在屏幕的坐标，返回值是这个坐标所存在的item的position值。</p>
-</blockquote>
-<pre><code>/** 
- * Maps a point to a position in the list. 
- * 
- * @param x X in local coordinate 
- * @param y Y in local coordinate 
- * @return The position of the item which contains the specified point, or 
- *         {@link #INVALID_POSITION} if the point does not intersect an item. 
- */  
-public int pointToPosition(int x, int y)
-</code></pre><blockquote>
-<p>此方法是根据获得的position值来获取对应position的item的View对象。</p>
-</blockquote>
-<pre><code>/** 
- * Returns the view at the specified position in the group. 
- * 
- * @param index the position at which to get the view from 
- * @return the view at the specified position or null if the position 
- *         does not exist within the group 
- */  
-public View getChildAt(int index)  
-</code></pre><blockquote>
-<p>使用以上方法需要注意，在我们日常的ListView开发中，经常需要对View对象进行复用优化。那么着就引起了接下来的问题，对象被复用后，在传入position这个位置值时，那么我们获取的对象就有可能是之前复用的。换句话说，我们的ListView优化后，屏幕上显示多少个item，也就有多少个View对象，如果有10个View对象的话，当我点击第18个item的时候，通过此方法，返回的对象实际上就是第八个item的实例，那么如何解决这个问题，Google提供了下面这个方法:</p>
-</blockquote>
-<pre><code>/** 
- * Returns the position within the adapter&apos;s data set for the first item 
- * displayed on screen. 
- * 
- * @return The position within the adapter&apos;s data set 
- */  
-public int getFirstVisiblePosition()  
-</code></pre><p>这里返回的值，是当前屏幕上显示的所有item中得第一个item的position值。所以我们的用法如下，这样我们得到的对象就是当前点击的item正在使用的View对象（如果复用，就是复用后的）。</p>
-<pre><code>getChildAt(position - getFirstVisiblePosition())  
-</code></pre><blockquote>
-<p> 当我们拖动item的时候，为了知道此时是正在拖动的状态和拖动的item是哪个，就需要让这个item的整体布局跟着手指来移动。那么我们获取到item的布局，然后让他跟着手指移动？很抱歉，布局已经绘制了，状态是locked。重新new一个布局来跟着手指拖动？先不说这样很麻烦，对于应用中得各种各样的item布局，难道还要绘制各种各样的View来对应？google同样提供了如下方法：</p>
-</blockquote>
-<pre><code>/** 
- * &lt;p&gt;Enables or disables the drawing cache. When the drawing cache is enabled, the next call 
- * to {@link #getDrawingCache()} or {@link #buildDrawingCache()} will draw the view in a 
- * bitmap. Calling {@link #draw(android.graphics.Canvas)} will not draw from the cache when 
- * the cache is enabled. To benefit from the cache, you must request the drawing cache by 
- * calling {@link #getDrawingCache()} and draw it on screen if the returned bitmap is not 
- * null.&lt;/p&gt; 
- * 
- * &lt;p&gt;Enabling the drawing cache is similar to 
- * {@link #setLayerType(int, android.graphics.Paint) setting a layer} when hardware 
- * acceleration is turned off. When hardware acceleration is turned on, enabling the 
- * drawing cache has no effect on rendering because the system uses a different mechanism 
- * for acceleration which ignores the flag. If you want to use a Bitmap for the view, even 
- * when hardware acceleration is enabled, see {@link #setLayerType(int, android.graphics.Paint)} 
- * for information on how to enable software and hardware layers.&lt;/p&gt; 
- * 
- * &lt;p&gt;This API can be used to manually generate 
- * a bitmap copy of this view, by setting the flag to &lt;code&gt;true&lt;/code&gt; and calling 
- * {@link #getDrawingCache()}.&lt;/p&gt; 
- * 
- * @param enabled true to enable the drawing cache, false otherwise 
- * 
- * @see #isDrawingCacheEnabled() 
- * @see #getDrawingCache() 
- * @see #buildDrawingCache() 
- * @see #setLayerType(int, android.graphics.Paint) 
- */  
-public void setDrawingCacheEnabled(boolean enabled)  
-</code></pre><p>将View的绘制进行缓存成Bitmap，那这回简单了，拖动哪个item，将它变成皂片就可以了。</p>
-<pre><code>/** 
- * &lt;p&gt;Calling this method is equivalent to calling &lt;code&gt;getDrawingCache(false)&lt;/code&gt;.&lt;/p&gt; 
- * 
- * @return A non-scaled bitmap representing this view or null if cache is disabled. 
- * 
- * @see #getDrawingCache(boolean) 
- */  
-public Bitmap getDrawingCache() 
-</code></pre><blockquote>
-<p>了解了以上所有方法，那么我们可以开始我们的正式开发了，首先我们理清思路：在按下一定时间后，显示出对应item的皂片，咱后根据手指拖动，实时跟新皂片的位置，并进行item的更新，以达到替换效果。然后在停止拖动的时候释放资源。</p>
-</blockquote>
-<pre><code>package com.example.view;  
-
-import android.R.integer;  
-import android.app.Activity;  
-import android.content.Context;  
-import android.graphics.Bitmap;  
-import android.graphics.BitmapFactory;  
-import android.graphics.PixelFormat;  
-import android.graphics.Rect;  
-import android.os.Handler;  
-import android.os.Vibrator;  
-import android.util.AttributeSet;  
-import android.util.Log;  
-import android.view.Gravity;  
-import android.view.MotionEvent;  
-import android.view.View;  
-import android.view.WindowManager;  
-import android.widget.AdapterView;  
-import android.widget.ImageView;  
-import android.widget.ListAdapter;  
-import android.widget.ListView;  
-
-public class CanDragListView extends ListView {  
-
-    private ListAdapter mAdapter;  
-    private WindowManager mWindowManager;  
-    /** 
-     * item镜像的布局参数 
-     */  
-    private WindowManager.LayoutParams mWindowLayoutParams;  
-    private WindowManager.LayoutParams mNewWindowLayoutParams;  
-    /** 
-     * 振动器 
-     */  
-    private Vibrator mVibrator;  
-    /** 
-     * 选中的item的position 
-     */  
-    private int mSelectedPosition;  
-    /** 
-     * 选中的item的View对象 
-     */  
-    private View mItemView;  
-    /** 
-     * 用于拖拽的镜像，这里直接用一个ImageView装载Bitmap 
-     */  
-    private ImageView mDragIV;  
-    private ImageView mNewDragIv;  
-    /** 
-     * 选中的item的镜像Bitmap 
-     */  
-    private Bitmap mBitmap;  
-    /** 
-     * 按下的点到所在item的上边缘的距离 
-     */  
-    private int mPoint2ItemTop;  
-
-    /** 
-     * 按下的点到所在item的左边缘的距离 
-     */  
-    private int mPoint2ItemLeft;  
-
-    /** 
-     * CanDragListView距离屏幕顶部的偏移量 
-     */  
-    private int mOffset2Top;  
-    /** 
-     * CanDragListView自动向下滚动的边界值 
-     */  
-    private int mDownScrollBorder;  
-
-    /** 
-     * CanDragListView自动向上滚动的边界值 
-     */  
-    private int mUpScrollBorder;  
-    /** 
-     * CanDragListView自动滚动的速度 
-     */  
-    private static final int speed = 20;  
-
-    /** 
-     * CanDragListView距离屏幕左边的偏移量 
-     */  
-    private int mOffset2Left;  
-    /** 
-     * 状态栏的高度 
-     */  
-    private int mStatusHeight;  
-    /** 
-     * 按下的系统时间 
-     */  
-    private long mActionDownTime = 0;  
-    /** 
-     * 移动的系统时间 
-     */  
-    private long mActionMoveTime = 0;  
-    /** 
-     * 默认长按事件时间是1000毫秒 
-     */  
-    private long mLongClickTime = 1000;  
-    /** 
-     * 是否可拖拽，默认为false 
-     */  
-    private boolean isDrag = false;  
-    /** 
-     * 按下是的x坐标 
-     */  
-    private int mDownX;  
-    /** 
-     * 按下是的y坐标 
-     */  
-    private int mDownY;  
-
-    /** 
-     * item发生变化回调的接口 
-     */  
-    private OnChanageListener onChanageListener;  
-
-    /** 
-     * 设置回调接口 
-     *  
-     * @param onChanageListener 
-     */  
-    public void setOnChangeListener(OnChanageListener onChanageListener) {  
-        this.onChanageListener = onChanageListener;  
-    }  
-
-    public CanDragListView(Context context) {  
-        this(context, null);  
-    }  
-
-    public CanDragListView(Context context, AttributeSet attrs) {  
-        this(context, attrs, 0);  
-    }  
-
-    public CanDragListView(Context context, AttributeSet attrs, int defStyle) {  
-        super(context, attrs, defStyle);  
-        mAdapter = getAdapter();  
-        mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);  
-        mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);  
-        mStatusHeight = getStatusHeight(context); // 获取状态栏的高度  
-    }  
-
-    private Handler mHandler = new Handler();  
-
-    // 用来处理长按的Runnable  
-    private Runnable mLongClickRunnable = new Runnable() {  
-
-        @Override  
-        public void run() {  
-            isDrag = true; // 设置可以拖拽  
-            mVibrator.vibrate(100); // 震动100毫秒  
-            if (mItemView != null) {  
-                mItemView.setVisibility(View.INVISIBLE);// 隐藏该item  
-            }  
-            Log.i(&quot;CanDragListView&quot;, &quot;**mLongClickRunnable**&quot;);  
-            // 根据我们按下的点显示item镜像  
-            createDragImage(mBitmap, mDownX, mDownY);  
-        }  
-    };  
-
-    /** 
-     * 当mDownY的值大于向上滚动的边界值，触发自动向上滚动 当mDownY的值小于向下滚动的边界值，触犯自动向下滚动 否则不进行滚动 
-     */  
-    private Runnable mScrollRunnable = new Runnable() {  
-
-        @Override  
-        public void run() {  
-            int scrollY;  
-            if (mDownY &gt; mUpScrollBorder) {  
-                scrollY = speed;  
-                mHandler.postDelayed(mScrollRunnable, 25);  
-            } else if (mDownY &lt; mDownScrollBorder) {  
-                scrollY = -speed;  
-                mHandler.postDelayed(mScrollRunnable, 25);  
-            } else {  
-                scrollY = 0;  
-                mHandler.removeCallbacks(mScrollRunnable);  
-            }  
-
-            // 所以我们在这里调用下onSwapItem()方法来交换item  
-            onSwapItem(mDownY, mDownY);  
-
-            smoothScrollBy(scrollY, 10);  
-        }  
-    };  
-
-    @Override  
-    public boolean onTouchEvent(MotionEvent event) {  
-        // Log.i(&quot;CanDragListView&quot;, mSelectedPosition+&quot;****&quot;+mItemView);  
-        switch (event.getAction()) {  
-        case MotionEvent.ACTION_DOWN:  
-            mActionDownTime = event.getDownTime();  
-            mDownX = (int) event.getX();  
-            mDownY = (int) event.getY();  
-
-            // 根据按下的坐标获取item对应的position  
-            mSelectedPosition = pointToPosition(mDownX, mDownY);  
-            // 如果是无效的position，即值为-1  
-            if (mSelectedPosition == AdapterView.INVALID_POSITION) {  
-                return super.onTouchEvent(event);  
-            }  
-            // 根据position获取对应的item  
-            mItemView = getChildAt(mSelectedPosition - getFirstVisiblePosition());  
-            // 使用Handler延迟mLongClickTime执行mLongClickRunnable  
-            mHandler.postDelayed(mLongClickRunnable, mLongClickTime);  
-            if (mItemView != null) {  
-                // 下面这几个距离大家可以参考我的博客上面的图来理解下  
-                mPoint2ItemTop = mDownY - mItemView.getTop();  
-                mPoint2ItemLeft = mDownX - mItemView.getLeft();  
-
-                mOffset2Top = (int) (event.getRawY() - mDownY);  
-                mOffset2Left = (int) (event.getRawX() - mDownX);  
-
-                // 获取CanDragListView自动向上滚动的偏移量，小于这个值，CanDragListView向下滚动  
-                mDownScrollBorder = getHeight() / 4;  
-                // 获取CanDragListView自动向下滚动的偏移量，大于这个值，CanDragListView向上滚动  
-                mUpScrollBorder = getHeight() * 3 / 4;  
-
-                // 将该item进行绘图缓存  
-                mItemView.setDrawingCacheEnabled(true);  
-                // 从缓存中获取bitmap  
-                mBitmap = Bitmap.createBitmap(mItemView.getDrawingCache());  
-                // 释放绘图缓存，避免出现重复的缓存对象  
-                mItemView.destroyDrawingCache();  
-            }  
-
-            // Log.i(&quot;CanDragListView&quot;, &quot;****&quot;+isDrag);  
-            break;  
-        case MotionEvent.ACTION_MOVE:  
-            // TODO  
-            if (isDrag) {  
-                int moveX = (int) event.getX();  
-                int moveY = (int) event.getY();  
-                if (!isOnTouchInItem(mItemView, moveX, moveY)) {  
-                    mHandler.removeCallbacks(mLongClickRunnable);  
-                }  
-                mDownX = moveX;  
-                mDownY = moveY;  
-                onDragItem(moveX, moveY);  
-            }  
-            break;  
-        case MotionEvent.ACTION_UP:  
-            onStopDrag();  
-            mHandler.removeCallbacks(mLongClickRunnable);  
-            mHandler.removeCallbacks(mScrollRunnable);  
-
-            isDrag = false;  
-            break;  
-        default:  
-            break;  
-        }  
-
-        return super.onTouchEvent(event);  
-    }  
-
-    /** 
-     * 判断手指按下的坐标是否在item范围内 
-     *  
-     * @param view 
-     * @param downX 
-     * @param downY 
-     * @return 
-     */  
-    private boolean isOnTouchInItem(View view, int downX, int downY) {  
-        if (view == null) {  
-            return false;  
-        }  
-        int leftX = view.getLeft();  
-        int topY = view.getTop();  
-        if (downX &lt; leftX || downX &gt; leftX + view.getWidth()) {  
-            return false;  
-        }  
-        if (downY &lt; topY || downY &gt; topY + view.getHeight()) {  
-            return false;  
-        }  
-        return true;  
-    }  
-
-    /** 
-     * 创建拖动的镜像 
-     *  
-     * @param bitmap 
-     * @param downX 
-     *            按下的点相对父控件的X坐标 
-     * @param downY 
-     *            按下的点相对父控件的X坐标 
-     */  
-    private void createDragImage(Bitmap bitmap, int downX, int downY) {  
-        mWindowLayoutParams = new WindowManager.LayoutParams();  
-        mWindowLayoutParams.format = PixelFormat.TRANSLUCENT; // 图片之外的其他地方透明  
-        mWindowLayoutParams.gravity = Gravity.TOP | Gravity.LEFT;  
-        mWindowLayoutParams.x = downX - mPoint2ItemLeft + mOffset2Left;  
-        mWindowLayoutParams.y = downY - mPoint2ItemTop + mOffset2Top - mStatusHeight;  
-        mWindowLayoutParams.alpha = 0.55f; // 透明度  
-        mWindowLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;  
-        mWindowLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;  
-        mWindowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;  
-
-        mNewWindowLayoutParams = new WindowManager.LayoutParams();  
-        mNewWindowLayoutParams.format = PixelFormat.TRANSLUCENT; // 图片之外的其他地方透明  
-        mNewWindowLayoutParams.gravity = Gravity.TOP | Gravity.LEFT;  
-        mNewWindowLayoutParams.x = downX - mPoint2ItemLeft + mOffset2Left;  
-        mNewWindowLayoutParams.y = downY - mPoint2ItemTop + mOffset2Top - mStatusHeight;  
-        // mNewWindowLayoutParams.alpha = 0.55f; // 透明度  
-        mNewWindowLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;  
-        mNewWindowLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;  
-        mNewWindowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;  
-
-        mDragIV = new ImageView(getContext());  
-        mNewDragIv = new ImageView(getContext());  
-        mDragIV.setImageBitmap(bitmap);  
-        mWindowManager.addView(mDragIV, mWindowLayoutParams);  
-        mWindowManager.addView(mNewDragIv, mNewWindowLayoutParams);  
-    }  
-
-    /** 
-     * 移除镜像 
-     */  
-    private void removeDragImage() {  
-        if (mDragIV != null) {  
-            mWindowManager.removeView(mDragIV);  
-            mDragIV = null;  
-        }  
-        if (mNewDragIv != null) {  
-            mWindowManager.removeView(mNewDragIv);  
-            mNewDragIv = null;  
-        }  
-    }  
-
-    /** 
-     * 拖动item，在里面实现了item镜像的位置更新，item的相互交换以及ListView的自行滚动 
-     *  
-     * @param x 
-     * @param y 
-     */  
-    private void onDragItem(int moveX, int moveY) {  
-        if (mWindowLayoutParams != null &amp;&amp; mDragIV != null) {  
-            mWindowLayoutParams.x = moveX - mPoint2ItemLeft + mOffset2Left;  
-            mWindowLayoutParams.y = moveY - mPoint2ItemTop + mOffset2Top - mStatusHeight;  
-            mWindowManager.updateViewLayout(mDragIV, mWindowLayoutParams); // 更新镜像的位置  
-        }  
-        onSwapItem(moveX, moveY);  
-        // ListView自动滚动  
-        mHandler.post(mScrollRunnable);  
-
-    }  
-
-    /** 
-     * 交换item,并且控制item之间的显示与隐藏效果 
-     *  
-     * @param moveX 
-     * @param moveY 
-     */  
-    private void onSwapItem(int moveX, int moveY) {  
-        // 获取我们手指移动到的那个item的position  
-        int position = pointToPosition(moveX, moveY);  
-
-        // 假如tempPosition 改变了并且tempPosition不等于-1,则进行交换  
-        if (position != mSelectedPosition &amp;&amp; position != AdapterView.INVALID_POSITION) {  
-
-            // mAdapter.getItem(mSelectedPosition);  
-            View newItem = getChildAt(position - getFirstVisiblePosition());  
-            View oldItem = getChildAt(mSelectedPosition - getFirstVisiblePosition());  
-
-            mNewWindowLayoutParams.x = moveX - (moveX - oldItem.getLeft()) + mOffset2Left;  
-            mNewWindowLayoutParams.y = moveY - (moveY - oldItem.getTop()) + mOffset2Top - mStatusHeight;  
-
-            newItem.setDrawingCacheEnabled(true);  
-            Bitmap bitmap = Bitmap.createBitmap(newItem.getDrawingCache());  
-            newItem.destroyDrawingCache();  
-            mNewDragIv.setImageBitmap(bitmap);  
-            if (newItem != null &amp;&amp; oldItem != null) {  
-                newItem.setVisibility(INVISIBLE);// 隐藏拖动到的位置的item  
-                 oldItem.setVisibility(VISIBLE);//显示之前的  
-                mWindowManager.updateViewLayout(mNewDragIv, mNewWindowLayoutParams); // 更新镜像的位置  
-                if (onChanageListener != null) {  
-                     Log.i(&quot;CanDragListView&quot;, &quot;**onSwapItem**&quot;);  
-                    onChanageListener.onChange(mSelectedPosition, position);  
-                }  
-            }  
-
-            mSelectedPosition = position;  
-        }  
-    }  
-
-    /** 
-     * 停止拖拽我们将之前隐藏的item显示出来，并将镜像移除 
-     */  
-    private void onStopDrag() {  
-        View view = getChildAt(mSelectedPosition - getFirstVisiblePosition());  
-        if (view != null) {  
-            view.setVisibility(View.VISIBLE);  
-        }  
-        // ((DragAdapter)this.getAdapter()).setItemHide(-1);  
-        removeDragImage();  
-    }  
-
-    /** 
-     * 获取状态栏的高度 
-     *  
-     * @param context 
-     * @return 
-     */  
-    private static int getStatusHeight(Context context) {  
-        int statusHeight = 0;  
-        Rect localRect = new Rect();  
-        ((Activity) context).getWindow().getDecorView().getWindowVisibleDisplayFrame(localRect);  
-        statusHeight = localRect.top;  
-        if (0 == statusHeight) {  
-            Class&lt;?&gt; localClass;  
-            try {  
-                localClass = Class.forName(&quot;com.android.internal.R$dimen&quot;);  
-                Object localObject = localClass.newInstance();  
-                int i5 = Integer.parseInt(localClass.getField(&quot;status_bar_height&quot;).get(localObject).toString());  
-                statusHeight = context.getResources().getDimensionPixelSize(i5);  
-            } catch (Exception e) {  
-                e.printStackTrace();  
-            }  
-        }  
-        return statusHeight;  
-    }  
-
-    /** 
-     * 监听数据拖拽的接口，用来更新数据显示 
-     */  
-    public interface OnChanageListener {  
-
-        /** 
-         * 当item交换位置的时候回调的方法，在此处实现数据的交换 
-         *  
-         * @param start 
-         *            开始的position 
-         * @param to 
-         *            拖拽到的position 
-         */  
-        public void onChange(int start, int to);  
-    }  
-
-}  
-</code></pre><p>在代码里定义了改变的回调接口，目的是对item进行交换并且更新。开始我是想将item的更新都固定在自定义的ListView中，这样拿来就能直接用。</p>
-<p>对于item的更新，一定要在Activity中实现OnChanageListener后，在方法里对数据集合进行元素位置交换。这里用的方法是：</p>
-<pre><code>/** 
- * Swaps the elements of list {@code list} at indices {@code index1} and 
- * {@code index2}. 
- * 
- * @param list 
- *            the list to manipulate. 
- * @param index1 
- *            position of the first element to swap with the element in 
- *            index2. 
- * @param index2 
- *            position of the other element. 
- * 
- * @throws IndexOutOfBoundsException 
- *             if index1 or index2 is out of range of this list. 
- * @since 1.4 
- */  
-@SuppressWarnings(&quot;unchecked&quot;)  
-public static void swap(List&lt;?&gt; list, int index1, int index2)  
-</code></pre><p>参数是要交换数据的集合，和要交换的两个元素的位置。用法是：</p>
-<pre><code>mListView.setOnChangeListener(new OnChanageListener() {  
-
-    @Override  
-    public void onChange(int start, int to) {  
-        //数据交换  
-              if(start &lt; to){    
-                  for(int i=start; i&lt;to; i++){    
-                      Collections.swap(mList, i, i+1);    
-                  }    
-              }else if(start &gt; to){    
-                  for(int i=start; i&gt;to; i--){    
-                      Collections.swap(mList, i, i-1);    
-                  }    
-              }  
-              mAdapter.notifyDataSetChanged();  
-    }  
-});  
-</code></pre><p>到此，可拖拽的ListView完成。</p>
-<p>xml布局文件示例如下：</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;  
-&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;  
-    android:layout_width=&quot;match_parent&quot;  
-    android:layout_height=&quot;match_parent&quot;  
-    android:orientation=&quot;vertical&quot; &gt;  
-
-    &lt;include  
-        android:layout_width=&quot;match_parent&quot;  
-        android:layout_height=&quot;wrap_content&quot;  
-        layout=&quot;@layout/include_title&quot; /&gt;  
-
-    &lt;com.qiyuan.activity.view.CanDragListView  
-        android:id=&quot;@+id/main_activity_lv&quot;  
-        android:dividerHeight=&quot;0.2dp&quot;  
-        android:divider=&quot;@color/blueviolet&quot;  
-        android:footerDividersEnabled=&quot;false&quot;  
-        android:layout_width=&quot;match_parent&quot;  
-        android:layout_height=&quot;0dp&quot;  
-        android:layout_weight=&quot;1&quot; /&gt;  
-
-&lt;/LinearLayout&gt;  
-</code></pre>
+<p>安装Git（必须）</p>
+<p>作用：把本地的hexo内容提交到github上去.</p>
+<p>安装Xcode就自带有Git，我就不多说了。</p>
+<p>申请GitHub（必须）</p>
+<p>作用：是用来做博客的远程创库、域名、服务器之类的，怎么与本地hexo建立连接等下讲。</p>
+<p>github账号我也不再啰嗦了,没有的话直接申请就行了，跟一般的注册账号差不多，SSH Keys，看你自己了，可以不配制，不配置的话以后每次对自己的博客有改动提交的时候就要手动输入账号密码，配置了就不需要了，怎么配置我就不多说了，网上有很多教程。</p>
+<p>正式安装Hexo</p>
+<p>Node和Git都安装好后,首先创建一个文件夹,如blog,用户存放hexo的配置文件,然后进入blog里安装Hexo。</p>
+<p>执行如下命令安装Hexo：</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo npm install -g hexo</div></pre></td></tr></table></figure>
+<p>初始化然后，执行init命令初始化hexo,命令：</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo init</div></pre></td></tr></table></figure>
+<p>好啦，至此，全部安装工作已经完成！blog就是你的博客根目录，所有的操作都在里面进行。</p>
+<p>生成静态页面</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo generate（hexo g也可以）</div></pre></td></tr></table></figure>
+<p>本地启动</p>
+<p>启动本地服务，进行文章预览调试，命令：</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo server</div></pre></td></tr></table></figure>
+<p>浏览器输入<a href="http://localhost:4000" target="_blank" rel="external">http://localhost:4000</a></p>
+<p>我不知道你们能不能，反正我不能，因为我还有环境没配置好</p>
+<p>配置Github</p>
+<p>建立Repository</p>
+<p>建立与你用户名对应的仓库，仓库名必须为【your_user_name.github.io】，固定写法</p>
+<p>然后建立关联，我的blog在本地/Users/leopard/blog，blog是我之前建的东西也全在这里面，有：</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">_config.yml    node_modules    public      source</div><div class="line"></div><div class="line">db.json        package.json    scaffolds  themes</div></pre></td></tr></table></figure>
+<p>现在我们需要_config.yml文件，来建立关联，命令：</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vim _config.yml</div></pre></td></tr></table></figure>
+<p>翻到最下面，改成我这样子的</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="attr">deploy:</span></div><div class="line"></div><div class="line"><span class="attr">     type:</span> <span class="string">git</span></div><div class="line"></div><div class="line"><span class="attr">     repo:</span> <span class="attr">https://github.com/leopardpan/leopardpan.github.io.git</span></div><div class="line"></div><div class="line"><span class="attr">     branch:</span> <span class="string">master</span></div></pre></td></tr></table></figure>
+<p>然后执行命令：</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install hexo-deployer-git --save</div></pre></td></tr></table></figure>
+<p>网上会有很多说法，有的type是github, 还有repository最后面的后缀也不一样，是github.com.git，我也踩了很多坑，我现在的版本是hexo: 3.1.1，执行命令hexo -vsersion就出来了,貌似3.0后全部改成我上面这种格式了。</p>
+<p>忘了说了，我没用SSH Keys如果你用了SSH Keys的话直接在github里复制SSH的就行了，总共就两种协议，相信你懂的。</p>
+<p>然后，执行配置命令：</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo deploy</div></pre></td></tr></table></figure>
+<p>然后再浏览器中输入<a href="http://leopardpan.github.io/就行了，我的github的账户叫leopardpan,把这个改成你github的账户名就行了" target="_blank" rel="external">http://leopardpan.github.io/就行了，我的github的账户叫leopardpan,把这个改成你github的账户名就行了</a></p>
+<p>部署步骤</p>
+<p>每次部署的步骤，可按以下三步来进行。</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">hexo clean</div><div class="line"></div><div class="line">hexo generate</div><div class="line"></div><div class="line">hexo deploy</div></pre></td></tr></table></figure>
+<p>一些常用命令：</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">hexo new"postName" <span class="comment">#新建文章</span></div><div class="line"></div><div class="line">hexo new page"pageName" <span class="comment">#新建页面</span></div><div class="line"></div><div class="line">hexo generate <span class="comment">#生成静态页面至public目录</span></div><div class="line"></div><div class="line">hexo server <span class="comment">#开启预览访问端口（默认端口4000，'ctrl + c'关闭server）</span></div><div class="line"></div><div class="line">hexo deploy <span class="comment">#将.deploy目录部署到GitHub</span></div><div class="line"></div><div class="line">hexo help <span class="comment"># 查看帮助</span></div><div class="line"></div><div class="line">hexo version <span class="comment">#查看Hexo的版本</span></div></pre></td></tr></table></figure>
+<p>E:\Blog_config.yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Hexo Configuration</span></div><div class="line"><span class="comment">## Docs: https://hexo.io/docs/configuration.html</span></div><div class="line"><span class="comment">## Source: https://github.com/hexojs/hexo/</span></div><div class="line"></div><div class="line"><span class="comment"># Site</span></div><div class="line"><span class="attr">title:</span> <span class="string">徐彦杰的博客</span></div><div class="line"><span class="attr">subtitle:</span> <span class="string">如果真有奇迹,那只是努力的另一个名字</span></div><div class="line"><span class="attr">description:</span> <span class="string">Yanjie.Xu</span> <span class="string">World</span></div><div class="line"><span class="attr">author:</span> <span class="string">墨迹流韶</span></div><div class="line"><span class="attr">email:</span> <span class="string">xuyjcode@gmail.com</span></div><div class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></div><div class="line"><span class="attr">timezone:</span></div><div class="line"></div><div class="line"><span class="comment"># URL</span></div><div class="line"><span class="comment">## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'</span></div><div class="line"><span class="attr">url:</span> <span class="attr">http://blog.cocoper.com</span></div><div class="line"><span class="attr">root:</span> <span class="string">/</span></div><div class="line"><span class="attr">permalink:</span> <span class="string">:year/:month/:day/:title/</span></div><div class="line"><span class="attr">permalink_defaults:</span></div><div class="line"></div><div class="line"><span class="comment"># Directory</span></div><div class="line"><span class="attr">source_dir:</span> <span class="string">source</span></div><div class="line"><span class="attr">public_dir:</span> <span class="string">public</span></div><div class="line"><span class="attr">tag_dir:</span> <span class="string">tags</span></div><div class="line"><span class="attr">archive_dir:</span> <span class="string">archives</span></div><div class="line"><span class="attr">category_dir:</span> <span class="string">categories</span></div><div class="line"><span class="attr">code_dir:</span> <span class="string">downloads/code</span></div><div class="line"><span class="attr">i18n_dir:</span> <span class="string">:lang</span></div><div class="line"><span class="attr">skip_render:</span></div><div class="line"></div><div class="line"><span class="comment"># Writing</span></div><div class="line"><span class="attr">new_post_name:</span> <span class="string">:title.md</span> <span class="comment"># File name of new posts</span></div><div class="line"><span class="attr">default_layout:</span> <span class="string">post</span></div><div class="line"><span class="attr">titlecase:</span> <span class="literal">false</span> <span class="comment"># Transform title into titlecase</span></div><div class="line"><span class="attr">external_link:</span> <span class="literal">true</span> <span class="comment"># Open external links in new tab</span></div><div class="line"><span class="attr">filename_case:</span> <span class="number">0</span></div><div class="line"><span class="attr">render_drafts:</span> <span class="literal">false</span></div><div class="line"><span class="attr">post_asset_folder:</span> <span class="literal">false</span></div><div class="line"><span class="attr">relative_link:</span> <span class="literal">false</span></div><div class="line"><span class="attr">future:</span> <span class="literal">true</span></div><div class="line"><span class="attr">highlight:</span></div><div class="line"><span class="attr">  enable:</span> <span class="literal">true</span></div><div class="line"><span class="attr">  line_number:</span> <span class="literal">true</span></div><div class="line"><span class="attr">  auto_detect:</span> <span class="literal">true</span></div><div class="line"><span class="attr">  tab_replace:</span></div><div class="line"></div><div class="line"><span class="comment"># Category &amp; Tag</span></div><div class="line"><span class="attr">default_category:</span> <span class="string">uncategorized</span></div><div class="line"><span class="attr">category_map:</span></div><div class="line"><span class="attr">tag_map:</span></div><div class="line"></div><div class="line"><span class="comment"># Date / Time format</span></div><div class="line"><span class="comment">## Hexo uses Moment.js to parse and display date</span></div><div class="line"><span class="comment">## You can customize the date format as defined in</span></div><div class="line"><span class="comment">## http://momentjs.com/docs/#/displaying/format/</span></div><div class="line"><span class="attr">date_format:</span> <span class="string">YYYY-MM-DD</span></div><div class="line"><span class="attr">time_format:</span> <span class="attr">HH:mm:ss</span></div><div class="line"></div><div class="line"><span class="comment"># Pagination</span></div><div class="line"><span class="comment">## Set per_page to 0 to disable pagination</span></div><div class="line"><span class="attr">per_page:</span> <span class="number">10</span></div><div class="line"><span class="attr">pagination_dir:</span> <span class="string">page</span></div><div class="line"></div><div class="line"><span class="comment"># Extensions</span></div><div class="line"><span class="comment">## Plugins: https://hexo.io/plugins/</span></div><div class="line"><span class="comment">## Themes: https://hexo.io/themes/</span></div><div class="line"><span class="attr">theme:</span> <span class="string">yilia</span></div><div class="line"></div><div class="line"><span class="comment"># Deployment</span></div><div class="line"><span class="comment">## Docs: https://hexo.io/docs/deployment.html</span></div><div class="line"><span class="attr">deploy:</span></div><div class="line"><span class="attr">    type:</span> <span class="string">git</span></div><div class="line"><span class="attr">    repository:</span> <span class="attr">https://github.com/hchjerry/hchjerry.github.io.git</span></div><div class="line"><span class="attr">    branch:</span> <span class="string">master</span></div><div class="line"></div><div class="line"><span class="attr">sitemap:</span></div><div class="line"><span class="attr">    path:</span> <span class="string">sitemap.xml</span></div><div class="line"><span class="attr">baidusitemap:</span></div><div class="line"><span class="attr">    path:</span> <span class="string">baidusitemap.xm</span></div><div class="line"></div><div class="line"><span class="attr">feed:</span></div><div class="line"><span class="attr">    type:</span> <span class="string">atom</span></div><div class="line"><span class="attr">    path:</span> <span class="string">atom.xml</span></div><div class="line"><span class="attr">    limit:</span> <span class="number">100</span></div><div class="line"></div><div class="line"><span class="attr">jsonContent:</span></div><div class="line"><span class="attr">  meta:</span> <span class="literal">false</span></div><div class="line"><span class="attr">  pages:</span> <span class="literal">false</span></div><div class="line"><span class="attr">  posts:</span></div><div class="line"><span class="attr">    title:</span> <span class="literal">true</span></div><div class="line"><span class="attr">    date:</span> <span class="literal">true</span></div><div class="line"><span class="attr">    path:</span> <span class="literal">true</span></div><div class="line"><span class="attr">    text:</span> <span class="literal">true</span></div><div class="line"><span class="attr">    raw:</span> <span class="literal">false</span></div><div class="line"><span class="attr">    content:</span> <span class="literal">false</span></div><div class="line"><span class="attr">    slug:</span> <span class="literal">false</span></div><div class="line"><span class="attr">    updated:</span> <span class="literal">false</span></div><div class="line"><span class="attr">    comments:</span> <span class="literal">false</span></div><div class="line"><span class="attr">    link:</span> <span class="literal">false</span></div><div class="line"><span class="attr">    permalink:</span> <span class="literal">false</span></div><div class="line"><span class="attr">    excerpt:</span> <span class="literal">false</span></div><div class="line"><span class="attr">    categories:</span> <span class="literal">true</span></div><div class="line"><span class="attr">    tags:</span> <span class="literal">true</span></div></pre></td></tr></table></figure>
+<p>E:\Blog\themes\yilia_config.yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Header</span></div><div class="line"></div><div class="line"><span class="attr">menu:</span></div><div class="line">  <span class="string">主页:</span> <span class="string">/</span></div><div class="line">  <span class="string">博客:</span> <span class="string">/archives</span></div><div class="line">  <span class="string">相册:</span> <span class="string">/photos</span></div><div class="line">  <span class="comment">#随笔: /tags</span></div><div class="line"></div><div class="line"><span class="comment"># SubNav</span></div><div class="line"><span class="attr">subnav:</span></div><div class="line"><span class="attr">  github:</span> <span class="string">"https://github.com/hchjerry"</span></div><div class="line"><span class="attr">  weibo:</span> <span class="string">"http://weibo.com/hchjerry"</span></div><div class="line">  <span class="comment">#rss: "#"</span></div><div class="line">  <span class="comment">#zhihu: "#"</span></div><div class="line">  <span class="comment">#qq: "#"</span></div><div class="line">  <span class="comment">#weixin: "#"</span></div><div class="line">  <span class="comment">#jianshu: "#"</span></div><div class="line">  <span class="comment">#douban: "#"</span></div><div class="line">  <span class="comment">#segmentfault: "#"</span></div><div class="line">  <span class="comment">#bilibili: "#"</span></div><div class="line">  <span class="comment">#acfun: "#"</span></div><div class="line">  <span class="comment">#mail: "mailto:litten225@qq.com"</span></div><div class="line">  <span class="comment">#facebook: "#"</span></div><div class="line">  <span class="comment">#google: "#"</span></div><div class="line">  <span class="comment">#twitter: "#"</span></div><div class="line">  <span class="comment">#linkedin: "#"</span></div><div class="line"></div><div class="line"><span class="attr">rss:</span> <span class="string">/atom.xml</span></div><div class="line"></div><div class="line"><span class="comment"># 是否需要修改 root 路径</span></div><div class="line"><span class="comment"># 如果您的网站存放在子目录中，例如 http://yoursite.com/blog，</span></div><div class="line"><span class="comment"># 请将您的 url 设为 http://yoursite.com/blog 并把 root 设为 /blog/。</span></div><div class="line"><span class="attr">root:</span> <span class="string">/</span></div><div class="line"></div><div class="line"><span class="comment"># Content</span></div><div class="line"></div><div class="line"><span class="comment"># 文章太长，截断按钮文字</span></div><div class="line"><span class="attr">excerpt_link:</span> <span class="string">more</span></div><div class="line"><span class="comment"># 文章卡片右下角常驻链接，不需要请设置为false</span></div><div class="line"><span class="attr">show_all_link:</span> <span class="string">'展开全文'</span></div><div class="line"><span class="comment"># 数学公式</span></div><div class="line"><span class="attr">mathjax:</span> <span class="literal">false</span></div><div class="line"><span class="comment"># 是否在新窗口打开链接</span></div><div class="line"><span class="attr">open_in_new:</span> <span class="literal">false</span></div><div class="line"></div><div class="line"><span class="comment"># 打赏</span></div><div class="line"><span class="comment"># 请在需要打赏的文章的md文件头部，设置属性reward: true</span></div><div class="line"></div><div class="line"><span class="comment"># 打赏基础设定：0-关闭打赏； 1-文章对应的md文件里有reward:true属性，才有打赏； 2-所有文章均有打赏</span></div><div class="line"><span class="attr">reward_type:</span> <span class="number">0</span></div><div class="line"><span class="comment"># 打赏wording</span></div><div class="line"><span class="attr">reward_wording:</span> <span class="string">'谢谢你请我吃糖果'</span></div><div class="line"><span class="comment"># 支付宝二维码图片地址，跟你设置头像的方式一样。比如：/assets/img/alipay.jpg</span></div><div class="line"><span class="attr">alipay:</span> </div><div class="line"><span class="comment"># 微信二维码图片地址</span></div><div class="line"><span class="attr">weixin:</span> </div><div class="line"></div><div class="line"><span class="comment"># Miscellaneous</span></div><div class="line"><span class="attr">baidu_analytics:</span> <span class="string">''</span></div><div class="line"><span class="attr">google_analytics:</span> <span class="string">''</span></div><div class="line"><span class="attr">favicon:</span> <span class="string">/favicon.png</span></div><div class="line"></div><div class="line"><span class="comment">#你的头像url</span></div><div class="line"><span class="attr">avatar:</span> <span class="string">/img/head.jpg</span></div><div class="line"></div><div class="line"><span class="comment">#是否开启分享</span></div><div class="line"><span class="attr">share_jia:</span> <span class="literal">true</span></div><div class="line"></div><div class="line"><span class="comment">#是否开启多说评论，填写你在多说申请的项目名称 duoshuo: duoshuo-key</span></div><div class="line"><span class="comment">#若使用disqus，请在博客config文件中填写disqus_shortname，并关闭多说评论</span></div><div class="line"><span class="attr">duoshuo:</span> <span class="literal">false</span></div><div class="line"></div><div class="line"><span class="comment"># 样式定制 - 一般不需要修改，除非有很强的定制欲望…</span></div><div class="line"><span class="attr">style:</span></div><div class="line">  <span class="comment"># 头像上面的背景颜色</span></div><div class="line"><span class="attr">  header:</span> <span class="string">'#4A708B'</span></div><div class="line">  <span class="comment"># 右滑板块背景</span></div><div class="line"><span class="attr">  slider:</span> <span class="string">'linear-gradient(200deg,#d1e3eb,#4A708B)'</span></div><div class="line"></div><div class="line"><span class="comment"># slider的设置</span></div><div class="line"><span class="attr">slider:</span></div><div class="line">  <span class="comment"># 是否默认展开tags板块</span></div><div class="line"><span class="attr">  showTags:</span> <span class="literal">false</span></div><div class="line">  </div><div class="line"><span class="comment"># 智能菜单</span></div><div class="line"><span class="comment"># 如不需要，将该对应项置为false</span></div><div class="line"><span class="comment"># 比如</span></div><div class="line"><span class="comment">#smart_menu:</span></div><div class="line"><span class="comment">#  friends: false</span></div><div class="line"><span class="attr">smart_menu:</span></div><div class="line"><span class="attr">  innerArchive:</span> <span class="string">'博客'</span></div><div class="line"><span class="attr">  friends:</span> <span class="string">'友链'</span></div><div class="line"><span class="attr">  aboutme:</span> <span class="string">'关于我'</span></div><div class="line">  <span class="comment">#tagcloud: '标签云'</span></div><div class="line"></div><div class="line"><span class="attr">friends:</span></div><div class="line">  <span class="string">百度:</span> <span class="attr">http://www.baidu.com</span></div><div class="line">  </div><div class="line"><span class="comment">#tagcloud: true</span></div><div class="line">  </div><div class="line"><span class="attr">aboutme:</span></div><div class="line">    <span class="string">&lt;div</span> <span class="string">id="nav"&gt;</span></div><div class="line">        <span class="string">邮箱：xuyanjie@cocoper.com</span> <span class="string">&lt;br&gt;&lt;br&gt;</span></div><div class="line">        <span class="string">QQ：825194169</span> <span class="string">&lt;br&gt;&lt;br&gt;</span></div><div class="line">        <span class="string">&lt;a</span> <span class="string">href="http://blog.csdn.net/github_19529589"</span> <span class="string">target="_blank"&gt;CSDN博客&lt;/a&gt;</span></div><div class="line">    <span class="string">&lt;/div&gt;</span></div></pre></td></tr></table></figure>
+<p>E:\Blog\themes\yilia\layout_partial\left-col.ejs</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 开启网易云播放器 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">nav</span> <span class="attr">class</span>=<span class="string">"header-music"</span>&gt;</span></div><div class="line">	<span class="comment">&lt;!--&lt;iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=300 height=400 src="//music.163.com/outchain/player?type=0&amp;id=509985151&amp;auto=0&amp;height=380"&gt;&lt;/iframe&gt;--&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">iframe</span> <span class="attr">frameborder</span>=<span class="string">"no"</span> <span class="attr">border</span>=<span class="string">"0"</span> <span class="attr">marginwidth</span>=<span class="string">"0"</span> <span class="attr">marginheight</span>=<span class="string">"0"</span> <span class="attr">width</span>=<span class="string">300</span> <span class="attr">height</span>=<span class="string">110</span> <span class="attr">src</span>=<span class="string">"//music.163.com/outchain/player?type=0&amp;id=509985151&amp;auto=0&amp;height=90"</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">nav</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>E:\Blog\themes\yilia\source\main.05aabf.css</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.header-music</span> </div><div class="line">&#123;</div><div class="line">	<span class="attribute">position</span>:fixed;</div><div class="line">	<span class="attribute">bottom</span>:<span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
       
 
       
@@ -781,11 +249,11 @@ public static void swap(List&lt;?&gt; list, int index1, int index2)
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">编程</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">应用</a>
         		</li>
       		
 		</ul>
@@ -852,7 +320,7 @@ public static void swap(List&lt;?&gt; list, int index1, int index2)
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=http://blog.hsujee.io/2017/02/18/Android/CustemView/2017-02-18-Android自定义可拖拽ListView/" alt="微信分享二维码">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://blog.hsujee.io/2015/05/10/Hoxe/2015-05-10-Hexo博客yilia模板配置/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -866,18 +334,18 @@ public static void swap(List&lt;?&gt; list, int index1, int index2)
   
 <nav id="article-nav">
   
-    <a href="/2017/02/17/Android/exeption/2017-02-17-解决Android65535问题/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2015/03/27/Tools/2015-03-27- SVN常用的命令/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          解决Android65535问题
+          Svn常用的命令
         
       </div>
     </a>
   
   
-    <a href="/2017/02/19/Android/CustemView/2017-02-19-Android自定义可拖拽交换位置的GridView/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Android自定义可拖拽交换位置的GridView</div>
+    <a href="/2015/05/17/Java/2015-05-17- Java代码获取汉字首字母/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Java代码获取汉字首字母</div>
       <i class="icon-circle-right"></i>
     </a>
   

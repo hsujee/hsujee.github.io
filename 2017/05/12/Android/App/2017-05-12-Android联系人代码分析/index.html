@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://blog.hsujee.io">
+  <title>Android联系人代码分析 | 徐彦杰的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="项目结构 PeopleActivity为项目启动后的主界面，就从此Activity开始  特殊成员概览：">
+<meta name="keywords" content="Android,Contact,App">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android联系人代码分析">
+<meta property="og:url" content="http://blog.hsujee.io/2017/05/12/Android/App/2017-05-12-Android联系人代码分析/index.html">
+<meta property="og:site_name" content="徐彦杰的博客">
+<meta property="og:description" content="项目结构 PeopleActivity为项目启动后的主界面，就从此Activity开始  特殊成员概览：">
+<meta property="og:updated_time" content="2017-06-13T08:31:02.494Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android联系人代码分析">
+<meta name="twitter:description" content="项目结构 PeopleActivity为项目启动后的主界面，就从此Activity开始  特殊成员概览：">
+  
+    <link rel="alternative" href="/atom.xml" title="徐彦杰的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.05aabf.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#d1e3eb,#4A708B);
+    }
+  </style>
+  
+
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4A708B"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="/img/head.jpg" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">墨迹流韶</a></h1>
+		</hgroup>
+		
+		<p class="header-subtitle">如果真有奇迹,那只是努力的另一个名字</p>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/archives">博客</a></li>
+	        
+				<li><a href="/photos">相册</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">博客</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="https://github.com/hsujee" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="http://weibo.com/hsujee" title="weibo"><i class="icon-weibo"></i></a>
+		        
+			</div>
+		</nav>
+		
+	</header>
+
+	<!-- 开启网易云播放器 -->
+	<nav class="header-music">
+		<!--<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=300 height=400 src="//music.163.com/outchain/player?type=0&id=509985151&auto=0&height=380"></iframe>-->
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=300 height=110 src="//music.163.com/outchain/player?type=0&id=509985151&auto=0&height=90"></iframe>
+	</nav>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4A708B"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="/img/head.jpg" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">墨迹流韶</h1>
+			</hgroup>
+			
+			<p class="header-subtitle"><i class="icon icon-quo-left"></i>如果真有奇迹,那只是努力的另一个名字<i class="icon icon-quo-right"></i></p>
+			
+			
+			
+				
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/hsujee" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/hsujee" title="weibo"><i class="icon-weibo"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 70%">
+				
+				
+					<li style="width: 33.333333333333336%"><a href="/">主页</a></li>
+		        
+					<li style="width: 33.333333333333336%"><a href="/archives">博客</a></li>
+		        
+					<li style="width: 33.333333333333336%"><a href="/photos">相册</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-Android/App/2017-05-12-Android联系人代码分析" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android联系人代码分析
+    </h1>
+  
+
+        
+        <a href="/2017/05/12/Android/App/2017-05-12-Android联系人代码分析/" class="archive-article-date">
+  	<time datetime="2017-05-11T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-05-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>项目结构</p>
+<p>PeopleActivity为项目启动后的主界面，就从此Activity开始</p>
+<ul>
+<li>特殊成员概览：</li>
+</ul>
+<a id="more"></a>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> MultiSelectContactsListFragment mAllFragment;  <span class="comment">//收藏联系人列表</span></div><div class="line"></div><div class="line"><span class="keyword">private</span> ContactTileListFragment mFavoritesFragment;  <span class="comment">//全部联系人列表</span></div><div class="line"></div><div class="line">onCreate()&#123;</div><div class="line">	<span class="comment">//申请权限 刷新sim卡 加载联系人列表筛选控制器 添加切换状态监听 初始化界面和fragment，createViewsAndFragments() 初始化全选按钮</span></div><div class="line">&#125;</div><div class="line">onClick()&#123;</div><div class="line">	<span class="keyword">case</span> R.id.floating_action_button:<span class="comment">// 点击悬浮按钮</span></div><div class="line">		Intent intent = <span class="keyword">new</span> Intent(Intent.ACTION_INSERT, Contacts.CONTENT_URI);<span class="comment">//新增联系人</span></div><div class="line">	<span class="keyword">case</span> R.id.selection_count_text:<span class="comment">//点击全选按钮</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">onAction()&#123;</div><div class="line">	CHANGE_SEARCH_QUERY = <span class="number">0</span>;                        <span class="comment">//搜索改变后更新模式</span></div><div class="line">	START_SEARCH_MODE = <span class="number">1</span>;                           <span class="comment">//开始搜索模式</span></div><div class="line">	START_SELECTION_MODE = <span class="number">2</span>;                        <span class="comment">//开始选择模式</span></div><div class="line">	STOP_SEARCH_AND_SELECTION_MODE = <span class="number">3</span>;             <span class="comment">//停止搜索进入选择模式</span></div><div class="line">	BEGIN_STOPPING_SEARCH_AND_SELECTION_MODE = <span class="number">4</span>;  <span class="comment">//绑定停止搜索和进入选择模式</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">onOptionsItemSelected()&#123;</div><div class="line">	<span class="keyword">case</span> android.R.id.home: <span class="comment">//点击ActionBar，如果menu显示，则隐藏</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_settings: <span class="comment">//设置</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_contacts_filter: <span class="comment">//要显示的联系人，联系人筛选器</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_share: <span class="comment">//分享</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_join: <span class="comment">//关联</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_delete: <span class="comment">//删除</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_import_export: <span class="comment">//导入/导出</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_clear_frequents: <span class="comment">//清理常用联系人</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_help: <span class="comment">//帮助</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_accounts: <span class="comment">//管理账号</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_search: <span class="comment">//搜索</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_blocked_numbers: <span class="comment">//已屏蔽的号码</span></div><div class="line">	<span class="keyword">case</span> R.id.export_database: <span class="comment">//输出数据</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_groups: <span class="comment">//群组</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_conference_call: <span class="comment">//电话会议</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>新建联系人/修改联系人</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">PeopleActivity-&gt;onClick()-&gt;<span class="keyword">case</span> R.id.floating_action_button:------&gt; ContactEditorActivity------&gt; ContactEditorFragment</div><div class="line">ContactEditorBaseFragment编辑联系人界面有两种状态分别如下：</div><div class="line">Intent.ACTION_EDIT<span class="comment">//编辑模式</span></div><div class="line">Intent.ACTION_INSERT<span class="comment">//新建模式</span></div><div class="line">由以上方式进入联系人编辑界面，对联系人的个人信息进行输入操作后，点击optionMenu进行添加</div></pre></td></tr></table></figure>
+<ul>
+<li>新建联系人</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//保存</span></div><div class="line">ContactEditorBaseFragment.onOptionsItemSelected()-&gt;<span class="keyword">case</span> R.id.menu_save:<span class="comment">//保存按钮点击事件入口</span></div><div class="line">ContactEditorBaseFragment. Listener<span class="comment">//监听器，处理所有对联系人的操作</span></div><div class="line">ContactEditorBaseFragment.save()-&gt;doSaveAction() <span class="comment">//保存联系人，调用子类该方法</span></div><div class="line">ContactEditorFragment-&gt;doSaveAction();<span class="comment">//此方法调用服务对联系人进行保存处理，具体保存实现如下：</span></div><div class="line">......</div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">doSaveAction</span><span class="params">(<span class="keyword">int</span> saveMode, Long joinContactId)</span> </span>&#123;</div><div class="line">    <span class="keyword">final</span> Intent intent = ContactSaveService.createSaveContactIntent(mContext, mState,</div><div class="line">         	SAVE_MODE_EXTRA_KEY, saveMode, isEditingUserProfile(),</div><div class="line">            ((Activity) mContext).getClass(), ContactEditorActivity.ACTION_SAVE_COMPLETED,</div><div class="line">            mUpdatedPhotos, JOIN_CONTACT_ID_EXTRA_KEY, joinContactId);</div><div class="line">    <span class="keyword">return</span> startSaveService(mContext, intent, saveMode);</div><div class="line">&#125;</div><div class="line">......</div><div class="line">startSaveService()&#123;</div><div class="line">	<span class="keyword">final</span> <span class="keyword">boolean</span> result = ContactSaveService.startService(context, intent, saveMode);</div><div class="line">&#125;</div><div class="line">......</div></pre></td></tr></table></figure>
+<p>通过以上流程，对联系人成员protected RawContactDeltaList mState 进行了保存，具体的ContactSaveService中的保存操作后面有整理</p>
+<ul>
+<li>修改联系人</li>
+</ul>
+<p>保存部分新增联系人中已做解析，下面看看其他操作选项</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">ContactEditorBaseFragment .onOptionsItemSelected()&#123;</div><div class="line">	<span class="keyword">case</span> R.id.menu_save: <span class="comment">//保存</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_delete: <span class="comment">//删除</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_split: <span class="comment">//取消关联</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_join: <span class="comment">//关联</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_set_ringtone: <span class="comment">//设置铃声</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_send_to_voicemail: <span class="comment">//发送邮件</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>1、删除联系人</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">mListener.onDeleteRequested(mLookupUri);</div><div class="line">ContactEditorBaseActivity. mFragmentListener-&gt;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDeleteRequested</span><span class="params">(Uri contactUri)</span> </span>&#123;</div><div class="line">        ContactDeletionInteraction.start(ContactEditorBaseActivity.<span class="keyword">this</span>, contactUri, <span class="keyword">true</span>);<span class="comment">//删除联系人</span></div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>2、取消关联</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">doSplitContactAction()</div><div class="line">	SplitContactConfirmationDialogFragment.show(<span class="keyword">this</span>, hasPendingChanges());</div><div class="line">hasPendingChanges()-&gt;hasPendingRawContactChanges()</div><div class="line">	RawContactModifier.hasChanges(mState, accountTypes, excludedMimeTypes);<span class="comment">//取消联系人关联</span></div></pre></td></tr></table></figure>
+<p>3、关联：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">showJoinAggregateActivity() <span class="comment">//弹出关联选择窗口</span></div><div class="line">	startActivityForResult(intent, REQUEST_CODE_JOIN);</div><div class="line">......</div><div class="line">onActivityResulte()</div><div class="line">	<span class="keyword">case</span> REQUEST_CODE_JOIN: <span class="comment">//如果返回数据，并且确定关联继续往下走</span></div><div class="line">......</div><div class="line">joinAggregate()-&gt;ContactEditorFragment.joinAggregete(); <span class="comment">//选择确定关联，对关联的联系人信息进行保存</span></div><div class="line">	<span class="keyword">final</span> Intent intent = ContactSaveService.createJoinContactsIntent(</div><div class="line">                mContext, mContactIdForJoin, contactId, ContactEditorActivity.class,</div><div class="line">                ContactEditorActivity.ACTION_JOIN_COMPLETED);</div><div class="line">    mContext.startService(intent);</div></pre></td></tr></table></figure>
+<p>4、设置铃声：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">doPickRingtone() <span class="comment">//设置联系人铃声</span></div><div class="line">	startActivityForResult(intent, REQUEST_CODE_PICK_RINGTONE);<span class="comment">//开启铃声选择界面</span></div><div class="line">onActivityResult() </div><div class="line">	<span class="keyword">case</span> REQUEST_CODE_PICK_RINGTONE:</div><div class="line">		onRingtonePicked(pickedUri);</div><div class="line">onRingtonePicked() <span class="comment">//根据参数URI传递的铃声地址，设置该联系人的铃声</span></div><div class="line">	Intent intent = ContactSaveService.createSetRingtone(mContext, mLookupUri, mCustomRingtone);</div><div class="line">	mContext.startService(intent);</div></pre></td></tr></table></figure>
+<p>5、发送邮件：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">mSendToVoicemailState = !mSendToVoicemailState;</div><div class="line">item.setChecked(mSendToVoicemailState);</div><div class="line"><span class="keyword">final</span> Intent intent = ContactSaveService.createSetSendToVoicemail(</div><div class="line">mContext, mLookupUri, mSendToVoicemailState);</div><div class="line">mContext.startService(intent);</div></pre></td></tr></table></figure>
+<ul>
+<li>查找联系人</li>
+</ul>
+<p>查找流程分析</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">PeopleActivity-&gt;onOptionsItemSelected-&gt; <span class="keyword">case</span> R.id.menu_search:------&gt; onSearchRequested();</div><div class="line">	mActionBarAdapter.setSearchMode(<span class="keyword">true</span>);  <span class="comment">//设置标题栏为搜索模式</span></div><div class="line">ActionBarAdapter. SearchTextWatcher-&gt;onTextChanged()</div><div class="line">	mListener.onAction(Action.CHANGE_SEARCH_QUERY);</div><div class="line">PeopleAction-&gt;onAction();</div><div class="line">	<span class="keyword">case</span> ActionBarAdapter.Listener.Action.CHANGE_SEARCH_QUERY:</div><div class="line">PeopleAction-&gt;setQueryTextToFragment(queryString);</div><div class="line">	到此处由MultiSelectContactsListFragment的父类实现，如下所示：</div><div class="line">ContactEntryListFragment-&gt; setQueryString()</div><div class="line">	mAdapter.setQueryString(queryString);</div><div class="line">ContactEntryListAdapter-&gt; setQueryString()</div><div class="line">	mUpperCaseQueryString = SearchUtil.cleanStartAndEndOfSearchQuery(queryString.toUpperCase()) ;</div></pre></td></tr></table></figure>
+<p>具体的查询代码在SearchUtil中，查询流程就此告一段落，具体查询算法后面补充</p>
+<p>注：在搜索栏输入debug debug! ，界面进入到debug模式，显示按钮，导出数据库文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">PeopleActivity-&gt;updateDebugOptionsVisibility()</div></pre></td></tr></table></figure>
+<ul>
+<li>联系人详情页QuickContactActivity</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">onOptionsItemSelected()&#123;</div><div class="line">	<span class="keyword">case</span> R.id.menu_star: <span class="comment">//加入收藏</span></div><div class="line">		<span class="keyword">final</span> Intent intent = ContactSaveService.createSetStarredIntent();</div><div class="line">	<span class="keyword">case</span> R.id.menu_edit: <span class="comment">//编辑按钮进入修改联系人界面</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_delete: <span class="comment">//删除联系人</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_share: <span class="comment">//分享联系人</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_create_contact_shortcut: <span class="comment">//创建联系人快捷方式</span></div><div class="line">	<span class="keyword">case</span> R.id.menu_help: <span class="comment">//帮助</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>删除联系人</li>
+</ul>
+<p>删除联系人按钮，将联系人URI出入并打开ContactDeletionInteraction.java,显示提示窗口，点击删除按钮将进行联系人删除操作，具体操作如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ContactDeletionInteraction-&gt;doDeleteContact()</div><div class="line">	ContactSaveService.createDeleteContactIntent(mContext,  contactUri)</div></pre></td></tr></table></figure>
+<ul>
+<li>分享联系人</li>
+</ul>
+<p>点击分享联系人按钮，进行如下操作：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">final</span> Intent intent = <span class="keyword">new</span> Intent(Intent.ACTION_SEND);</div><div class="line">ImplicitIntentsUtil.startActivityOutsideApp(<span class="keyword">this</span>, chooseIntent);</div></pre></td></tr></table></figure>
+<p>通过Intent.ACTION_SEND启动系统提供的分享功能进行分享操作</p>
+<ul>
+<li>导入/导出联系人</li>
+</ul>
+<p>通过点击事件开启导入/到处界面： </p>
+<p>ContactImportExportActivity.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//选择导入/导出源</span></div><div class="line"><span class="comment">//选择导入/导出目标</span></div><div class="line"><span class="comment">//打开联系人选择列表界面</span></div><div class="line">ContactListMultiChoiceActivity.java，</div><div class="line">	configureListFragment()</div><div class="line">	<span class="keyword">case</span> ContactsRequestAction.ACTION_PICK_MULTIPLE_CONTACTS  <span class="comment">//多重选择联系人</span></div><div class="line">                | ContactsIntentResolverEx.MODE_MASK_IMPORT_EXPORT_PICKER:  <span class="comment">// 导入/导出选择器</span></div><div class="line">		在这里初始化选择器：MultiDuplicationPickerFragment</div></pre></td></tr></table></figure>
+<p>在选择器界面，对需要操作的联系人进行选中，点击ExportVCardActivity确定按钮进行导入导出操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">onOptionAction()  <span class="comment">//处理动作</span></div><div class="line"><span class="keyword">if</span> (mDstStoreType == DST_STORE_TYPE_STORAGE) &#123;<span class="comment">//如果存储目标类型是SDCard</span></div><div class="line">       doExportVCardToSDCard();</div><div class="line">doExportVCardToSDCard()<span class="comment">//中开启ExportVCardActivity界面ExportVCardActivity.java，在该类中使用VCardService进行导入/导出的具体操作</span></div><div class="line">&#125; <span class="keyword">else</span> &#123; </div><div class="line">	mRequestHandler.sendMessage(mRequestHandler.obtainMessage(</div><div class="line">                                SendRequestHandler.MSG_REQUEST, mRequests));</div></pre></td></tr></table></figure>
+<p>发送msg到handler</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">handleMessage()  <span class="comment">//方法中进行导入/导出请求</span></div><div class="line">	<span class="comment">//调用CopyRequestConnection-&gt;sendCopyRequest方法进行操作请求</span></div><div class="line">	mCopyRequestConnection.sendCopyRequest((List&lt;MultiChoiceRequest&gt;) msg.obj)</div><div class="line">MultiChoiceService.class  <span class="comment">//批量选择服务</span></div><div class="line">	handleCopyRequest()</div><div class="line">		tryExecute(<span class="keyword">new</span> CopyProcessor(<span class="keyword">this</span>, listener, requests, sCurrentJobId, sourceAccount,</div><div class="line">                destinationAccount))</div></pre></td></tr></table></figure>
+<p>通过CopyProcessor对文件进行最后的拷贝</p>
+<ul>
+<li>要显示的联系人</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">case</span> R.id.menu_blocked_numbers: <span class="comment">//屏蔽号码</span></div><div class="line">	createManageBlockedNumbersIntent<span class="comment">//打开系统提供的屏蔽号码界面</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>关联/取消关联联系人</p>
+</blockquote>
+<ul>
+<li>关联联系人</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">case</span> R.id.menu_join:</div><div class="line">    joinSelectedContacts();</div><div class="line">打开JoinContactsDialogFragment，选择确定关联联系人，执行以下代码</div><div class="line"><span class="keyword">final</span> Intent intent = ContactSaveService.createJoinSeveralContactsIntent(getActivity(),</div><div class="line">                contactIdsArray2);</div></pre></td></tr></table></figure>
+<blockquote>
+<p>群组</p>
+</blockquote>
+<p>点击群组按钮，开启GroupBrowserActivity</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">startActivity(<span class="keyword">new</span> Intent(PeopleActivity.<span class="keyword">this</span>, GroupBrowseActivity.class));</div></pre></td></tr></table></figure>
+<p>界面中加载GroupBrowseListFragment</p>
+<ul>
+<li>新建群组</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">GroupBrowserActivity-&gt;onOptionItemSelected()</div><div class="line">	<span class="keyword">case</span> R.id.menu_add_group:</div><div class="line"><span class="comment">//开启群组编辑界面进行群组创建GroupEditorActivity-GroupEditorFragment</span></div><div class="line"><span class="comment">//在此编辑界面对群组的信息进行输入，点击去定按钮</span></div><div class="line">saveMenuItem-&gt;onClicked()</div><div class="line">	mFragment.onDoneClicked();</div><div class="line">GroupEditorFragment-&gt;onDoneClicked()</div><div class="line">	<span class="keyword">if</span> (isGroupMembershipEditable()) &#123; </div><div class="line">            save(SaveMode.CLOSE);  <span class="comment">//调用保存群组方法，进行保存     </span></div><div class="line">    &#125; <span class="keyword">else</span> &#123;doRevertAction();<span class="comment">//仅仅返回操作&#125;</span></div><div class="line">GroupEditorFragment-&gt;save()</div><div class="line">	<span class="keyword">if</span> (Intent.ACTION_INSERT.equals(mAction))  <span class="comment">//如果是插入模式，进行群组新建操作</span></div><div class="line">	saveIntent = ContactSaveService.createNewGroupIntent(activity,</div><div class="line">                        <span class="keyword">new</span> AccountWithDataSet(mAccountName, mAccountType, mDataSet),</div><div class="line">                        mGroupNameView.getText().toString(),</div><div class="line">                        membersToAddArray, activity.getClass(),</div><div class="line">                        GroupEditorActivity.ACTION_SAVE_COMPLETED);</div><div class="line">	Intent.ACTION_EDIT.equals(mAction)  <span class="comment">//如果是编辑模式，进行更新操作</span></div><div class="line">	saveIntent = ContactSaveService.createGroupUpdateIntent(activity, mGroupId,</div><div class="line">                        getUpdatedName(), membersToAddArray, membersToRemoveArray,</div><div class="line">                        activity.getClass(), GroupEditorActivity.ACTION_SAVE_COMPLETED);</div></pre></td></tr></table></figure>
+<ul>
+<li>群组详情</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">GroupBrowseListFragment-&gt;configOnItemClickListener() <span class="comment">//Item项目点击事件</span></div><div class="line">	viewGroup();</div><div class="line">		mListener.onViewGroupAction(groupUri); </div><div class="line">GroupBrowseActivity-&gt;<span class="function">GroupBrowserActionListener</span></div><div class="line">	<span class="title">onViewGroupAction</span><span class="params">()</span>; <span class="comment">//此方法中执行打开群组详情界面</span></div><div class="line">		Intent intent = <span class="keyword">new</span> Intent(GroupBrowseActivity.<span class="keyword">this</span>, GroupDetailActivity.class);</div><div class="line">		startActivity(intent);</div><div class="line">GroupDetailActivity	-&gt;onContactSelected()  <span class="comment">//点击群组中的联系人，打开联系人详情</span></div><div class="line">GroupDetailFragment-&gt; onOptionsItemSelected()&#123;</div><div class="line"><span class="keyword">case</span> R.id.menu_edit_group: <span class="comment">// 修改</span></div><div class="line">	GroupDetailActivity	-&gt;onEditRequested()  <span class="comment">//点击修改按钮，进入联系人编辑界面GroupEditorActivity</span></div><div class="line"><span class="keyword">case</span> R.id.menu_delete_group:  <span class="comment">//删除</span></div><div class="line">	GroupDeletionDialogFragment-&gt;PositiveButtonClick  <span class="comment">//点击删除按钮后，打开删除窗口，点击确认按钮进行删除</span></div><div class="line">	getActivity().startService(SimGroupUtils.createGroupDeletionIntentForIcc());</div><div class="line">		serviceIntent.setAction(ContactSaveService.ACTION_DELETE_GROUP);</div><div class="line">		<span class="comment">//通过上面代码开启SimProcessorService，在sim进程中，调用ContactSaveService.ACTION_DELETE_GROUP</span></div><div class="line">		ContactSaveService.deleteGroup  <span class="comment">//进行删除群组操作</span></div><div class="line"><span class="keyword">case</span> R.id.menu_move_group:  <span class="comment">//移动群组</span></div><div class="line"><span class="keyword">case</span> R.id.menu_message_group:  <span class="comment">//发送群组信息</span></div><div class="line">	SendGroupSmsTask-&gt; execute  <span class="comment">//异步发送群组短信执行任务</span></div><div class="line">		Intent intent = <span class="keyword">new</span> Intent(Intent.ACTION_SENDTO);</div><div class="line">		startActivity(intent);</div><div class="line"><span class="keyword">case</span> R.id.menu_email_group:  <span class="comment">//发送群组邮件</span></div><div class="line">	SendGroupEmailTask-&gt;execute  <span class="comment">//异步发送群组邮件执行任务</span></div><div class="line">		Intent intent = <span class="keyword">new</span> Intent(Intent.ACTION_SENDTO, dataUri);</div><div class="line">		startActivity(intent);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>管理账号</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">Intent intent = <span class="keyword">new</span> Intent(Settings.ACTION_SYNC_SETTINGS);  <span class="comment">//调用系统账号管理界面</span></div><div class="line">设置</div><div class="line">startActivity(<span class="keyword">new</span> Intent(<span class="keyword">this</span>, ContactsPreferenceActivity.class));</div><div class="line">ContactsPreferenceActivity -&gt; DisplayOptionsPreferenceFragment</div><div class="line">ContactSaveService解析</div><div class="line">负责保存对内容提供者的更改的服务</div><div class="line">createRawContact()  <span class="comment">//创建联系人</span></div><div class="line">saveContact()  <span class="comment">//保存联系人</span></div><div class="line">createGroup()  <span class="comment">//创建群组</span></div><div class="line">renameGroup()  <span class="comment">//重命名群组</span></div><div class="line">deleteGroup()  <span class="comment">//删除群组</span></div><div class="line">updateGroup()  <span class="comment">//更新群组</span></div><div class="line">setStarred()  <span class="comment">//设置收藏</span></div><div class="line">setSuperPrimary()  <span class="comment">//设置主要联系人</span></div><div class="line">clearPrimary()  <span class="comment">//清除主要联系人</span></div><div class="line">deleteMultipleContacts()  <span class="comment">//删除多个联系人</span></div><div class="line">deleteContact()  <span class="comment">//删除联系人</span></div><div class="line">joinContacts()  <span class="comment">//关联联系人</span></div><div class="line">joinSeveralContacts()  <span class="comment">//取消联系人关联</span></div><div class="line">setSendToVoicemail()  <span class="comment">//设置发送语音邮箱</span></div><div class="line">setRingtone()  <span class="comment">//设置铃声</span></div><div class="line">这些方法是联系人项目中用的的对联系人的增删改查操作，方法里面通过ContentResolver来实现数据库的操作，示例如下：</div><div class="line">getContentResolver().XXX();</div></pre></td></tr></table></figure>
+<blockquote>
+<p>联系人数据库之ContactsProvider</p>
+</blockquote>
+<p>packages/providers/ContactsProvider是Android设备上的联系人数据存储，组织，管理组件</p>
+<p>ContactsProvider模块中主要有：</p>
+<p>1、ContactsProvider处理联系人数据，操作raw_contacts, contacts, accounts, agg_exception, data, group, mimetypes, name_lookup, phone_lookup, settings, v1_settings数据表</p>
+<p>2、CallLogProvider主要处理通话记录，操作calls表</p>
+<p>3、SocialProvider主要处理社交整合的数据，操作activitys和status_updates表</p>
+<p>ContactsProvider的API路径<br>\frameworks\base\core\java\android\provider\</p>
+<ul>
+<li>数据库创建</li>
+</ul>
+<p>作为数据存储组件，最重要的就是数据，那么ContactsProvider的数据库的表结构是什么？</p>
+<p>在ContactsProvider中数据库的创建和表的创建在com.android.providers.contacts. ContactsDatabaseHelper类中实现</p>
+<p>下面具体分析ContactsDatabaseHelper类：</p>
+<p>ContactsDatabaseHelper继承SQLiteOpenHelper类</p>
+<p>类中使用单例设计模式，创建对象，在构造方法中创建数据库</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">     * Contacts DB version ranges:</div><div class="line">     * &lt;pre&gt;</div><div class="line">     *   0-98    Cupcake/Donut</div><div class="line">     *   100-199 Eclair</div><div class="line">     *   200-299 Eclair-MR1</div><div class="line">     *   300-349 Froyo</div><div class="line">     *   350-399 Gingerbread</div><div class="line">     *   400-499 Honeycomb</div><div class="line">     *   500-549 Honeycomb-MR1</div><div class="line">     *   550-599 Honeycomb-MR2</div><div class="line">     *   600-699 Ice Cream Sandwich</div><div class="line">     *   700-799 Jelly Bean</div><div class="line">     *   800-899 Kitkat</div><div class="line">     *   900-999 Lollipop</div><div class="line">     *   1000-1099 M</div><div class="line">     *   1100-1199 N</div><div class="line">     * &lt;/pre&gt;</div><div class="line">     */</div><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DATABASE_VERSION = <span class="number">1111</span>; <span class="comment">//当前数据库版本1111</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String DATABASE_NAME = <span class="string">"contacts2.db"</span>; <span class="comment">//数据库名称</span></div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> *主要的三个表，contacts, raw_contacts, data存储所有的联系人信息</div><div class="line"> *其他表是辅助表，Contact provider利用它们来管理其操作，</div><div class="line"> *或为设备的联系人或电话应用中的特定功能提供支持。</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Tables</span> </span>&#123;</div><div class="line">	........</div><div class="line">	<span class="comment">//表示不同联系人的行，基于聚合的原始联系人行</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String CONTACTS = <span class="string">"contacts"</span>;  </div><div class="line">	<span class="comment">//包含联系人数据摘要的行，针对特定用户帐户和类型</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String RAW_CONTACTS = <span class="string">"raw_contacts"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String STREAM_ITEMS = <span class="string">"stream_items"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String STREAM_ITEM_PHOTOS = <span class="string">"stream_item_photos"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String PHOTO_FILES = <span class="string">"photo_files"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String PACKAGES = <span class="string">"packages"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String MIMETYPES = <span class="string">"mimetypes"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String PHONE_LOOKUP = <span class="string">"phone_lookup"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String NAME_LOOKUP = <span class="string">"name_lookup"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String AGGREGATION_EXCEPTIONS = <span class="string">"agg_exceptions"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String SETTINGS = <span class="string">"settings"</span>;  </div><div class="line">	<span class="comment">//包含原始联系人详细信息（例如电子邮件地址或电话号码）的行</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DATA = <span class="string">"data"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String GROUPS = <span class="string">"groups"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String PRESENCE = <span class="string">"presence"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String AGGREGATED_PRESENCE = <span class="string">"agg_presence"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String NICKNAME_LOOKUP = <span class="string">"nickname_lookup"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String CALLS = <span class="string">"calls"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String STATUS_UPDATES = <span class="string">"status_updates"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String PROPERTIES = <span class="string">"properties"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String ACCOUNTS = <span class="string">"accounts"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String VISIBLE_CONTACTS = <span class="string">"visible_contacts"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DIRECTORIES = <span class="string">"directories"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_DIRECTORY = <span class="string">"default_directory"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String SEARCH_INDEX = <span class="string">"search_index"</span>;  </div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String VOICEMAIL_STATUS = <span class="string">"voicemail_status"</span>;  </div><div class="line">	........</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>onCreate方法中进行所有的表的创建，下面是代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(SQLiteDatabase db)</span> </span>&#123;</div><div class="line">	<span class="comment">//创建_sync_state和_sync_state_metadata表，主要用于同步时，状态的记录</span></div><div class="line">	mSyncState.createDatabase(db);</div><div class="line">	<span class="comment">//首先创建属性表，以便尽快确定创建时间。</span></div><div class="line">	PropertyUtils.createPropertiesTable(db);</div><div class="line">	............</div><div class="line">	db.execSQL()..........<span class="comment">//此类语句都是执行相关表和视图的创建</span></div><div class="line">	............</div><div class="line">	<span class="comment">//创建视图和settings表</span></div><div class="line">	LegacyApiSupport.createDatabase(db);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>数据库操作</li>
+</ul>
+<p>数据库操作，主要分为两个模块ContactsProvider2和LegacyApiSupport进行处理</p>
+<p>用户通过传递参数URL，先匹配ContactsProvider2中定义的URL，如果匹配成功则进行数据操作并返回</p>
+<p>如果匹配不成功，则进入LegacyApiSupport中进行匹配，进行数据操作<br>数据库涉及到读操作的行为，主要是数据查询，程序直接通过URL匹配查询，返回数据集</p>
+<p>数据库涉及到写操作的行为，主要包括增加、删除、修改，针对多个数据表的操作ContactsProvider采用事务机制，多个数据表的数据的操作全部完成后，统一进行提交。单表操作，则不会使用</p>
+<p>事务机制具体定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">mDb.beginTransactionWithListener(<span class="keyword">this</span>)</div><div class="line">insertInTransaction() / updatnTransaction() / deleteInTransaction()</div><div class="line">mDb.setTransactionSuccessful()</div><div class="line">mDb.endTransaction()</div></pre></td></tr></table></figure>
+<p>beginTransactionWithListener中调用onBegin()方法，实现事务处理前期准备工作</p>
+<p>endTransaction 中调用onCommit()方法，根据事务的执行状态，进行数据提交</p>
+<p>ContactsProvider模块通过在SQLiteContentProvider文件的applyBatch()方法中进行标志变量的设置，来判断是否为多操作</p>
+<p>单表操作都是通过URL匹配，完成数据库造作</p>
+<p>多表操作主要是通过构建ContentProviderOperation数组，设计多个表的数据变化，最为常见的为联系人的增删改，联系人数据会涉及到下面的表</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">raw_contacts，contacts，data，name_lookup，phone_lookup，mimetypes</div></pre></td></tr></table></figure>
+<p>下面主要分析联系人的增删改操作：</p>
+<ul>
+<li>增加联系人</li>
+</ul>
+<p>用户在联系人新增界面，填入需要的联系人信息数据，比如名字，电话号码，电子邮件等信息，用户点击保存会调用ContactSaveService.java中的createRawContact()方法来进行联系人插入操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createRawContact</span><span class="params">(Intent intent)</span> </span>&#123;</div><div class="line">	..........</div><div class="line">	<span class="comment">//先构造带有RawContacts.CONTENT_URI的数据，然后根据用户输入的数据的mimetype类型，</span></div><div class="line">	<span class="comment">//构造带有Data.CONTENT_URI的数据。</span></div><div class="line">	ArrayList&lt;ContentProviderOperation&gt; operations = <span class="keyword">new</span> ArrayList&lt;ContentProviderOperation&gt;();</div><div class="line">        operations.add(ContentProviderOperation.newInsert(RawContacts.CONTENT_URI)</div><div class="line">                .withValue(RawContacts.ACCOUNT_NAME, accountName)</div><div class="line">                .withValue(RawContacts.ACCOUNT_TYPE, accountType)</div><div class="line">                .withValue(RawContacts.DATA_SET, dataSet)</div><div class="line">                .build());</div><div class="line">	...........</div><div class="line">	<span class="comment">//最后会调用applyBatch()函数进行数据写入。</span></div><div class="line">	results = resolver.applyBatch(ContactsContract.AUTHORITY, operations);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>关于AbstractContactsProvider. applyBatch()：</li>
+</ul>
+<p>调用applyBatch()函数过程中，会读取ContentProviderOperation数组，而数组的每一条记录都会带有一个URI，通过匹配URI，找到对应的表进行插入操作。操作成功后得到返回结果，并对关联数据mValuesBackReferences中的字段值进行更新。</p>
+<p>获取mimetype，并根据mimetype类型数据，获得不同的DataRowHandler，进行data数据的写入。（data数据操作具体见Data表数据增加、修改、删除）</p>
+<ul>
+<li>查询联系人</li>
+</ul>
+<p>由于数据查询涉及多个表间关系，大量数据的查询都是通过视图来完成的，<br>创建了如下视图，而这几个视图是大家在调用api进行查询时显示的数据：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Views</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DATA = <span class="string">"view_data"</span>;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String RAW_CONTACTS = <span class="string">"view_raw_contacts"</span>;</div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String CONTACTS = <span class="string">"view_contacts"</span>;</div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String ENTITIES = <span class="string">"view_entities"</span>;</div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String RAW_ENTITIES = <span class="string">"view_raw_entities"</span>;</div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String GROUPS = <span class="string">"view_groups"</span>;</div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DATA_USAGE_STAT = <span class="string">"view_data_usage_stat"</span>;</div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String STREAM_ITEMS = <span class="string">"view_stream_items"</span>;</div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String METADATA_SYNC = <span class="string">"view_metadata_sync"</span>;</div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String METADATA_SYNC_STATE = <span class="string">"view_metadata_sync_state"</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Data表数据增加、修改、删除</li>
+</ul>
+<p>AbstractContactsProvider<br>联系人数据库操作基类，他的两个子类分别是ContactsProvider2和ProfileProvider</p>
+<p>其中ProfileProvider是ContactsProvider2的委托类<br>AbstractContactsProvider类中定义了以下三个抽象方法，分别负责对联系人数据的增加，删除，修改</p>
+<p>该类使用了模板模式的设计模式,模板方法如下</p>
+<p>该类在对数据库进行事务操作的同时，对子类开放了onRollback，onCommit等事物回调方法</p>
+<p>子类可以根据自己的业务特点进行扩展</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> Uri <span class="title">insertInTransaction</span><span class="params">(Uri uri, ContentValues values)</span></span>;</div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">deleteInTransaction</span><span class="params">(Uri uri, String selection, String[] selectionArgs)</span></span>;</div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">updateInTransaction</span><span class="params">(Uri uri, ContentValues values, String selection, String[] selectionArgs)</span></span>;</div></pre></td></tr></table></figure>
+<p>ContactsTransaction.java是对事务的管理类，主要对进行的事务进行管理，类似一个事务池</p>
+<p>是AbstractContactsProvider.java中事务处理的核心类</p>
+<p>DataRowHandler.java是数据处理抽象类，实现了对数据的增删改操作，下面都是它的实现类</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">DataRowHandlerForCommonDataKind.java  </div><div class="line">DataRowHandlerForCustomMimetype.java  </div><div class="line">DataRowHandlerForEmail.java  </div><div class="line">DataRowHandlerForGroupMembership.java  </div><div class="line">DataRowHandlerForIm.java  </div><div class="line">DataRowHandlerForNickname.java  </div><div class="line">DataRowHandlerForNote.java  </div><div class="line">DataRowHandlerForOrganization.java  </div><div class="line">DataRowHandlerForPhoneNumber.java  </div><div class="line">DataRowHandlerForPhoto.java  </div><div class="line">DataRowHandlerForStructuredName.java  </div><div class="line">DataRowHandlerForStructuredPostal.java</div></pre></td></tr></table></figure>
+<p>在ContactsProvider2.initDataRowHandlers() 方法中对所有的DataRowHandler进行了初始化操作</p>
+<p>其调用在ContactsProvider2.getDataRowHandler()方法之通过 mimetype匹配调用</p>
+<p>所有数据的mimetype都被存储在表Tables.MIMETYPES中，该只有两个字段_id和mimetype</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Contact</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">App</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://blog.hsujee.io/2017/05/12/Android/App/2017-05-12-Android联系人代码分析/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/05/10/Hoxe/2017-05-10-Hexo博客yilia模板配置/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Hexo博客yilia模板配置
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/06/10/Android/Provider/2017-06-10-Android联系人代码分析/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">ContactsProvider 数据库操作</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+
+  
+    <div class="duoshuo"></div>
+  
+
+
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2017 墨迹流韶
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),g=e(75),m=r(g),w=e(70);l(),(0,w.addLoadEvent)(function(){m.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),g=x[f],m=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&m&&void 0!==m[a],s&&a in x||(l=s?m[a]:e[a],x[a]=d&&"function"!=typeof m[a]?e[a]:h&&s?i(l,r):b&&m[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&g&&!g[a]&&u(g,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,g,m,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=g==h,M=!1,A=t.prototype,T=A[p]||A[v]||g&&A[g],L=T||j(g),N=g?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,g)if(O={values:E?L:j(h),keys:m?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),g=e(10),m=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),g(t),n=w(n,!0),g(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){g(t);for(var e,r=b(n=m(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=m(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(m(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:m(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){var n=t.setAttribute("target");n&&""!==n||t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.05aabf.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.885efe.js")}()</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">博客</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">应用</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Contact</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">App</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            2、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: true
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://www.baidu.com" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>百度</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">&lt;div id=&quot;nav&quot;&gt; 邮箱：xuyanjie@cocoper.com &lt;br&gt;&lt;br&gt; QQ：825194169 &lt;br&gt;&lt;br&gt; &lt;a href=&quot;http://blog.csdn.net/github_19529589&quot; target=&quot;_blank&quot;&gt;CSDN博客&lt;/a&gt; &lt;/div&gt;</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>

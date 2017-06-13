@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://blog.hsujee.io">
+  <title>ContactsProvider 数据库操作 | 徐彦杰的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="通过之前的文章对联系人以及联系人数据做了大概的了解和梳理，这里继续深入到联系人的数据存储做出相应总结 数据结构一条Contact数据是由此账户下的所有raw contacts组合起来生成的，方便手机某一用户的所有信息，用户不允许增加Contact（只能增加raw contacts）。通常联系人应用中看到的联系人用的就是 contacts 表中的一条记录。一个 contact 可以拥有多个 raw">
+<meta name="keywords" content="Android,Contact,Provider">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ContactsProvider 数据库操作">
+<meta property="og:url" content="http://blog.hsujee.io/2017/06/10/Android/Provider/2017-06-10-Android联系人代码分析/index.html">
+<meta property="og:site_name" content="徐彦杰的博客">
+<meta property="og:description" content="通过之前的文章对联系人以及联系人数据做了大概的了解和梳理，这里继续深入到联系人的数据存储做出相应总结 数据结构一条Contact数据是由此账户下的所有raw contacts组合起来生成的，方便手机某一用户的所有信息，用户不允许增加Contact（只能增加raw contacts）。通常联系人应用中看到的联系人用的就是 contacts 表中的一条记录。一个 contact 可以拥有多个 raw">
+<meta property="og:image" content="http://blog.hsujee.io/assets/images/android/provider/contact01-01.jpg">
+<meta property="og:image" content="http://blog.hsujee.io/assets/images/android/provider/contact01-02.jpg">
+<meta property="og:image" content="http://blog.hsujee.io/assets/images/android/provider/contact01-03.jpg">
+<meta property="og:updated_time" content="2017-06-13T08:51:29.685Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ContactsProvider 数据库操作">
+<meta name="twitter:description" content="通过之前的文章对联系人以及联系人数据做了大概的了解和梳理，这里继续深入到联系人的数据存储做出相应总结 数据结构一条Contact数据是由此账户下的所有raw contacts组合起来生成的，方便手机某一用户的所有信息，用户不允许增加Contact（只能增加raw contacts）。通常联系人应用中看到的联系人用的就是 contacts 表中的一条记录。一个 contact 可以拥有多个 raw">
+<meta name="twitter:image" content="http://blog.hsujee.io/assets/images/android/provider/contact01-01.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="徐彦杰的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.05aabf.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#d1e3eb,#4A708B);
+    }
+  </style>
+  
+
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4A708B"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="/img/head.jpg" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">墨迹流韶</a></h1>
+		</hgroup>
+		
+		<p class="header-subtitle">如果真有奇迹,那只是努力的另一个名字</p>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/archives">博客</a></li>
+	        
+				<li><a href="/photos">相册</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">博客</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="https://github.com/hsujee" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="http://weibo.com/hsujee" title="weibo"><i class="icon-weibo"></i></a>
+		        
+			</div>
+		</nav>
+		
+	</header>
+
+	<!-- 开启网易云播放器 -->
+	<nav class="header-music">
+		<!--<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=300 height=400 src="//music.163.com/outchain/player?type=0&id=509985151&auto=0&height=380"></iframe>-->
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=300 height=110 src="//music.163.com/outchain/player?type=0&id=509985151&auto=0&height=90"></iframe>
+	</nav>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4A708B"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="/img/head.jpg" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">墨迹流韶</h1>
+			</hgroup>
+			
+			<p class="header-subtitle"><i class="icon icon-quo-left"></i>如果真有奇迹,那只是努力的另一个名字<i class="icon icon-quo-right"></i></p>
+			
+			
+			
+				
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/hsujee" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/hsujee" title="weibo"><i class="icon-weibo"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 70%">
+				
+				
+					<li style="width: 33.333333333333336%"><a href="/">主页</a></li>
+		        
+					<li style="width: 33.333333333333336%"><a href="/archives">博客</a></li>
+		        
+					<li style="width: 33.333333333333336%"><a href="/photos">相册</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-Android/Provider/2017-06-10-Android联系人代码分析" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ContactsProvider 数据库操作
+    </h1>
+  
+
+        
+        <a href="/2017/06/10/Android/Provider/2017-06-10-Android联系人代码分析/" class="archive-article-date">
+  	<time datetime="2017-06-09T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>通过之前的文章对联系人以及联系人数据做了大概的了解和梳理，这里继续深入到联系人的数据存储做出相应总结</p>
+<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>一条Contact数据是由此账户下的所有raw contacts组合起来生成的，方便手机某一用户的所有信息，用户不允许增加Contact（只能增加raw contacts）。<br>通常联系人应用中看到的联系人用的就是 contacts 表中的一条记录。<br>一个 contact 可以拥有多个 raw contacts，这时候点击这个联系人的编辑界面，就会发现可以同时编辑多个 raw contacts.这边所谓的组合，也就是 raw contacts 的 contact_id，只是让这几个 raw contacts 在界面上组合起来显示，本身的数据还是完全独立的。<br>Contacts Provider 通过 ContactsContract.RawContacts 表中的 _ID 列将 contacts 表中的数据和 raw contacts 表中的数据链接起来。</p>
+<a id="more"></a>
+<p>ContactsContract.RawContacts 表中 CONTACT_ID 的值就是 contacts 表中的 _ID，说明这条 raw contact 记录属于_ID所在的这个联系人。<br>下面是Contact数据组成关系图</p>
+<p><img src="/assets/images/android/provider/contact01-01.jpg" alt="01-01"></p>
+<h2 id="访问权限、用户私密信息访问"><a href="#访问权限、用户私密信息访问" class="headerlink" title="访问权限、用户私密信息访问"></a>访问权限、用户私密信息访问</h2><p>读取权限：android.permission.READ_CONTACTS<br>修改权限：android.permission.WRITE_CONTACTS<br>ContactsContract.Profile定义私密信息<br>ProfileProvider继承自AbstractContactsProvider，负责对用户私密信息数据的操作<br>想要访问用户私密信息除了以上两个权限还需要添加READ_PROFILE和WRITE_PROFILE两个权限</p>
+<h2 id="同步适配器"><a href="#同步适配器" class="headerlink" title="同步适配器"></a>同步适配器</h2><p>主要用来同步Web服务器上的用户数据<br>Contacts Provider 为了处理设备和服务器之间的同步做了特别的设计。允许用户从服务器下载数据，并且也可以上传数据。同步使得设备端总能有最新的数据，不管数据源发生什么变化。同步的另一个好处是即使没有联网，设备还是能够使用服务器上存在的数据(当然是同步号的数据)。</p>
+<p>尽管你可以有很多办法来实现同步，Android 提供了一个插件式的同步框架，它可以自动完成下面的工作：</p>
+<p>检查网络是否可用<br>按照用户偏好，周期性地执行同步<br>重新启动停止的同步操作<br>想要使用这个框架，应该实现一个同步适配器插件。每一个同步适配器都对应一个服务器和一个 provider，但是每一个服务器下可以有多个账户名。这个框架下也允许有一个服务器和 provider 对应多个同步适配器。</p>
+<h2 id="数据库改变记录"><a href="#数据库改变记录" class="headerlink" title="数据库改变记录"></a>数据库改变记录</h2><p>Contacts Provider 对数据库中数据的状态改变都有记录。</p>
+<h2 id="数据库操作"><a href="#数据库操作" class="headerlink" title="数据库操作"></a>数据库操作</h2><ul>
+<li>Entity查询</li>
+</ul>
+<p>联系人的结构是由层次组织的，因此想要查找一个联系人的信息，就要先查找其下面所有RawContacts，还要查出所有RawContacts下关联的所有ContactsContract.CommonDataKinds.Email等，因此为了方便查询，Contacts Provider提供了Entity结构，它可将各个表连接起来。</p>
+<p><img src="/assets/images/android/provider/contact01-02.jpg" alt="01-02"></p>
+<p>Entity就像是一张从父表和子表中选出一些列重新组合的一张表。当查询 entity 时，只能根据entity中的列来定制查询结果和查询条件。查询结果的 Cursor 里包含了子表中被查询到的记录。<br>Entity的机构可参考上图，在源码中进行查看。<br>Entity的使用非常方便，通过查询它我们可以一次就得到一个联系人的所有数据。不许要先去查询父表，得到 ID 后，再用这个 ID 去子表中查询。<br>Entity通常不会包含父表和子表中所有的列，如果使用的列并不在 entity 中时，程序就会抛出Exception<br>通过下面查询示例可以帮助理解加载流程：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//将Entity路径追加到URI。 在联系人提供者中</span></div><div class="line"><span class="comment">//预期的URI是content：//com.google.contacts/#/entity（＃是ID值）。</span></div><div class="line">mContactUri = Uri.withAppendedPath(</div><div class="line">            mContactUri,</div><div class="line">            ContactsContract.Contacts.Entity.CONTENT_DIRECTORY);</div><div class="line">.....................</div><div class="line"><span class="comment">//初始化由LOADER_CONTACT_ID标识的加载器，并添加加载回调</span></div><div class="line">mContactLoader = (ContactLoader) getLoaderManager().initLoader( </div><div class="line">        LOADER_CONTACT_ID,  <span class="comment">// The identifier of the loader to initialize</span></div><div class="line">        <span class="keyword">null</span>,       <span class="comment">// Arguments for the loader (in this case, none)</span></div><div class="line">        mLoaderContactCallbacks);</div><div class="line">.....................</div><div class="line"><span class="comment">//给联系人加载器设置Uri</span></div><div class="line">mContactLoader.setLookupUri(mContactUri);</div><div class="line">.....................</div><div class="line"><span class="comment">//联系人加载回调</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> LoaderCallbacks&lt;Contact&gt; mLoaderContactCallbacks =</div><div class="line">            <span class="keyword">new</span> LoaderCallbacks&lt;Contact&gt;() &#123;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLoadFinished</span><span class="params">(Loader&lt;Contact&gt; loader, Contact data)</span> </span>&#123;</div><div class="line">		<span class="comment">//此方法中的data就是查询之后返回的结果</span></div><div class="line">.....................</div><div class="line">	<span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> Loader&lt;Contact&gt; <span class="title">onCreateLoader</span><span class="params">(<span class="keyword">int</span> id, Bundle args)</span> </span>&#123;</div><div class="line">            <span class="keyword">if</span> (mLookupUri == <span class="keyword">null</span>) &#123;</div><div class="line">                Log.wtf(TAG, <span class="string">"Lookup uri wasn't initialized. Loader was started too early"</span>);</div><div class="line">            &#125;</div><div class="line">            <span class="comment">//加载所有联系人数据。 我们需要loadGroupMetaData = true来确定是否</span></div><div class="line">            <span class="comment">//联系是看不见的。 如果是，我们需要显示一个“添加到联系人”菜单项。</span></div><div class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ContactLoader(getApplicationContext(), mLookupUri,</div><div class="line">                    <span class="keyword">true</span> <span class="comment">/*loadGroupMetaData*/</span>, <span class="keyword">false</span> <span class="comment">/*loadInvitableAccountTypes*/</span>,</div><div class="line">                    <span class="keyword">true</span> <span class="comment">/*postViewNotification*/</span>, <span class="keyword">true</span> <span class="comment">/*computeFormattedPhoneNumber*/</span>);</div></pre></td></tr></table></figure>
+<p>当 load 完成数据加载后，LoaderManager 会调用 onLoadFinished() 方法。到此就可以根据监听器中onLoadFinished()方法返回的data使用了<br>监听器中的onCreateLoader()返回具体的加载器，在这里我们创建了联系人加载器ContactLoader()</p>
+<ul>
+<li>批量修改</li>
+</ul>
+<p>Contacts Provider 中执行新增、修改、删除操作时，应该尽可能地使用“批处理”，通过创建一个 ContentProviderOperation 对象的 ArrayList 集合然后调用 applyBatch() 方法。因为 Contacts Provider 会把一个 applyBatch() 中的所有操作当成一个事务来处理，你的修改将不会让数据库处于一个不一致的状态中。批处理还方便同时插入 raw contact 和它对应的 data 数据。</p>
+<p>Yield points(挂起点)<br>批量处理中有很多的操作，这又可能会阻塞其他进程的运行，这是很差的用户体验。为了改善这种情况，应该尽可能地将所要做的操作分散到多个集合中，同时也为了避免阻塞系统运行，应该为 ContentProviderOperation 设置一个或多个yield points. 通过让 ContentProviderOperation的 isYieldAllowed() 的返回值置为 true. 当Contacts Provider 遇到一个挂起点时，它会停止工作来让其他进程得以运行，并且会关闭当前事务。当Contacts Provider 再次工作时，它将会开启一个新的事务来进行 ArrayList 集合中的下一个操作。</p>
+<p>挂起点会导致调用一次 applyBatch() 时开启多个事务。因此，我们应该为某一行记录所有操作的最后一个操作设置一个挂起点。比如说，在我们插入 raw contact 和它相关的 data 数据时，我们应该为最后一步操作设置一个挂起点。</p>
+<p>挂起点是原子操作，也就是说两个挂起点之间的所有操作要么成功要么失败。如果没有设置挂起点，原子操作将会是每一步具体的操作。使用挂起点，可以阻止系统性能的下降，还可以确保一些列的操作集合具有原子性。</p>
+<p>Modification back references修改反回参考<br>当我们使用 ContentProviderOperation 来插入新的 raw contacts 和与它相关的 data 数据时，必须要将 data 数据的 raw contact’s _ID 这一列关联到 raw contact 的RAW_CONTACT_ID 列上。然而，这个值在创建 ContentProviderOperation 对象时还没有，因为插入 raw contact 的操作还没有完成。为了解决这个问题，ContentProviderOperation.Builder 类提供了withValueBackReference()这个方法，它允许基于上一条操作的结果来插入或者修改数据。</p>
+<p>withValueBackReference() 方法有两个参数:</p>
+<p>key<br>键值对的键。这个值应该是表中的列名。<br>previousResult<br>applyBatch() 的结果存储在一个索引从0开始的 ContentProviderResult 对象数组中。执行批处理操作时，指向结果存储在一个中间数组中。previousResult 的值就是数组中的一个索引，它以key值来进行存取。这允许我们在插入一个 raw contact 记录时得到插入的 _ID 值，接下来在插入 data 记录时使用。<br>结果数组在调用 applyBatch() 时就被创建完成，它的大小等于 ContentProviderOperation 的 ArrayList 数组的大小。数组初始值都是null，当我们想要获取一个还没有被执行操作的向后引用时，withValueBackReference() 方法将会抛出 异常。<br>下面是Contact新建联系人的示例图：</p>
+<p><img src="/assets/images/android/provider/contact01-03.jpg" alt="01-03"></p>
+<p>下面为批量修改示例，代码出自com.android.contacts.ContactSaveService类，其中主要方法为applyBatch()请求批量插入</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createRawContact</span><span class="params">(Intent intent)</span> </span>&#123;</div><div class="line">		<span class="comment">//获取用户输入的所有信息</span></div><div class="line">        String accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME);</div><div class="line">        String accountType = intent.getStringExtra(EXTRA_ACCOUNT_TYPE);</div><div class="line">        String dataSet = intent.getStringExtra(EXTRA_DATA_SET);</div><div class="line">        List&lt;ContentValues&gt; valueList = intent.getParcelableArrayListExtra(EXTRA_CONTENT_VALUES);</div><div class="line">        Intent callbackIntent = intent.getParcelableExtra(EXTRA_CALLBACK_INTENT);</div><div class="line">		</div><div class="line">		<span class="comment">//创建一个插入到ContactsContract.RawContacts表中 raw contact 记录的操作</span></div><div class="line">        ArrayList&lt;ContentProviderOperation&gt; operations = <span class="keyword">new</span> ArrayList&lt;ContentProviderOperation&gt;();</div><div class="line">        operations.add(ContentProviderOperation.newInsert(RawContacts.CONTENT_URI)</div><div class="line">                .withValue(RawContacts.ACCOUNT_NAME, accountName)</div><div class="line">                .withValue(RawContacts.ACCOUNT_TYPE, accountType)</div><div class="line">                .withValue(RawContacts.DATA_SET, dataSet)</div><div class="line">                .build());</div><div class="line"></div><div class="line">        <span class="keyword">int</span> size = valueList.size();</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++) &#123;</div><div class="line">            ContentValues values = valueList.get(i);</div><div class="line">            values.keySet().retainAll(ALLOWED_DATA_COLUMNS);</div><div class="line">            operations.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)</div><div class="line">                    .withValueBackReference(Data.RAW_CONTACT_ID, <span class="number">0</span>)</div><div class="line">                    .withValues(values)</div><div class="line">                    .build());</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        ContentResolver resolver = getContentResolver();</div><div class="line">        ContentProviderResult[] results;</div><div class="line">		<span class="comment">//调用 applyBatch() 来新增一个 raw contact 和与它相关的 data 记录。</span></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            results = resolver.applyBatch(ContactsContract.AUTHORITY, operations);</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Failed to store new contact"</span>, e);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        Uri rawContactUri = results[<span class="number">0</span>].uri;</div><div class="line">        callbackIntent.setData(RawContacts.getContactLookupUri(resolver, rawContactUri));</div><div class="line"></div><div class="line">        deliverCallback(callbackIntent);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> ContentProviderResult[] applyBatch(ArrayList&lt;ContentProviderOperation&gt; operations)</div><div class="line">            <span class="keyword">throws</span> OperationApplicationException &#123;</div><div class="line">        incrementStats(mBatchStats);</div><div class="line">        <span class="keyword">if</span> (VERBOSE_LOGGING) &#123;</div><div class="line">            Log.v(TAG, <span class="string">"applyBatch: "</span> + operations.size() + <span class="string">" ops"</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">int</span> ypCount = <span class="number">0</span>;</div><div class="line">        <span class="keyword">int</span> opCount = <span class="number">0</span>;</div><div class="line">		<span class="comment">//开启数据操作事务，循环operations处理每一个ops，最大挂起点为500个，如果超过将抛出				//OperationApplicationException异常</span></div><div class="line">        ContactsTransaction transaction = startTransaction(<span class="keyword">true</span>);</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="keyword">final</span> <span class="keyword">int</span> numOperations = operations.size();</div><div class="line">            <span class="keyword">final</span> ContentProviderResult[] results = <span class="keyword">new</span> ContentProviderResult[numOperations];</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numOperations; i++) &#123;</div><div class="line">                <span class="keyword">if</span> (++opCount &gt;= MAX_OPERATIONS_PER_YIELD_POINT) &#123;</div><div class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> OperationApplicationException(</div><div class="line">                            <span class="string">"Too many content provider operations between yield points. "</span></div><div class="line">                                    + <span class="string">"The maximum number of operations per yield point is "</span></div><div class="line">                                    + MAX_OPERATIONS_PER_YIELD_POINT, ypCount);</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">final</span> ContentProviderOperation operation = operations.get(i);</div><div class="line">                <span class="keyword">if</span> (i &gt; <span class="number">0</span> &amp;&amp; operation.isYieldAllowed()) &#123;</div><div class="line">                    <span class="keyword">if</span> (VERBOSE_LOGGING) &#123;</div><div class="line">                        Log.v(TAG, <span class="string">"applyBatch: "</span> + opCount + <span class="string">" ops finished; about to yield..."</span>);</div><div class="line">                    &#125;</div><div class="line">                    opCount = <span class="number">0</span>;</div><div class="line">                    <span class="keyword">try</span> &#123;</div><div class="line">                        <span class="keyword">if</span> (yield(transaction)) &#123;</div><div class="line">                            ypCount++;</div><div class="line">                        &#125;</div><div class="line">                    &#125; <span class="keyword">catch</span> (RuntimeException re) &#123;</div><div class="line">                        transaction.markYieldFailed();</div><div class="line">                        <span class="keyword">throw</span> re;</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">				<span class="comment">//调用ContentProviderOperation.apply(),开始具体的对数据库的操作，并返回结果</span></div><div class="line">                results[i] = operation.apply(<span class="keyword">this</span>, results, i);</div><div class="line">            &#125;</div><div class="line">            transaction.markSuccessful(<span class="keyword">true</span>);</div><div class="line">            <span class="keyword">return</span> results;</div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">            endTransaction(<span class="keyword">true</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>联系人批量处理过程中使用了事务，和乐观并发控制概念<br>批处理允许我们实现乐观并发控制，它可以让我们在执行修改事务时不去锁定数据库。要是用这个方法，我们先执行事务然后检查是否有其他修改发生。如果检测到不一致的变化，应该回滚事务在重新执行。</p>
+<p>乐观并发控制在手机上非常有用，因为只有一个用户，极少发生对一个数据库的同时访问。因为锁没有被使用，所以没有时间浪费在加锁和等待锁的操作上。</p>
+<p>为了使用乐观并发控制，我们在更新 ContactsContract.RawContacts 表中的数据时，要遵循以下步骤:</p>
+<p>①在获取其他数据时，一并将 VERSION 获取出来<br>②通过 newAssertQuery(Uri) 方法来创建一个 ContentProviderOperation.Builder 对象。将 raw contact’s _ID 附在 RawContacts.CONTENT_URI 后面来形成 URI参数。<br>③调用 ContentProviderOperation.Builder 对象的 withValue() 方法，将得到的 VERSION 的值添加进来。<br>④调用 ContentProviderOperation.Builder 的 withExpectedCount() 方法来保证这个断言只检测一条数据记录。<br>⑤调用 build() 创建 ContentProviderOperation 对象，并将这个对象加入到需要通过 applyBatch() 执行的 ArrayList 数组中去。<br>⑥执行批处理。<br>如果在读取和修改某条记录的过程中，这条记录被其他程序修改了，那么这个断言 ContentProviderOperation 将会失败，事务将会回滚。此时你可以尝试重新执行或者采取其他措施。</p>
+<ul>
+<li>使用intents进行检索和修改</li>
+</ul>
+<p>要去修改单个 raw contact 记录，最好是通过发送 intent 来让联系人应用去修改，而不是直接用代码进行修改。<br>发送特定的 intent 可以通过设备的联系人应用间接接触 Contacts Provider.这些 intent 会启动联系人应用界面，用户可以在这些界面中完成联系人相关的工作。</p>
+<ul>
+<li>数据的完整性（数据协议）</li>
+</ul>
+<p>由于联系人数据是非常重要并且敏感的数据，所以用户期望这些数据是正确的，Contacts Provider 为了保证数据的完整性定义了一些规则。当用户修改联系人数据时，你要确保所做的操作都能够满足这些规则。下面是几个比较重要的规则:</p>
+<p>要给每一个 ContactsContract.RawContacts 记录都添加 ContactsContract.CommonDataKinds.StructuredName 数据。<br>一个没有 ContactsContract.CommonDataKinds.StructuredName 数据的 ContactsContract.RawContacts 记录在与其他 raw contact 进行组合时可能会遇到问题。<br>每一条 ContactsContract.Data 记录都必须要链接到一条 ContactsContract.RawContacts 记录上去。一个没有链接到 ContactsContract.RawContacts 记录上的 ContactsContract.Data 记录将永远不会显示在联系人应用中，并且可能会影响同步适配器的工作。<br>仅修改属于你自己 raw contact 的数据<br>Contacts Provider 通常管理着几个账户类型的数据。你需要确保你的应用值修改属于你自己的数据，只向自己的账户下新增数据。<br>开发时总是使用 ContactsContract 类中定义的常量来表示authorities、content URIs、URI paths、MIME、以及 TYPE 值。<br>使用这些常量可以帮助你避免一些错误的发生。编译器将会对那些废除的常量给出警告。</p>
+<ul>
+<li>自定义数据行</li>
+</ul>
+<p>通过定义自己的 MIME 类型，我们可以向 ContactsContract.Data 表中添加自己的数据类型。尽管你可以为你的数据类型定义一些特别的列名（比如phone、Email）,但是还是只能使用定义在 ContactsContract.DataColumns 中的列。在联系人应用中，用户只能显示出你定义的数据类型，但是无法编辑、删除、增加它，所以需要在你自己的应用中实现这样一个界面来完成这些操作。</p>
+<p>为了显示自定义的数据类型，需要提供一个 contacts.xml 文件，这个文件中得有一个 <contactsaccounttype> 元素和它的子元素 <contactsdatakind>.这将在 <contactsdatakind> element 中详细描述。</contactsdatakind></contactsdatakind></contactsaccounttype></p>
+<ul>
+<li>其他</li>
+</ul>
+<p>ContactsContract.StreamItems 表和 ContactsContract.StreamItemPhotos 表管理着来自与社交网络的数据。可以编写同步适配器来将网络上的数据添加到这两张表中，也可以将表中的数据显示在自己的应用中。这个功能可以将社交网络服务和应用集成到Android的社交网络体验中来。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Contact</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Provider</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://blog.hsujee.io/2017/06/10/Android/Provider/2017-06-10-Android联系人代码分析/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/05/12/Android/App/2017-05-12-Android联系人代码分析/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Android联系人代码分析
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+
+
+
+
+
+  
+    <div class="duoshuo"></div>
+  
+
+
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2017 墨迹流韶
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),g=e(75),m=r(g),w=e(70);l(),(0,w.addLoadEvent)(function(){m.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),g=x[f],m=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&m&&void 0!==m[a],s&&a in x||(l=s?m[a]:e[a],x[a]=d&&"function"!=typeof m[a]?e[a]:h&&s?i(l,r):b&&m[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&g&&!g[a]&&u(g,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,g,m,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=g==h,M=!1,A=t.prototype,T=A[p]||A[v]||g&&A[g],L=T||j(g),N=g?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,g)if(O={values:E?L:j(h),keys:m?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),g=e(10),m=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),g(t),n=w(n,!0),g(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){g(t);for(var e,r=b(n=m(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=m(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(m(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:m(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){var n=t.setAttribute("target");n&&""!==n||t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.05aabf.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.885efe.js")}()</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">博客</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">应用</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Contact</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">App</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            2、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: true
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://www.baidu.com" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>百度</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">&lt;div id=&quot;nav&quot;&gt; 邮箱：xuyanjie@cocoper.com &lt;br&gt;&lt;br&gt; QQ：825194169 &lt;br&gt;&lt;br&gt; &lt;a href=&quot;http://blog.csdn.net/github_19529589&quot; target=&quot;_blank&quot;&gt;CSDN博客&lt;/a&gt; &lt;/div&gt;</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>

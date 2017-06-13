@@ -9,13 +9,13 @@
   <title>Android系统OTG_usb链接摄像头的驱动和使用 | 徐彦杰的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="Android系统usb摄像头的驱动和使用">
-<meta name="keywords" content="C/C++,编程,Android,NDK">
+<meta name="keywords" content="C/C++,编程,NDK,Android">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android系统OTG_usb链接摄像头的驱动和使用">
 <meta property="og:url" content="https://blog.hsujee.io/2016/12/14/Android/App/2016-12-14-Android系统OTG_usb链接摄像头的驱动和使用/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="Android系统usb摄像头的驱动和使用">
-<meta property="og:updated_time" content="2017-04-12T02:20:51.478Z">
+<meta property="og:updated_time" content="2017-06-13T11:02:24.434Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android系统OTG_usb链接摄像头的驱动和使用">
 <meta name="twitter:description" content="Android系统usb摄像头的驱动和使用">
@@ -192,178 +192,15 @@
 <p>接下来就开始代码改造</p>
 <p>找到jni文件夹下的ImageProc.c文件修改其中的jni接口方法名，使之指向CameraPreview.java</p>
 <p>我修改后如下所示，找到其他的jni方法用同样方式修改方法名（不要忘了同步.h文件中的方法名哦。。。）：</p>
-<pre><code>void Java_com_mojsoft_usbcamera_view_CameraPreview_pixeltobmp( JNIEnv* env,jobject thiz,jobject bitmap)
-</code></pre><p>Ctrl+Alt+T打开终端，cd到你的jni目录下，运行ndk-build,编译成功</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Java_com_mojsoft_usbcamera_view_CameraPreview_pixeltobmp</span><span class="params">( JNIEnv* env,jobject thiz,jobject bitmap)</span></span></div></pre></td></tr></table></figure>
+<p>Ctrl+Alt+T打开终端，cd到你的jni目录下，运行ndk-build,编译成功</p>
 <p>cd .. 回到jni目录外面，运行ls就可以看到libs,obj两个目录，将libs中的libImageProc.so文件拷贝到你项目中的jniLibs目录下（AS）</p>
 <p>接下来是java调用 [注意：java包名和C文件方法格式一致]</p>
 <p>将CameraPreview文件放到布局中，编译运行。。。</p>
 <p>接下来就是盯着屏幕。。。</p>
 <p>满满的惊喜，问题就这么解决了，哈哈</p>
-<p>下面是主要的CameraSurfaView类：</p>
-<pre><code>class CameraPreview extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+<p>下面是主要的CameraSurfaView类：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">CameraPreview</span> <span class="keyword">extends</span> <span class="title">SurfaceView</span> <span class="keyword">implements</span> <span class="title">SurfaceHolder</span>.<span class="title">Callback</span>, <span class="title">Runnable</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">boolean</span> DEBUG = <span class="keyword">true</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"WebCam"</span>;</div><div class="line">    <span class="keyword">protected</span> Context context;</div><div class="line">    <span class="keyword">private</span> SurfaceHolder holder;</div><div class="line">    Thread mainLoop = <span class="keyword">null</span>;</div><div class="line">    <span class="keyword">private</span> Bitmap bmp = <span class="keyword">null</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">byte</span>[] byteArrary;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> cameraExists = <span class="keyword">false</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> shouldStop = <span class="keyword">false</span>;</div><div class="line"></div><div class="line">    <span class="comment">// /dev/videox (x=cameraId+cameraBase) is used.</span></div><div class="line">    <span class="comment">// In some omap devices, system uses /dev/video[0-3],</span></div><div class="line">    <span class="comment">// so users must use /dev/video[4-].</span></div><div class="line">    <span class="comment">// In such a case, try cameraId=0 and cameraBase=4</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> cameraId = <span class="number">0</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> cameraBase = <span class="number">0</span>;</div><div class="line"></div><div class="line">    <span class="comment">// This definition also exists in ImageProc.h.</span></div><div class="line">    <span class="comment">// Webcam must support the resolution 640x480 with YUYV format.</span></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> IMG_WIDTH = <span class="number">640</span>;</div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> IMG_HEIGHT = <span class="number">480</span>;</div><div class="line"></div><div class="line">    <span class="comment">// The following variables are used to draw camera images.</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> winWidth = <span class="number">0</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> winHeight = <span class="number">0</span>;</div><div class="line">    <span class="keyword">private</span> Rect rect;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> dw, dh;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> rate;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> isFramAready = <span class="keyword">false</span>;</div><div class="line">    <span class="keyword">private</span> AlreadyRGBListener listener;</div><div class="line"></div><div class="line">    <span class="comment">// JNI functions</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">int</span> <span class="title">prepareCamera</span><span class="params">(<span class="keyword">int</span> videoid)</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">int</span> <span class="title">prepareCameraWithBase</span><span class="params">(<span class="keyword">int</span> videoid, <span class="keyword">int</span> camerabase)</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">processCamera</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">stopCamera</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">pixeltobmp</span><span class="params">(Bitmap bitmap)</span></span>;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">byte</span>[] getRgb();</div><div class="line"></div><div class="line">    <span class="keyword">static</span> &#123;</div><div class="line">	System.loadLibrary(<span class="string">"ImageProc"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CameraPreview</span><span class="params">(Context context)</span> </span>&#123;</div><div class="line">	<span class="keyword">super</span>(context);</div><div class="line">	<span class="keyword">this</span>.context = context;</div><div class="line">	<span class="keyword">if</span> (DEBUG) Log.d(TAG, <span class="string">"CameraPreview constructed"</span>);</div><div class="line">	setFocusable(<span class="keyword">true</span>);</div><div class="line"></div><div class="line">	holder = getHolder();</div><div class="line">	holder.addCallback(<span class="keyword">this</span>);</div><div class="line">	holder.setType(SurfaceHolder.SURFACE_TYPE_NORMAL);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CameraPreview</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</div><div class="line">	<span class="keyword">super</span>(context, attrs);</div><div class="line">	<span class="keyword">this</span>.context = context;</div><div class="line">	<span class="keyword">if</span> (DEBUG) Log.d(TAG, <span class="string">"CameraPreview constructed"</span>);</div><div class="line">	setFocusable(<span class="keyword">true</span>);</div><div class="line"></div><div class="line">	holder = getHolder();</div><div class="line">	holder.addCallback(<span class="keyword">this</span>);</div><div class="line">	holder.setType(SurfaceHolder.SURFACE_TYPE_NORMAL);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="keyword">while</span> (<span class="keyword">true</span> &amp;&amp; cameraExists) &#123;</div><div class="line">	    <span class="comment">//obtaining display area to draw a large image</span></div><div class="line">	    <span class="keyword">if</span> (winWidth == <span class="number">0</span>) &#123;</div><div class="line">	        winWidth = <span class="keyword">this</span>.getWidth();</div><div class="line">	        winHeight = <span class="keyword">this</span>.getHeight();</div><div class="line"></div><div class="line">	        <span class="keyword">if</span> (winWidth * <span class="number">3</span> / <span class="number">4</span> &lt;= winHeight) &#123;</div><div class="line">	            dw = <span class="number">0</span>;</div><div class="line">	            dh = (winHeight - winWidth * <span class="number">3</span> / <span class="number">4</span>) / <span class="number">2</span>;</div><div class="line">	            rate = ((<span class="keyword">float</span>) winWidth) / IMG_WIDTH;</div><div class="line">	            rect = <span class="keyword">new</span> Rect(dw, dh, dw + winWidth - <span class="number">1</span>, dh + winWidth * <span class="number">3</span> / <span class="number">4</span> - <span class="number">1</span>);</div><div class="line">	        &#125; <span class="keyword">else</span> &#123;</div><div class="line">	            dw = (winWidth - winHeight * <span class="number">4</span> / <span class="number">3</span>) / <span class="number">2</span>;</div><div class="line">	            dh = <span class="number">0</span>;</div><div class="line">	            rate = ((<span class="keyword">float</span>) winHeight) / IMG_HEIGHT;</div><div class="line">	            rect = <span class="keyword">new</span> Rect(dw, dh, dw + winHeight * <span class="number">4</span> / <span class="number">3</span> - <span class="number">1</span>, dh + winHeight - <span class="number">1</span>);</div><div class="line">	        &#125;</div><div class="line">	    &#125;</div><div class="line"></div><div class="line">	    <span class="comment">// obtaining a camera image (pixel data are stored in an array in JNI).</span></div><div class="line">	    processCamera();</div><div class="line">	    <span class="comment">// camera image to bmp</span></div><div class="line">	    pixeltobmp(bmp);</div><div class="line"></div><div class="line">	    <span class="keyword">byte</span>[] arr = getRgb();</div><div class="line"></div><div class="line">	    isFramAready = <span class="keyword">true</span>;</div><div class="line"></div><div class="line">	    Canvas canvas = getHolder().lockCanvas();</div><div class="line">	    <span class="keyword">if</span> (canvas != <span class="keyword">null</span>) &#123;</div><div class="line">	        <span class="comment">// draw camera bmp on canvas</span></div><div class="line">	        canvas.drawBitmap(bmp, <span class="keyword">null</span>, rect, <span class="keyword">null</span>);</div><div class="line"></div><div class="line">	        getHolder().unlockCanvasAndPost(canvas);</div><div class="line">	    &#125;</div><div class="line"></div><div class="line">	    listener.alreadyRGB(arr);</div><div class="line"></div><div class="line">	    <span class="keyword">if</span> (shouldStop) &#123;</div><div class="line">	        shouldStop = <span class="keyword">false</span>;</div><div class="line">	        <span class="keyword">break</span>;</div><div class="line">	    &#125;</div><div class="line"></div><div class="line">	&#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">surfaceCreated</span><span class="params">(SurfaceHolder holder)</span> </span>&#123;</div><div class="line">	<span class="keyword">if</span> (DEBUG) Log.d(TAG, <span class="string">"surfaceCreated"</span>);</div><div class="line">	<span class="keyword">if</span> (bmp == <span class="keyword">null</span>) &#123;</div><div class="line">	    bmp = Bitmap.createBitmap(IMG_WIDTH, IMG_HEIGHT, Bitmap.Config.ARGB_8888);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> (byteArrary == <span class="keyword">null</span>) &#123;</div><div class="line">	    byteArrary = <span class="keyword">new</span> <span class="keyword">byte</span>[IMG_WIDTH * IMG_HEIGHT];</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// /dev/videox (x=cameraId + cameraBase) is used</span></div><div class="line">	<span class="comment">//下面一句是原代码，我尝试失败，于是我将其修改为 int ret = prepareCamera(0);后成功调用</span></div><div class="line">	<span class="comment">// int ret = prepareCameraWithBase(cameraId, cameraBase);</span></div><div class="line">	<span class="keyword">int</span> ret = prepareCamera(<span class="number">0</span>);</div><div class="line">	<span class="keyword">if</span> (ret != -<span class="number">1</span>) cameraExists = <span class="keyword">true</span>;</div><div class="line"></div><div class="line">	mainLoop = <span class="keyword">new</span> Thread(<span class="keyword">this</span>);</div><div class="line">	mainLoop.start();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">surfaceChanged</span><span class="params">(SurfaceHolder holder, <span class="keyword">int</span> format, <span class="keyword">int</span> width, <span class="keyword">int</span> height)</span> </span>&#123;</div><div class="line">	<span class="keyword">if</span> (DEBUG) Log.d(TAG, <span class="string">"surfaceChanged"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">surfaceDestroyed</span><span class="params">(SurfaceHolder holder)</span> </span>&#123;</div><div class="line">	<span class="keyword">if</span> (DEBUG) Log.d(TAG, <span class="string">"surfaceDestroyed"</span>);</div><div class="line">	<span class="keyword">if</span> (cameraExists) &#123;</div><div class="line">	    shouldStop = <span class="keyword">true</span>;</div><div class="line">	    <span class="keyword">while</span> (shouldStop) &#123;</div><div class="line">	        <span class="keyword">try</span> &#123;</div><div class="line">	            Thread.sleep(<span class="number">50</span>); <span class="comment">// wait for thread stopping</span></div><div class="line">	        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">	        &#125;</div><div class="line">	    &#125;</div><div class="line">	&#125;</div><div class="line">	stopCamera();</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setGetBitmapListener</span><span class="params">(AlreadyRGBListener listener)</span></span>&#123;</div><div class="line">       	<span class="keyword">this</span>.listener = listener;</div><div class="line">   	    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 
-    private static final boolean DEBUG = true;
-    private static final String TAG = &quot;WebCam&quot;;
-    protected Context context;
-    private SurfaceHolder holder;
-    Thread mainLoop = null;
-    private Bitmap bmp = null;
-    private byte[] byteArrary;
-
-    private boolean cameraExists = false;
-    private boolean shouldStop = false;
-
-    // /dev/videox (x=cameraId+cameraBase) is used.
-    // In some omap devices, system uses /dev/video[0-3],
-    // so users must use /dev/video[4-].
-    // In such a case, try cameraId=0 and cameraBase=4
-    private int cameraId = 0;
-    private int cameraBase = 0;
-
-    // This definition also exists in ImageProc.h.
-    // Webcam must support the resolution 640x480 with YUYV format.
-    static final int IMG_WIDTH = 640;
-    static final int IMG_HEIGHT = 480;
-
-    // The following variables are used to draw camera images.
-    private int winWidth = 0;
-    private int winHeight = 0;
-    private Rect rect;
-    private int dw, dh;
-    private float rate;
-    private boolean isFramAready = false;
-    private AlreadyRGBListener listener;
-
-    // JNI functions
-    public native int prepareCamera(int videoid);
-
-    public native int prepareCameraWithBase(int videoid, int camerabase);
-
-    public native void processCamera();
-
-    public native void stopCamera();
-
-    public native void pixeltobmp(Bitmap bitmap);
-
-    public native byte[] getRgb();
-
-    static {
-    System.loadLibrary(&quot;ImageProc&quot;);
-    }
-
-    public CameraPreview(Context context) {
-    super(context);
-    this.context = context;
-    if (DEBUG) Log.d(TAG, &quot;CameraPreview constructed&quot;);
-    setFocusable(true);
-
-    holder = getHolder();
-    holder.addCallback(this);
-    holder.setType(SurfaceHolder.SURFACE_TYPE_NORMAL);
-    }
-
-    public CameraPreview(Context context, AttributeSet attrs) {
-    super(context, attrs);
-    this.context = context;
-    if (DEBUG) Log.d(TAG, &quot;CameraPreview constructed&quot;);
-    setFocusable(true);
-
-    holder = getHolder();
-    holder.addCallback(this);
-    holder.setType(SurfaceHolder.SURFACE_TYPE_NORMAL);
-    }
-
-    @Override
-    public void run() {
-    while (true &amp;&amp; cameraExists) {
-        //obtaining display area to draw a large image
-        if (winWidth == 0) {
-            winWidth = this.getWidth();
-            winHeight = this.getHeight();
-
-            if (winWidth * 3 / 4 &lt;= winHeight) {
-                dw = 0;
-                dh = (winHeight - winWidth * 3 / 4) / 2;
-                rate = ((float) winWidth) / IMG_WIDTH;
-                rect = new Rect(dw, dh, dw + winWidth - 1, dh + winWidth * 3 / 4 - 1);
-            } else {
-                dw = (winWidth - winHeight * 4 / 3) / 2;
-                dh = 0;
-                rate = ((float) winHeight) / IMG_HEIGHT;
-                rect = new Rect(dw, dh, dw + winHeight * 4 / 3 - 1, dh + winHeight - 1);
-            }
-        }
-
-        // obtaining a camera image (pixel data are stored in an array in JNI).
-        processCamera();
-        // camera image to bmp
-        pixeltobmp(bmp);
-
-        byte[] arr = getRgb();
-
-        isFramAready = true;
-
-        Canvas canvas = getHolder().lockCanvas();
-        if (canvas != null) {
-            // draw camera bmp on canvas
-            canvas.drawBitmap(bmp, null, rect, null);
-
-            getHolder().unlockCanvasAndPost(canvas);
-        }
-
-        listener.alreadyRGB(arr);
-
-        if (shouldStop) {
-            shouldStop = false;
-            break;
-        }
-
-    }
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-    if (DEBUG) Log.d(TAG, &quot;surfaceCreated&quot;);
-    if (bmp == null) {
-        bmp = Bitmap.createBitmap(IMG_WIDTH, IMG_HEIGHT, Bitmap.Config.ARGB_8888);
-    }
-    if (byteArrary == null) {
-        byteArrary = new byte[IMG_WIDTH * IMG_HEIGHT];
-    }
-    // /dev/videox (x=cameraId + cameraBase) is used
-    //下面一句是原代码，我尝试失败，于是我将其修改为 int ret = prepareCamera(0);后成功调用
-    // int ret = prepareCameraWithBase(cameraId, cameraBase);
-    int ret = prepareCamera(0);
-    if (ret != -1) cameraExists = true;
-
-    mainLoop = new Thread(this);
-    mainLoop.start();
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-    if (DEBUG) Log.d(TAG, &quot;surfaceChanged&quot;);
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-    if (DEBUG) Log.d(TAG, &quot;surfaceDestroyed&quot;);
-    if (cameraExists) {
-        shouldStop = true;
-        while (shouldStop) {
-            try {
-                Thread.sleep(50); // wait for thread stopping
-            } catch (Exception e) {
-            }
-        }
-    }
-    stopCamera();
-    }
-    public void setGetBitmapListener(AlreadyRGBListener listener){
-        this.listener = listener;
-        }
-}
-</code></pre>
       
 
       
@@ -384,11 +221,11 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">NDK</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">NDK</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
         		</li>
       		
 		</ul>
@@ -604,11 +441,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -616,11 +453,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -636,15 +473,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -652,15 +485,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -669,6 +502,10 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

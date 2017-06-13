@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="Android自定义View扫描界面">
 <meta property="og:image" content="https://blog.hsujee.io/assets/images/android/Android自定义View扫描界面scanview.png">
-<meta property="og:updated_time" content="2017-04-12T02:23:18.536Z">
+<meta property="og:updated_time" content="2017-06-13T11:18:21.173Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android自定义View扫描界面">
 <meta name="twitter:description" content="Android自定义View扫描界面">
@@ -190,133 +190,7 @@
 <p><img src="/assets/images/android/Android自定义View扫描界面scanview.png" alt="自定义View扫描界面"></p>
 <p>下面胃自定义代码，可放入xml布局文件中直接使用，可根据需求灵活画图：</p>
 <a id="more"></a>
-<pre><code>public final class ScanView extends View {
-    /**
-     * 刷新界面的时间
-     */
-    private static final long ANIMATION_DELAY = 15L;
-    private static final int OPAQUE = 0xFF;
-
-    /**
-     * 中间那条线每次刷新移动的距离
-     */
-    private static final int SPEEN_DISTANCE = 5;
-
-    /**
-     * 手机的屏幕密度
-     */
-    private static float density;
-
-    /**
-     * 画笔对象的引用
-     */
-    private Paint paint;
-
-    /**
-     * 中间滑动线的最顶端位置
-     */
-    private int slideTop = 0;
-
-    /**
-     * 将扫描的二维码拍下来，这里没有这个功能，暂时不考虑
-     */
-    private Bitmap resultBitmap;
-    private final int maskColor;
-    private int mWidth;
-    private int mHeight;
-
-    boolean isFirst;
-    private Rect frame;
-
-    public ScanView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-
-        density = context.getResources().getDisplayMetrics().density;
-
-        paint = new Paint();
-        Resources resources = getResources();
-        maskColor = resources.getColor(R.color.viewfinder_mask);
-    }
-
-    @Override
-    public void onDraw(Canvas canvas) {
-        //获取屏幕的宽和高
-        mWidth = canvas.getWidth();
-        mHeight = canvas.getHeight();
-
-        int centerX = mWidth / 2;
-        int centerY = mHeight / 2;
-        frame = new Rect(centerX - centerX / 5 * 4, centerY - 150, centerX + centerX / 5 * 4, centerY + 150);
-        paint.setColor(maskColor);
-
-        //画出扫描框外面的阴影部分，共四个部分，扫描框的上面到屏幕上面，扫描框的下面到屏幕下面
-        //扫描框的左边面到屏幕左边，扫描框的右边到屏幕右边
-        canvas.drawRect(0, 0, mWidth, frame.top, paint);
-        canvas.drawRect(0, frame.top, frame.left, frame.bottom + 1, paint);
-        canvas.drawRect(frame.right + 1, frame.top, mWidth, frame.bottom + 1,
-                paint);
-        canvas.drawRect(0, frame.bottom + 1, mWidth, mHeight, paint);
-
-        paint.setColor(getResources().getColor(R.color.smoke_oranger));
-        paint.setStrokeWidth(4);
-        canvas.drawLine(frame.left, frame.top - 2, frame.left, frame.bottom, paint);
-        canvas.drawLine(frame.left, frame.top, frame.right + 2, frame.top, paint);
-        canvas.drawLine(frame.right, frame.top, frame.right, frame.bottom + 2, paint);
-        canvas.drawLine(frame.left - 2, frame.bottom, frame.right, frame.bottom, paint);
-
-        Rect rect1 = new Rect(frame.left, frame.top-250, frame.right, frame.bottom-250);
-        Rect rect2 = new Rect(frame.left, frame.top-250+60, frame.right, frame.bottom-250+60);
-        Paint textPaint = new Paint();
-        textPaint.setColor(Color.WHITE);
-        textPaint.setTextSize(50);
-        textPaint.setStyle(Paint.Style.FILL);
-        //该方法即为设置基线上那个点究竟是left,center,还是right  这里我设置为center
-        textPaint.setTextAlign(Paint.Align.CENTER);
-
-        Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
-        float top = fontMetrics.top;//为基线到字体上边框的距离,即上图中的top
-        float bottom = fontMetrics.bottom;//为基线到字体下边框的距离,即上图中的bottom
-
-        int baseLineY1 = (int) (rect1.centerY() - top/2 - bottom/2);//基线中间点的y轴计算公式
-        int baseLineY2 = (int) (rect2.centerY() - top/2 - bottom/2);//基线中间点的y轴计算公式
-
-        canvas.drawText(&quot;请将打码放到识别区域内&quot;,rect1.centerX(),baseLineY1,textPaint);
-        canvas.drawText(&quot;拍摄一张清晰的照片&quot;,rect1.centerX(),baseLineY2,textPaint);
-
-        //绘制中间的线,每次刷新界面，中间的线往下移动SPEEN_DISTANCE
-        if (slideTop == 0){
-            slideTop = frame.top;
-        }
-        slideTop += SPEEN_DISTANCE;
-        if(slideTop &gt;= frame.bottom){
-            slideTop = frame.top;
-        }
-        Rect lineRect = new Rect();
-        lineRect.left = frame.left;
-        lineRect.right = frame.right;
-        lineRect.top = slideTop;
-        lineRect.bottom = slideTop + 18;
-        canvas.drawBitmap(((BitmapDrawable)(getResources().getDrawable(R.drawable.qrcode_scan_line))).getBitmap(), null, lineRect, paint);
-
-        //只刷新扫描框的内容，其他地方不刷新
-        postInvalidateDelayed(ANIMATION_DELAY, frame.left, frame.top,
-                frame.right, frame.bottom);
-    }
-
-    public Rect getFrame() {
-        return frame;
-    }
-
-    public int getmHeight() {
-        return mHeight;
-    }
-
-    public int getmWidth() {
-        return mWidth;
-    }
-
-}
-</code></pre>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ScanView</span> <span class="keyword">extends</span> <span class="title">View</span> </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 刷新界面的时间</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> ANIMATION_DELAY = <span class="number">15L</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> OPAQUE = <span class="number">0xFF</span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 中间那条线每次刷新移动的距离</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SPEEN_DISTANCE = <span class="number">5</span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 手机的屏幕密度</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">float</span> density;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 画笔对象的引用</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> Paint paint;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 中间滑动线的最顶端位置</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> slideTop = <span class="number">0</span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 将扫描的二维码拍下来，这里没有这个功能，暂时不考虑</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> Bitmap resultBitmap;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> maskColor;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mWidth;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mHeight;</div><div class="line"></div><div class="line">    <span class="keyword">boolean</span> isFirst;</div><div class="line">    <span class="keyword">private</span> Rect frame;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ScanView</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context, attrs);</div><div class="line"></div><div class="line">        density = context.getResources().getDisplayMetrics().density;</div><div class="line"></div><div class="line">        paint = <span class="keyword">new</span> Paint();</div><div class="line">        Resources resources = getResources();</div><div class="line">        maskColor = resources.getColor(R.color.viewfinder_mask);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDraw</span><span class="params">(Canvas canvas)</span> </span>&#123;</div><div class="line">        <span class="comment">//获取屏幕的宽和高</span></div><div class="line">        mWidth = canvas.getWidth();</div><div class="line">        mHeight = canvas.getHeight();</div><div class="line"></div><div class="line">        <span class="keyword">int</span> centerX = mWidth / <span class="number">2</span>;</div><div class="line">        <span class="keyword">int</span> centerY = mHeight / <span class="number">2</span>;</div><div class="line">        frame = <span class="keyword">new</span> Rect(centerX - centerX / <span class="number">5</span> * <span class="number">4</span>, centerY - <span class="number">150</span>, centerX + centerX / <span class="number">5</span> * <span class="number">4</span>, centerY + <span class="number">150</span>);</div><div class="line">        paint.setColor(maskColor);</div><div class="line"></div><div class="line">        <span class="comment">//画出扫描框外面的阴影部分，共四个部分，扫描框的上面到屏幕上面，扫描框的下面到屏幕下面</span></div><div class="line">        <span class="comment">//扫描框的左边面到屏幕左边，扫描框的右边到屏幕右边</span></div><div class="line">        canvas.drawRect(<span class="number">0</span>, <span class="number">0</span>, mWidth, frame.top, paint);</div><div class="line">        canvas.drawRect(<span class="number">0</span>, frame.top, frame.left, frame.bottom + <span class="number">1</span>, paint);</div><div class="line">        canvas.drawRect(frame.right + <span class="number">1</span>, frame.top, mWidth, frame.bottom + <span class="number">1</span>,</div><div class="line">                paint);</div><div class="line">        canvas.drawRect(<span class="number">0</span>, frame.bottom + <span class="number">1</span>, mWidth, mHeight, paint);</div><div class="line"></div><div class="line">        paint.setColor(getResources().getColor(R.color.smoke_oranger));</div><div class="line">        paint.setStrokeWidth(<span class="number">4</span>);</div><div class="line">        canvas.drawLine(frame.left, frame.top - <span class="number">2</span>, frame.left, frame.bottom, paint);</div><div class="line">        canvas.drawLine(frame.left, frame.top, frame.right + <span class="number">2</span>, frame.top, paint);</div><div class="line">        canvas.drawLine(frame.right, frame.top, frame.right, frame.bottom + <span class="number">2</span>, paint);</div><div class="line">        canvas.drawLine(frame.left - <span class="number">2</span>, frame.bottom, frame.right, frame.bottom, paint);</div><div class="line">	</div><div class="line">        Rect rect1 = <span class="keyword">new</span> Rect(frame.left, frame.top-<span class="number">250</span>, frame.right, frame.bottom-<span class="number">250</span>);</div><div class="line">        Rect rect2 = <span class="keyword">new</span> Rect(frame.left, frame.top-<span class="number">250</span>+<span class="number">60</span>, frame.right, frame.bottom-<span class="number">250</span>+<span class="number">60</span>);</div><div class="line">        Paint textPaint = <span class="keyword">new</span> Paint();</div><div class="line">        textPaint.setColor(Color.WHITE);</div><div class="line">        textPaint.setTextSize(<span class="number">50</span>);</div><div class="line">        textPaint.setStyle(Paint.Style.FILL);</div><div class="line">        <span class="comment">//该方法即为设置基线上那个点究竟是left,center,还是right  这里我设置为center</span></div><div class="line">        textPaint.setTextAlign(Paint.Align.CENTER);</div><div class="line"></div><div class="line">        Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();</div><div class="line">        <span class="keyword">float</span> top = fontMetrics.top;<span class="comment">//为基线到字体上边框的距离,即上图中的top</span></div><div class="line">        <span class="keyword">float</span> bottom = fontMetrics.bottom;<span class="comment">//为基线到字体下边框的距离,即上图中的bottom</span></div><div class="line"></div><div class="line">        <span class="keyword">int</span> baseLineY1 = (<span class="keyword">int</span>) (rect1.centerY() - top/<span class="number">2</span> - bottom/<span class="number">2</span>);<span class="comment">//基线中间点的y轴计算公式</span></div><div class="line">        <span class="keyword">int</span> baseLineY2 = (<span class="keyword">int</span>) (rect2.centerY() - top/<span class="number">2</span> - bottom/<span class="number">2</span>);<span class="comment">//基线中间点的y轴计算公式</span></div><div class="line"></div><div class="line">        canvas.drawText(<span class="string">"请将打码放到识别区域内"</span>,rect1.centerX(),baseLineY1,textPaint);</div><div class="line">        canvas.drawText(<span class="string">"拍摄一张清晰的照片"</span>,rect1.centerX(),baseLineY2,textPaint);</div><div class="line"></div><div class="line">        <span class="comment">//绘制中间的线,每次刷新界面，中间的线往下移动SPEEN_DISTANCE</span></div><div class="line">        <span class="keyword">if</span> (slideTop == <span class="number">0</span>)&#123;</div><div class="line">            slideTop = frame.top;</div><div class="line">        &#125;</div><div class="line">        slideTop += SPEEN_DISTANCE;</div><div class="line">        <span class="keyword">if</span>(slideTop &gt;= frame.bottom)&#123;</div><div class="line">            slideTop = frame.top;</div><div class="line">        &#125;</div><div class="line">        Rect lineRect = <span class="keyword">new</span> Rect();</div><div class="line">        lineRect.left = frame.left;</div><div class="line">        lineRect.right = frame.right;</div><div class="line">        lineRect.top = slideTop;</div><div class="line">        lineRect.bottom = slideTop + <span class="number">18</span>;</div><div class="line">        canvas.drawBitmap(((BitmapDrawable)(getResources().getDrawable(R.drawable.qrcode_scan_line))).getBitmap(), <span class="keyword">null</span>, lineRect, paint);</div><div class="line"></div><div class="line">        <span class="comment">//只刷新扫描框的内容，其他地方不刷新</span></div><div class="line">        postInvalidateDelayed(ANIMATION_DELAY, frame.left, frame.top,</div><div class="line">                frame.right, frame.bottom);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Rect <span class="title">getFrame</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> frame;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getmHeight</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mHeight;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getmWidth</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mWidth;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
       
 
       
@@ -424,8 +298,8 @@
     </a>
   
   
-    <a href="/2017/02/17/Android/exeption/2017-02-17-解决Android65535问题/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">解决Android65535问题</div>
+    <a href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总-Media-FaceDetector/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Android人脸检测汇总Media-FaceDetection</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -549,11 +423,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -561,11 +435,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -581,15 +455,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -597,15 +467,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -614,6 +484,10 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

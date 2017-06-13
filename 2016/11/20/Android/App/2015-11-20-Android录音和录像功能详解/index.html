@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://blog.hsujee.io/2016/11/20/Android/App/2015-11-20-Android录音和录像功能详解/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="Android系统录音和录像功能详解">
-<meta property="og:updated_time" content="2017-04-12T02:20:14.249Z">
+<meta property="og:updated_time" content="2017-06-13T10:59:29.466Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android录音和录像功能详解">
 <meta name="twitter:description" content="Android系统录音和录像功能详解">
@@ -189,171 +189,11 @@
 </blockquote>
 <p>来进行Android录音和录像功能的实现，下面上主要代码</p>
 <a id="more"></a>
-<h3 id="创建保存路径"><a href="#创建保存路径" class="headerlink" title="创建保存路径"></a>创建保存路径</h3><pre><code>/**
- * 根据Audio种类创建文件保存路径
- * @param isAudio
- * @return
- */
-private File getFilePath(boolean isAudio) {
-    File file = null;
-    File sampleDir = Environment.getExternalStorageDirectory();
-    if (!sampleDir.canWrite())
-    sampleDir = new File(&quot;/mnt/sdcard&quot;);
+<h3 id="创建保存路径"><a href="#创建保存路径" class="headerlink" title="创建保存路径"></a>创建保存路径</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 根据Audio种类创建文件保存路径</div><div class="line"> * <span class="doctag">@param</span> isAudio</div><div class="line"> * <span class="doctag">@return</span></div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">private</span> File <span class="title">getFilePath</span><span class="params">(<span class="keyword">boolean</span> isAudio)</span> </span>&#123;</div><div class="line">    File file = <span class="keyword">null</span>;</div><div class="line">    File sampleDir = Environment.getExternalStorageDirectory();</div><div class="line">    <span class="keyword">if</span> (!sampleDir.canWrite())</div><div class="line">	sampleDir = <span class="keyword">new</span> File(<span class="string">"/mnt/sdcard"</span>);</div><div class="line"></div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">	file = File.createTempFile(SAMPLE_PREFIX,</div><div class="line">		isAudio ? <span class="string">".amr"</span> : <span class="string">".mp4"</span>, sampleDir);</div><div class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> file;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="录音代码"><a href="#录音代码" class="headerlink" title="录音代码"></a>录音代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@SuppressLint</span>(<span class="string">"InlinedApi"</span>)</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startRecorderAudio</span><span class="params">(View view)</span> </span>&#123;</div><div class="line">    stop(view);</div><div class="line">    mtv.setText(<span class="string">"开始录音..."</span>);</div><div class="line"></div><div class="line">    mRecorder = <span class="keyword">new</span> MediaRecorder();</div><div class="line">    mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);</div><div class="line">    mRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);</div><div class="line">    mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);</div><div class="line">    mAudioFile = getFilePath(<span class="keyword">true</span>);</div><div class="line"></div><div class="line">    <span class="comment">// Handle IOException</span></div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        mRecorder.setOutputFile(mAudioFile.getAbsolutePath());</div><div class="line">        mRecorder.prepare();</div><div class="line">    &#125; <span class="keyword">catch</span> (Exception exception) &#123;</div><div class="line">        setError(INTERNAL_ERROR);</div><div class="line">        mRecorder.reset();</div><div class="line">        mRecorder.release();</div><div class="line">        mRecorder = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// Handle RuntimeException if the recording couldn't start</span></div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        mRecorder.start();</div><div class="line">    &#125; <span class="keyword">catch</span> (RuntimeException exception) &#123;</div><div class="line">        AudioManager audioMngr = (AudioManager) <span class="keyword">this</span></div><div class="line">                .getSystemService(Context.AUDIO_SERVICE);</div><div class="line">        <span class="keyword">boolean</span> isInCall = ((audioMngr.getMode() == AudioManager.MODE_IN_CALL) || (audioMngr</div><div class="line">                .getMode() == AudioManager.MODE_IN_COMMUNICATION));</div><div class="line">        <span class="keyword">if</span> (isInCall) &#123;</div><div class="line">            setError(IN_CALL_RECORD_ERROR);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            setError(INTERNAL_ERROR);</div><div class="line">        &#125;</div><div class="line">        mRecorder.reset();</div><div class="line">        mRecorder.release();</div><div class="line">        mRecorder = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stopRecorderAudio</span><span class="params">(View view)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (mRecorder == <span class="keyword">null</span>)</div><div class="line">        <span class="keyword">return</span>;</div><div class="line"></div><div class="line">    mtv.setText(<span class="string">"停止录音..."</span>);</div><div class="line">    mRecorder.stop();</div><div class="line">    mRecorder.release();</div><div class="line">    mRecorder = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="录像代码"><a href="#录像代码" class="headerlink" title="录像代码"></a>录像代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@SuppressLint</span>(<span class="string">"NewApi"</span>)</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startRecorderVideo</span><span class="params">(View view)</span> </span>&#123;</div><div class="line"></div><div class="line">    stop(view);</div><div class="line">    mtv.setText(<span class="string">"开始录像..."</span>);</div><div class="line"></div><div class="line">    mMediaRecorder = <span class="keyword">new</span> MediaRecorder();</div><div class="line">    mMediaRecorder.setPreviewDisplay(mSurfaceView.getHolder().getSurface());</div><div class="line"></div><div class="line">    <span class="comment">// mMediaRecorder.setCamera(mCamera);</span></div><div class="line">    mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);</div><div class="line">    mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);</div><div class="line">    mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);</div><div class="line">    <span class="comment">// 这两项需要放在setOutputFormat之后</span></div><div class="line">    mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);</div><div class="line">    mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);</div><div class="line"></div><div class="line">    <span class="comment">// 设置立体声</span></div><div class="line">    mMediaRecorder.setAudioChannels(<span class="number">2</span>);</div><div class="line">    <span class="comment">// 设置最大录像时间 单位：毫秒</span></div><div class="line">    mMediaRecorder.setMaxDuration(<span class="number">600000</span>);</div><div class="line">    <span class="comment">// 设置最大录制的大小 单位，字节</span></div><div class="line">    mMediaRecorder.setMaxFileSize(<span class="number">1024</span> * <span class="number">1024</span>);</div><div class="line">    <span class="comment">// 音频一秒钟包含多少数据位</span></div><div class="line">    mMediaRecorder.setAudioEncodingBitRate(<span class="number">128</span>);</div><div class="line">    <span class="comment">// 设置选择角度，顺时针方向，因为默认是逆向90度的，这样图像就是正常显示了，</span></div><div class="line">    <span class="comment">// 这里设置的是观看保存后的视频的角度</span></div><div class="line">    <span class="comment">// mMediaRecorder.setOrientationHint(90);</span></div><div class="line">    <span class="comment">// 设置录像的分辨率</span></div><div class="line">    mMediaRecorder.setVideoSize(<span class="number">720</span>, <span class="number">480</span>);</div><div class="line"></div><div class="line">    <span class="comment">// mMediaRecorder.setVideoFrameRate(20);</span></div><div class="line"></div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        mMediaRecorder.setOutputFile(getFilePath(<span class="keyword">false</span>).getAbsolutePath());</div><div class="line">        mMediaRecorder.prepare();</div><div class="line"></div><div class="line">        mMediaRecorder.start(); <span class="comment">// Recording is now started</span></div><div class="line"></div><div class="line">    &#125; <span class="keyword">catch</span> (RuntimeException exception) &#123;</div><div class="line"></div><div class="line">        exception.printStackTrace();</div><div class="line">        mMediaRecorder.reset();</div><div class="line">        mMediaRecorder.release();</div><div class="line">        mMediaRecorder = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stopRecorderVideo</span><span class="params">(View view)</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (mMediaRecorder == <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">    mtv.setText(<span class="string">"停止录像..."</span>);</div><div class="line">    mMediaRecorder.stop();</div><div class="line">    mMediaRecorder.release();</div><div class="line">    mMediaRecorder = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="播放测试代码"><a href="#播放测试代码" class="headerlink" title="播放测试代码"></a>播放测试代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startPlayback</span><span class="params">(View view)</span> </span>&#123;</div><div class="line">    stop(view);</div><div class="line">    mtv.setText(<span class="string">"开始播放..."</span>);</div><div class="line">    mPlayer = <span class="keyword">new</span> MediaPlayer();</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        mPlayer.setDataSource(mAudioFile.getAbsolutePath());</div><div class="line">        mPlayer.setOnCompletionListener(<span class="keyword">this</span>);</div><div class="line">        mPlayer.setOnErrorListener(<span class="keyword">this</span>);</div><div class="line">        mPlayer.prepare();</div><div class="line">        mPlayer.start();</div><div class="line">    &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</div><div class="line">        setError(INTERNAL_ERROR);</div><div class="line">        mPlayer = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">        setError(SDCARD_ACCESS_ERROR);</div><div class="line">        mPlayer = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stopPlayback</span><span class="params">(View view)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (mPlayer == <span class="keyword">null</span>) <span class="comment">// we were not in playback</span></div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    mtv.setText(<span class="string">"停止播放..."</span>);</div><div class="line">    mPlayer.stop();</div><div class="line">    mPlayer.release();</div><div class="line">    mPlayer = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
-    try {
-    file = File.createTempFile(SAMPLE_PREFIX,
-        isAudio ? &quot;.amr&quot; : &quot;.mp4&quot;, sampleDir);
-    } catch (IOException e) {
-    }
-    return file;
-}
-</code></pre><h3 id="录音代码"><a href="#录音代码" class="headerlink" title="录音代码"></a>录音代码</h3><pre><code>@SuppressLint(&quot;InlinedApi&quot;)
-public void startRecorderAudio(View view) {
-    stop(view);
-    mtv.setText(&quot;开始录音...&quot;);
-
-    mRecorder = new MediaRecorder();
-    mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-    mRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
-    mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-    mAudioFile = getFilePath(true);
-
-    // Handle IOException
-    try {
-        mRecorder.setOutputFile(mAudioFile.getAbsolutePath());
-        mRecorder.prepare();
-    } catch (Exception exception) {
-        setError(INTERNAL_ERROR);
-        mRecorder.reset();
-        mRecorder.release();
-        mRecorder = null;
-        return;
-    }
-    // Handle RuntimeException if the recording couldn&apos;t start
-    try {
-        mRecorder.start();
-    } catch (RuntimeException exception) {
-        AudioManager audioMngr = (AudioManager) this
-                .getSystemService(Context.AUDIO_SERVICE);
-        boolean isInCall = ((audioMngr.getMode() == AudioManager.MODE_IN_CALL) || (audioMngr
-                .getMode() == AudioManager.MODE_IN_COMMUNICATION));
-        if (isInCall) {
-            setError(IN_CALL_RECORD_ERROR);
-        } else {
-            setError(INTERNAL_ERROR);
-        }
-        mRecorder.reset();
-        mRecorder.release();
-        mRecorder = null;
-        return;
-    }
-
-}
-
-public void stopRecorderAudio(View view) {
-    if (mRecorder == null)
-        return;
-
-    mtv.setText(&quot;停止录音...&quot;);
-    mRecorder.stop();
-    mRecorder.release();
-    mRecorder = null;
-
-}
-</code></pre><h3 id="录像代码"><a href="#录像代码" class="headerlink" title="录像代码"></a>录像代码</h3><pre><code>@SuppressLint(&quot;NewApi&quot;)
-public void startRecorderVideo(View view) {
-
-    stop(view);
-    mtv.setText(&quot;开始录像...&quot;);
-
-    mMediaRecorder = new MediaRecorder();
-    mMediaRecorder.setPreviewDisplay(mSurfaceView.getHolder().getSurface());
-
-    // mMediaRecorder.setCamera(mCamera);
-    mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-    mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-    mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-    // 这两项需要放在setOutputFormat之后
-    mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-    mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-
-    // 设置立体声
-    mMediaRecorder.setAudioChannels(2);
-    // 设置最大录像时间 单位：毫秒
-    mMediaRecorder.setMaxDuration(600000);
-    // 设置最大录制的大小 单位，字节
-    mMediaRecorder.setMaxFileSize(1024 * 1024);
-    // 音频一秒钟包含多少数据位
-    mMediaRecorder.setAudioEncodingBitRate(128);
-    // 设置选择角度，顺时针方向，因为默认是逆向90度的，这样图像就是正常显示了，
-    // 这里设置的是观看保存后的视频的角度
-    // mMediaRecorder.setOrientationHint(90);
-    // 设置录像的分辨率
-    mMediaRecorder.setVideoSize(720, 480);
-
-    // mMediaRecorder.setVideoFrameRate(20);
-
-    try {
-        mMediaRecorder.setOutputFile(getFilePath(false).getAbsolutePath());
-        mMediaRecorder.prepare();
-
-        mMediaRecorder.start(); // Recording is now started
-
-    } catch (RuntimeException exception) {
-
-        exception.printStackTrace();
-        mMediaRecorder.reset();
-        mMediaRecorder.release();
-        mMediaRecorder = null;
-        return;
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-}
-
-public void stopRecorderVideo(View view) {
-
-    if (mMediaRecorder == null) {
-        return;
-    }
-    mtv.setText(&quot;停止录像...&quot;);
-    mMediaRecorder.stop();
-    mMediaRecorder.release();
-    mMediaRecorder = null;
-
-}
-</code></pre><h3 id="播放测试代码"><a href="#播放测试代码" class="headerlink" title="播放测试代码"></a>播放测试代码</h3><pre><code>public void startPlayback(View view) {
-    stop(view);
-    mtv.setText(&quot;开始播放...&quot;);
-    mPlayer = new MediaPlayer();
-    try {
-        mPlayer.setDataSource(mAudioFile.getAbsolutePath());
-        mPlayer.setOnCompletionListener(this);
-        mPlayer.setOnErrorListener(this);
-        mPlayer.prepare();
-        mPlayer.start();
-    } catch (IllegalArgumentException e) {
-        setError(INTERNAL_ERROR);
-        mPlayer = null;
-        return;
-    } catch (IOException e) {
-        setError(SDCARD_ACCESS_ERROR);
-        mPlayer = null;
-        return;
-    }
-
-}
-
-public void stopPlayback(View view) {
-    if (mPlayer == null) // we were not in playback
-        return;
-    mtv.setText(&quot;停止播放...&quot;);
-    mPlayer.stop();
-    mPlayer.release();
-    mPlayer = null;
-
-}
-</code></pre>
       
 
       
@@ -586,11 +426,11 @@ public void stopPlayback(View view) {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -598,11 +438,11 @@ public void stopPlayback(View view) {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -618,15 +458,11 @@ public void stopPlayback(View view) {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -634,15 +470,15 @@ public void stopPlayback(View view) {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -651,6 +487,10 @@ public void stopPlayback(View view) {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

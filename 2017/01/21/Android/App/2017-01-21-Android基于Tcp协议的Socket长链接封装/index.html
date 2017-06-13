@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://blog.hsujee.io/2017/01/21/Android/App/2017-01-21-Android基于Tcp协议的Socket长链接封装/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="Android基于Tcp协议的Socket长链接封装">
-<meta property="og:updated_time" content="2017-04-12T02:21:14.815Z">
+<meta property="og:updated_time" content="2017-06-13T11:04:34.515Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android基于Tcp协议的Socket长链接封装">
 <meta name="twitter:description" content="Android基于Tcp协议的Socket长链接封装">
@@ -184,214 +184,12 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>在Service中使用，注意以下规则</p>
-<pre><code>//startService() 启动Service
-其生命周期为context.startService() -&gt;onCreate()- &gt;onStart()-&gt;Service running--&gt;context.stopService() | -&gt;onDestroy() -&gt;Service stop 
-//对于bindService()启动Service：
-context.bindService()-&gt;onCreate()-&gt;onBind()-&gt;Service running--&gt;onUnbind() -&gt; onDestroy() -&gt;Service stop
-</code></pre><p>TcpSocketHelper封装类，使Socket保持长连接，便于手机跟服务器通讯，保持心跳实时更新数据</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">//startService() 启动Service</div><div class="line">其生命周期为context.startService() -&gt;onCreate()- &gt;onStart()-&gt;Service running--&gt;context.stopService() | -&gt;onDestroy() -&gt;Service stop </div><div class="line">//对于bindService()启动Service：</div><div class="line">context.bindService()-&gt;onCreate()-&gt;onBind()-&gt;Service running--&gt;onUnbind() -&gt; onDestroy() -&gt;Service stop</div></pre></td></tr></table></figure>
+<p>TcpSocketHelper封装类，使Socket保持长连接，便于手机跟服务器通讯，保持心跳实时更新数据</p>
 <a id="more"></a>
-<pre><code>package com.irobotcity.psnclient.net;
-
-import android.text.format.DateFormat;
-import android.util.Log;
-
-import com.irobotcity.psnclient.listener.OnRecivedListener;
-import com.irobotcity.psnclient.utils.LogUtils;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.util.Calendar;
-import java.util.Date;
-
-/**
- * 使用Socket封装长连接
- * Created by Jerry on 2017/1/18.
- */
-
-public class TcpSocketHelper {
-    private String mTag = &quot;TcpSocketHelper&quot;;
-    private Socket socket;
-    private boolean _connect;
-    private ReceiveThread mReceiveThread;
-    private boolean receiveStop;
-    private Date lastKeepAliveOkTime;
-    private OnRecivedListener mRecivedListener;
-    private String mIpAddr = &quot;192.168.1.137&quot;;
-    private int mPort = 9995;
-
-    /**
-     * 开启链接socket
-     * @param ipAddr
-     * @param port
-     */
-    public void startConnect(String ipAddr, int port){
-        LogUtils.e(mTag, &quot;准备链接...&quot;);
-        this.mIpAddr = ipAddr;
-        this.mPort = port;
-        InetAddress serverAddr;
-        try {
-            socket = new Socket(ipAddr, port);
-            _connect = true;
-            mReceiveThread = new ReceiveThread();
-            receiveStop = false;
-            mReceiveThread.start();
-            LogUtils.e(mTag, &quot;链接成功...&quot;);
-
-        } catch (Exception e) {
-            LogUtils.e(mTag, &quot;链接出错...&quot; + e.getMessage().toString());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 关闭链接
-     */
-    public void closeConnect(){
-        if (socket != null){
-            try {
-                socket.close();
-                socket = null;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * 保持心跳
-     */
-    public void KeepAlive() {
-        // 判断socket是否已断开,断开就重连  
-        if (lastKeepAliveOkTime != null) {
-            LogUtils.e(mTag, &quot;上次心跳成功时间:&quot;+ DateFormat.format(&quot;yyyy-MM-dd HH:mm:ss&quot;, lastKeepAliveOkTime));
-            Date now = Calendar.getInstance().getTime();
-            long between = (now.getTime() - lastKeepAliveOkTime.getTime());// 得到两者的毫秒数  
-            if (between &gt; 60 * 1000) {
-                LogUtils.e(mTag, &quot;心跳异常超过1分钟,重新连接:&quot;);
-                lastKeepAliveOkTime = null;
-                socket = null;
-            }
-
-        } else {
-            lastKeepAliveOkTime = Calendar.getInstance().getTime();
-        }
-
-        if (!checkIsAlive()) {
-            LogUtils.e(mTag, &quot;链接已断开,重新连接.&quot;);
-            startConnect(mIpAddr, mPort);
-        }
-    }
-
-    /**
-     * 此方法是检测是否连接
-     * @return
-     */
-    public boolean checkIsAlive() {
-        if (socket == null||!socket.isConnected())
-            return false;
-//        try {
-//            socket.sendUrgentData(0xFF);
-//        } catch (IOException e) {
-//            return false;
-//        }
-        return true;
-
-    }
-
-    /**
-     * 发送数据的方法
-     * @param msg
-     */
-    public void sendmessage(String msg) {
-        boolean isAlive = checkIsAlive();
-        if (!isAlive)
-            return;
-        LogUtils.e(mTag, &quot;准备发送消息:&quot; + msg);
-        try {
-            if (socket != null &amp;&amp; socket.isConnected()) {
-                if (!socket.isOutputShutdown()) {
-
-                    //2.得到socket读写流
-                    OutputStream os=socket.getOutputStream();
-                    //true:是否自动flush
-                    PrintWriter outStream=new PrintWriter(os, true);
-                    outStream.print(msg);
-                    outStream.flush();
-                }
-            }
-            LogUtils.e(mTag, &quot;发送成功!&quot;);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 设置接收数据监听器
-     * @param mRecivedListener
-     */
-    public void setmRecivedListener(OnRecivedListener mRecivedListener) {
-        this.mRecivedListener = mRecivedListener;
-    }
-
-    /**
-     * 数据接收线程
-     */
-    class ReceiveThread extends Thread{
-
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    sleep(500);
-//                    LogUtils.i(mTag, &quot;监听中...:&quot;+socket.isConnected());
-                    // 判断 Socket 是否处于连接状态
-                    if (socket != null &amp;&amp; socket.isConnected()) {
-                        // 客户端接收服务器端的响应，读取服务器端向客户端的输入流
-                        InputStream isRead = socket.getInputStream();
-                        // 缓冲区
-                        byte[] buffer = new byte[isRead.available()];
-                        // 读取缓冲区
-                        isRead.read(buffer);
-                        // 转换为字符串
-                        String responseInfo = new String(buffer);
-                        // 日志中输出
-                        if(responseInfo != null&amp;&amp;!responseInfo.equals(&quot;&quot;)){
-                            Log.e(&quot;TcpManager&quot;, &quot;返回：&quot;+responseInfo);
-                            mRecivedListener.onRecived(responseInfo);
-                        }
-
-                        lastKeepAliveOkTime = Calendar.getInstance().getTime();
-                        KeepAlive();
-
-                        continue;
-                    } else {
-                        if (socket != null)
-                            LogUtils.e(mTag, &quot;链接状态:&quot; + socket.isConnected());
-                    }
-
-                } catch (Exception e) {
-                    LogUtils.e(mTag, &quot;监听出错:&quot; + e.toString());
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-}
-</code></pre><p>以下是OnRecivedListener监听器</p>
-<pre><code>package com.irobotcity.psnclient.listener;
-
-/**
- * Created by Jerry on 2017/1/18.
- */
-
-public interface OnRecivedListener {
-    public void onRecived(String data);
-}
-</code></pre>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.irobotcity.psnclient.net;</div><div class="line"></div><div class="line"><span class="keyword">import</span> android.text.format.DateFormat;</div><div class="line"><span class="keyword">import</span> android.util.Log;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.irobotcity.psnclient.listener.OnRecivedListener;</div><div class="line"><span class="keyword">import</span> com.irobotcity.psnclient.utils.LogUtils;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.InputStream;</div><div class="line"><span class="keyword">import</span> java.io.OutputStream;</div><div class="line"><span class="keyword">import</span> java.io.PrintWriter;</div><div class="line"><span class="keyword">import</span> java.net.InetAddress;</div><div class="line"><span class="keyword">import</span> java.net.Socket;</div><div class="line"><span class="keyword">import</span> java.util.Calendar;</div><div class="line"><span class="keyword">import</span> java.util.Date;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 使用Socket封装长连接</div><div class="line"> * Created by Jerry on 2017/1/18.</div><div class="line"> */</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TcpSocketHelper</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> String mTag = <span class="string">"TcpSocketHelper"</span>;</div><div class="line">	<span class="keyword">private</span> Socket socket;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">boolean</span> _connect;</div><div class="line">	<span class="keyword">private</span> ReceiveThread mReceiveThread;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">boolean</span> receiveStop;</div><div class="line">	<span class="keyword">private</span> Date lastKeepAliveOkTime;</div><div class="line">	<span class="keyword">private</span> OnRecivedListener mRecivedListener;</div><div class="line">	<span class="keyword">private</span> String mIpAddr = <span class="string">"192.168.1.137"</span>;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> mPort = <span class="number">9995</span>;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 开启链接socket</div><div class="line">	 * <span class="doctag">@param</span> ipAddr</div><div class="line">	 * <span class="doctag">@param</span> port</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startConnect</span><span class="params">(String ipAddr, <span class="keyword">int</span> port)</span></span>&#123;</div><div class="line">	    LogUtils.e(mTag, <span class="string">"准备链接..."</span>);</div><div class="line">	    <span class="keyword">this</span>.mIpAddr = ipAddr;</div><div class="line">	    <span class="keyword">this</span>.mPort = port;</div><div class="line">	    InetAddress serverAddr;</div><div class="line">	    <span class="keyword">try</span> &#123;</div><div class="line">	        socket = <span class="keyword">new</span> Socket(ipAddr, port);</div><div class="line">	        _connect = <span class="keyword">true</span>;</div><div class="line">	        mReceiveThread = <span class="keyword">new</span> ReceiveThread();</div><div class="line">	        receiveStop = <span class="keyword">false</span>;</div><div class="line">	        mReceiveThread.start();</div><div class="line">	        LogUtils.e(mTag, <span class="string">"链接成功..."</span>);</div><div class="line"></div><div class="line">	    &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">	        LogUtils.e(mTag, <span class="string">"链接出错..."</span> + e.getMessage().toString());</div><div class="line">	        e.printStackTrace();</div><div class="line">	    &#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 关闭链接</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">closeConnect</span><span class="params">()</span></span>&#123;</div><div class="line">	    <span class="keyword">if</span> (socket != <span class="keyword">null</span>)&#123;</div><div class="line">	        <span class="keyword">try</span> &#123;</div><div class="line">	            socket.close();</div><div class="line">	            socket = <span class="keyword">null</span>;</div><div class="line">	        &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">	            e.printStackTrace();</div><div class="line">	        &#125;</div><div class="line">	    &#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 保持心跳</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">KeepAlive</span><span class="params">()</span> </span>&#123;</div><div class="line">	    <span class="comment">// 判断socket是否已断开,断开就重连  </span></div><div class="line">	    <span class="keyword">if</span> (lastKeepAliveOkTime != <span class="keyword">null</span>) &#123;</div><div class="line">	        LogUtils.e(mTag, <span class="string">"上次心跳成功时间:"</span>+ DateFormat.format(<span class="string">"yyyy-MM-dd HH:mm:ss"</span>, lastKeepAliveOkTime));</div><div class="line">	        Date now = Calendar.getInstance().getTime();</div><div class="line">	        <span class="keyword">long</span> between = (now.getTime() - lastKeepAliveOkTime.getTime());<span class="comment">// 得到两者的毫秒数  </span></div><div class="line">	        <span class="keyword">if</span> (between &gt; <span class="number">60</span> * <span class="number">1000</span>) &#123;</div><div class="line">	            LogUtils.e(mTag, <span class="string">"心跳异常超过1分钟,重新连接:"</span>);</div><div class="line">	            lastKeepAliveOkTime = <span class="keyword">null</span>;</div><div class="line">	            socket = <span class="keyword">null</span>;</div><div class="line">	        &#125;</div><div class="line"></div><div class="line">	    &#125; <span class="keyword">else</span> &#123;</div><div class="line">	        lastKeepAliveOkTime = Calendar.getInstance().getTime();</div><div class="line">	    &#125;</div><div class="line"></div><div class="line">	    <span class="keyword">if</span> (!checkIsAlive()) &#123;</div><div class="line">	        LogUtils.e(mTag, <span class="string">"链接已断开,重新连接."</span>);</div><div class="line">	        startConnect(mIpAddr, mPort);</div><div class="line">	    &#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 此方法是检测是否连接</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">checkIsAlive</span><span class="params">()</span> </span>&#123;</div><div class="line">	    <span class="keyword">if</span> (socket == <span class="keyword">null</span>||!socket.isConnected())</div><div class="line">	        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line"><span class="comment">//        try &#123;</span></div><div class="line"><span class="comment">//            socket.sendUrgentData(0xFF);</span></div><div class="line"><span class="comment">//        &#125; catch (IOException e) &#123;</span></div><div class="line"><span class="comment">//            return false;</span></div><div class="line"><span class="comment">//        &#125;</span></div><div class="line">	    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line"></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 发送数据的方法</div><div class="line">	 * <span class="doctag">@param</span> msg</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendmessage</span><span class="params">(String msg)</span> </span>&#123;</div><div class="line">	    <span class="keyword">boolean</span> isAlive = checkIsAlive();</div><div class="line">	    <span class="keyword">if</span> (!isAlive)</div><div class="line">	        <span class="keyword">return</span>;</div><div class="line">	    LogUtils.e(mTag, <span class="string">"准备发送消息:"</span> + msg);</div><div class="line">	    <span class="keyword">try</span> &#123;</div><div class="line">	        <span class="keyword">if</span> (socket != <span class="keyword">null</span> &amp;&amp; socket.isConnected()) &#123;</div><div class="line">	            <span class="keyword">if</span> (!socket.isOutputShutdown()) &#123;</div><div class="line"></div><div class="line">	                <span class="comment">//2.得到socket读写流</span></div><div class="line">	                OutputStream os=socket.getOutputStream();</div><div class="line">	                <span class="comment">//true:是否自动flush</span></div><div class="line">	                PrintWriter outStream=<span class="keyword">new</span> PrintWriter(os, <span class="keyword">true</span>);</div><div class="line">	                outStream.print(msg);</div><div class="line">	                outStream.flush();</div><div class="line">	            &#125;</div><div class="line">	        &#125;</div><div class="line">	        LogUtils.e(mTag, <span class="string">"发送成功!"</span>);</div><div class="line">	    &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">	        e.printStackTrace();</div><div class="line">	    &#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 设置接收数据监听器</div><div class="line">	 * <span class="doctag">@param</span> mRecivedListener</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setmRecivedListener</span><span class="params">(OnRecivedListener mRecivedListener)</span> </span>&#123;</div><div class="line">	    <span class="keyword">this</span>.mRecivedListener = mRecivedListener;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 数据接收线程</div><div class="line">	 */</div><div class="line">	<span class="class"><span class="keyword">class</span> <span class="title">ReceiveThread</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</div><div class="line"></div><div class="line">	    <span class="meta">@Override</span></div><div class="line">	    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">	        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">	            <span class="keyword">try</span> &#123;</div><div class="line">	                sleep(<span class="number">500</span>);</div><div class="line"><span class="comment">//                    LogUtils.i(mTag, "监听中...:"+socket.isConnected());</span></div><div class="line">	                <span class="comment">// 判断 Socket 是否处于连接状态</span></div><div class="line">	                <span class="keyword">if</span> (socket != <span class="keyword">null</span> &amp;&amp; socket.isConnected()) &#123;</div><div class="line">	                    <span class="comment">// 客户端接收服务器端的响应，读取服务器端向客户端的输入流</span></div><div class="line">	                    InputStream isRead = socket.getInputStream();</div><div class="line">	                    <span class="comment">// 缓冲区</span></div><div class="line">	                    <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[isRead.available()];</div><div class="line">	                    <span class="comment">// 读取缓冲区</span></div><div class="line">	                    isRead.read(buffer);</div><div class="line">	                    <span class="comment">// 转换为字符串</span></div><div class="line">	                    String responseInfo = <span class="keyword">new</span> String(buffer);</div><div class="line">	                    <span class="comment">// 日志中输出</span></div><div class="line">	                    <span class="keyword">if</span>(responseInfo != <span class="keyword">null</span>&amp;&amp;!responseInfo.equals(<span class="string">""</span>))&#123;</div><div class="line">	                        Log.e(<span class="string">"TcpManager"</span>, <span class="string">"返回："</span>+responseInfo);</div><div class="line">	                        mRecivedListener.onRecived(responseInfo);</div><div class="line">	                    &#125;</div><div class="line"></div><div class="line">	                    lastKeepAliveOkTime = Calendar.getInstance().getTime();</div><div class="line">	                    KeepAlive();</div><div class="line"></div><div class="line">	                    <span class="keyword">continue</span>;</div><div class="line">	                &#125; <span class="keyword">else</span> &#123;</div><div class="line">	                    <span class="keyword">if</span> (socket != <span class="keyword">null</span>)</div><div class="line">	                        LogUtils.e(mTag, <span class="string">"链接状态:"</span> + socket.isConnected());</div><div class="line">	                &#125;</div><div class="line"></div><div class="line">	            &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">	                LogUtils.e(mTag, <span class="string">"监听出错:"</span> + e.toString());</div><div class="line">	                e.printStackTrace();</div><div class="line">	            &#125;</div><div class="line">	        &#125;</div><div class="line">	    &#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>以下是OnRecivedListener监听器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.irobotcity.psnclient.listener;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by Jerry on 2017/1/18.</div><div class="line"> */</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OnRecivedListener</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onRecived</span><span class="params">(String data)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
       
 
       
@@ -624,11 +422,11 @@ public interface OnRecivedListener {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -636,11 +434,11 @@ public interface OnRecivedListener {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -656,15 +454,11 @@ public interface OnRecivedListener {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -672,15 +466,15 @@ public interface OnRecivedListener {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -689,6 +483,10 @@ public interface OnRecivedListener {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://blog.hsujee.io/2015/07/11/Android/Tool/2015-07-11- AS混淆打包/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="AndroidStudio 混淆打包">
-<meta property="og:updated_time" content="2017-04-12T02:24:20.773Z">
+<meta property="og:updated_time" content="2017-06-13T11:26:51.171Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="AS混淆打包">
 <meta name="twitter:description" content="AndroidStudio 混淆打包">
@@ -188,325 +188,12 @@
 <p>在最终realease打包时，混淆的设置是比较重要的，否则会导致生成的包有很多功能不能正常使用。下面列举一个基本的app的build.gradle和混淆文件。并注意，混淆打包后的apk文件大小会比不使用混淆要小。</p>
 <p>在app根目录下设置build.gradle和混淆文件，然后把混淆选项写入混淆文件就可以。虽然app项目中可能引用了一些module，但这些module工程可以不定义自己的混淆，我的工程目录结构如下：</p>
 <p>其中app是应用主模块，引用剩余的module，被引用module的build.gradle中都使用默认的设置不启用混淆：</p>
-<pre><code>buildTypes {
-    release {
-        minifyEnabled false
-        proguardFiles getDefaultProguardFile(&apos;proguard-android.txt&apos;), &apos;proguard-rules.pro&apos;
-    }
-}
-</code></pre><p>在主目录的build.gradle:</p>
-<pre><code>apply plugin: &apos;com.android.application&apos;
-
-def releaseTime() {
-    return new Date().format(&quot;yyyy-MM-dd&quot;, TimeZone.getTimeZone(&quot;UTC&quot;))
-}
-
-repositories {
-    maven {
-        url &apos;https://oss.sonatype.org/content/repositories/snapshots&apos;
-    }
-}
-android {
-    compileSdkVersion 22
-    buildToolsVersion &apos;22.0.1&apos;
-    defaultConfig {
-        applicationId &quot;com.*****.****&quot; //自己的applicationId
-        minSdkVersion 14
-        targetSdkVersion 19
-        versionCode 1
-        versionName &quot;1.0&quot;
-    }
-    //执行lint检查，有任何的错误或者警告提示，都会终止构建，我们可以将其关掉。
-    lintOptions {
-        abortOnError false
-    }
-
-
-    //签名
-    signingConfigs {
-        debug {
-
-        }
-        release {// 自己的签名文件
-            storeFile file(&quot;doc/****.jks&quot;) 
-            storePassword &quot;******&quot;
-            keyAlias &quot;******&quot;
-            keyPassword &quot;******&quot;
-        }
-    }
-
-    buildTypes {
-        debug {
-            // 显示Log
-            buildConfigField &quot;boolean&quot;, &quot;LOG_DEBUG&quot;, &quot;true&quot;
-            versionNameSuffix &quot;-debug&quot;
-            minifyEnabled false
-            zipAlignEnabled false
-            shrinkResources false
-            signingConfig signingConfigs.debug
-        }
-
-        release {
-            // 不显示Log
-            buildConfigField &quot;boolean&quot;, &quot;LOG_DEBUG&quot;, &quot;false&quot;
-            //混淆
-            minifyEnabled true
-            //Zipalign优化
-            zipAlignEnabled true
-
-            // 移除无用的resource文件
-            shrinkResources true
-            //前一部分代表系统默认的android程序的混淆文件，该文件已经包含了基本的混淆声明，后一个文件是自己的定义混淆文件
-            proguardFiles getDefaultProguardFile(&apos;proguard-android.txt&apos;), &apos;proguard-rules.pro&apos;
-            //签名
-            signingConfig signingConfigs.release
-
-            applicationVariants.all { variant -&gt;
-                variant.outputs.each { output -&gt;
-                    def outputFile = output.outputFile
-                    if (outputFile != null &amp;&amp; outputFile.name.endsWith(&apos;.apk&apos;)) {
-                        // 输出apk名称为app_v1.0_2015-xx-xx_xxxx.apk
-                        //def fileName = &quot;app_v${defaultConfig.versionName}_${releaseTime()}.apk&quot;
-                        def fileName = &quot;app_v${defaultConfig.versionName}_${variant.productFlavors[0].name}.apk&quot;
-                        output.outputFile = new File(outputFile.parent, fileName)
-                    }
-                }
-            }
-        }
-    }
-    //渠道Flavors，配置不同风格的app,友盟渠道统计时用到
-    productFlavors {
-        &quot;offical&quot; {}
-        &quot;360&quot; {}
-        yingyongbao {}
-        wandoujia {}
-        baidu {}
-        &quot;91&quot; {}
-    }
-
-}
-
-
-dependencies {
-    compile fileTree(dir: &apos;libs&apos;, include: [&apos;*.jar&apos;])
-    compile project(&apos;:appsdk&apos;)
-    compile &apos;com.jakewharton:butterknife:7.0.1&apos;
-    //compile &apos;com.faradaj:blur-behind:1.1&apos;
-    compile &apos;com.github.ksoichiro:android-observablescrollview:1.6.0&apos;
-    compile &apos;com.nineoldandroids:library:2.4.0&apos;
-    compile &apos;in.srain.cube:ultra-ptr:1.0.10&apos;
-    compile &apos;com.android.support:cardview-v7:22.1.0&apos;
-    compile project(&apos;:multi-image-selector&apos;)
-}
-</code></pre><p>proguard-rules.pro文件中则定义了项目的混淆选项，定义如下：</p>
-<pre><code># Add project specific ProGuard rules here.
-# By default, the flags in this file are appended to flags specified
-# in D:\Android\sdk/tools/proguard/proguard-android.txt
-# You can edit the include path and order by changing the proguardFiles
-# directive in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
-
-# Add any project specific keep options here:
-
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
--keepclassmembers class fqcn.of.javascript.interface.for.webview {
-   public *;
-}
-
-#指定代码的压缩级别
--optimizationpasses 5
-
-#包明不混合大小写
--dontusemixedcaseclassnames
-
-#不去忽略非公共的库类
--dontskipnonpubliclibraryclasses
-
- #优化  不优化输入的类文件
--dontoptimize
-
- #预校验
--dontpreverify
-
- #混淆时是否记录日志
--verbose
-
- # 混淆时所采用的算法
--optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
-
-#保护注解
--keepattributes *Annotation*
-
-# 保持哪些类不被混淆
--keep public class * extends android.app.Fragment
--keep public class * extends android.app.Activity
--keep public class * extends android.app.Application
--keep public class * extends android.app.Service
--keep public class * extends android.content.BroadcastReceiver
--keep public class * extends android.content.ContentProvider
--keep public class * extends android.app.backup.BackupAgentHelper
--keep public class * extends android.preference.Preference
--keep public class com.android.vending.licensing.ILicensingService
-#如果有引用v4包可以添加下面这行
--keep public class * extends android.support.v4.app.Fragment
-
-
-#忽略警告
--ignorewarning
-
-##记录生成的日志数据,gradle build时在本项目根目录输出##
-#apk 包内所有 class 的内部结构
--dump proguard/class_files.txt
-#未混淆的类和成员
--printseeds proguard/seeds.txt
-#列出从 apk 中删除的代码
--printusage proguard/unused.txt
-#混淆前后的映射
--printmapping proguard/mapping.txt
-########记录生成的日志数据，gradle build时 在本项目根目录输出-end######
-
-#如果引用了v4或者v7包
--dontwarn android.support.**
-
-####混淆保护自己项目的部分代码以及引用的第三方jar包library-end####
-
-
-
-#保持 native 方法不被混淆
--keepclasseswithmembernames class * {
-    native &lt;methods&gt;;
-}
-
-#保持自定义控件类不被混淆
--keepclasseswithmembers class * {
-    public &lt;init&gt;(android.content.Context, android.util.AttributeSet);
-}
-
-#保持自定义控件类不被混淆
--keepclassmembers class * extends android.app.Activity {
-   public void *(android.view.View);
-}
-
--keep public class * extends android.view.View {
-    public &lt;init&gt;(android.content.Context);
-    public &lt;init&gt;(android.content.Context, android.util.AttributeSet);
-    public &lt;init&gt;(android.content.Context, android.util.AttributeSet, int);
-    public void set*(...);
-}
-
-#保持 Parcelable 不被混淆
--keep class * implements android.os.Parcelable {
-  public static final android.os.Parcelable$Creator *;
-}
-
-#保持 Serializable 不被混淆
--keepnames class * implements java.io.Serializable
-
-#保持 Serializable 不被混淆并且enum 类也不被混淆
--keepclassmembers class * implements java.io.Serializable {
-    static final long serialVersionUID;
-    private static final java.io.ObjectStreamField[] serialPersistentFields;
-    !static !transient &lt;fields&gt;;
-    !private &lt;fields&gt;;
-    !private &lt;methods&gt;;
-    private void writeObject(java.io.ObjectOutputStream);
-    private void readObject(java.io.ObjectInputStream);
-    java.lang.Object writeReplace();
-    java.lang.Object readResolve();
-}
-
-#保持枚举 enum 类不被混淆
--keepclassmembers enum * {
-  public static **[] values();
-  public static ** valueOf(java.lang.String);
-}
-
--keepclassmembers class * {
-    public void *ButtonClicked(android.view.View);
-}
-
-#不混淆资源类
--keepclassmembers class **.R$* {
-    public static &lt;fields&gt;;
-}
-
-#避免混淆泛型 如果混淆报错建议关掉
-#-keepattributes Signature
-
-#移除Log类打印各个等级日志的代码，打正式包的时候可以做为禁log使用，这里可以作为禁止log打印的功能使用，另外的一种实现方案是通过BuildConfig.DEBUG的变量来控制
-#-assumenosideeffects class android.util.Log {
-#    public static *** v(...);
-#    public static *** i(...);
-#    public static *** d(...);
-#    public static *** w(...);
-#    public static *** e(...);
-#}
-
-#############################################################################################
-########################                 以上通用           ##################################
-#############################################################################################
-
-#######################     常用第三方模块的混淆选项         ###################################
-#gson
-#如果用用到Gson解析包的，直接添加下面这几行就能成功混淆，不然会报错。
--keepattributes Signature
-# Gson specific classes
--keep class sun.misc.Unsafe { *; }
-# Application classes that will be serialized/deserialized over Gson
--keep class com.google.gson.** { *; }
--keep class com.google.gson.stream.** { *; }
-
-#mob
--keep class android.net.http.SslError
--keep class android.webkit.**{*;}
--keep class cn.sharesdk.**{*;}
--keep class com.sina.**{*;}
--keep class m.framework.**{*;}
--keep class **.R$* {*;}
--keep class **.R{*;}
--dontwarn cn.sharesdk.**
--dontwarn **.R$*
-
-#butterknife
--keep class butterknife.** { *; }
--dontwarn butterknife.internal.**
--keep class **$$ViewBinder { *; }
-
--keepclasseswithmembernames class * {
-    @butterknife.* &lt;fields&gt;;
-}
-
--keepclasseswithmembernames class * {
-    @butterknife.* &lt;methods&gt;;
-}
-
-######引用的其他Module可以直接在app的这个混淆文件里配置
-
-# 如果使用了Gson之类的工具要使被它解析的JavaBean类即实体类不被混淆。
--keep class com.matrix.app.entity.json.** { *; }
--keep class com.matrix.appsdk.network.model.** { *; }
-
-#####混淆保护自己项目的部分代码以及引用的第三方jar包library#######
-#如果在当前的application module或者依赖的library module中使用了第三方的库，并不需要显式添加规则
-#-libraryjars xxx
-#添加了反而有可能在打包的时候遭遇同一个jar多次被指定的错误，一般只需要添加忽略警告和保持某些class不被混淆的声明。
-#以libaray的形式引用了开源项目,如果不想混淆 keep 掉，在引入的module的build.gradle中设置minifyEnabled=false
--keep class com.nineoldandroids.** { *; }
--keep interface com.nineoldandroids.** { *; }
--dontwarn com.nineoldandroids.**
-# 下拉刷新
--keep class in.srain.cube.** { *; }
--keep interface in.srain.cube.** { *; }
--dontwarn in.srain.cube.**
-# observablescrollview：tab fragment
--keep class com.github.ksoichiro.** { *; }
--keep interface com.github.ksoichiro.** { *; }
--dontwarn com.github.ksoichiro.**
-</code></pre><p>然后执行build的release打包，会在app目录下生成一个proguard文件夹，里面有混淆前后文件的映射信息等文本文件，以后bug定位就靠它了：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">buildTypes &#123;</div><div class="line">    release &#123;</div><div class="line">        minifyEnabled <span class="keyword">false</span></div><div class="line">        proguardFiles getDefaultProguardFile(<span class="string">'proguard-android.txt'</span>), <span class="string">'proguard-rules.pro'</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在主目录的build.gradle:</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div></pre></td><td class="code"><pre><div class="line">apply plugin: <span class="string">'com.android.application'</span></div><div class="line"></div><div class="line"><span class="keyword">def</span> releaseTime() &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Date().format(<span class="string">"yyyy-MM-dd"</span>, TimeZone.getTimeZone(<span class="string">"UTC"</span>))</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">repositories</span> &#123;</div><div class="line">    maven &#123;</div><div class="line">        url <span class="string">'https://oss.sonatype.org/content/repositories/snapshots'</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">android &#123;</div><div class="line">    compileSdkVersion <span class="number">22</span></div><div class="line">    buildToolsVersion <span class="string">'22.0.1'</span></div><div class="line">    defaultConfig &#123;</div><div class="line">        applicationId <span class="string">"com.*****.****"</span> <span class="comment">//自己的applicationId</span></div><div class="line">        minSdkVersion <span class="number">14</span></div><div class="line">        targetSdkVersion <span class="number">19</span></div><div class="line">        versionCode <span class="number">1</span></div><div class="line">        versionName <span class="string">"1.0"</span></div><div class="line">    &#125;</div><div class="line">    <span class="comment">//执行lint检查，有任何的错误或者警告提示，都会终止构建，我们可以将其关掉。</span></div><div class="line">    lintOptions &#123;</div><div class="line">        abortOnError <span class="keyword">false</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">//签名</span></div><div class="line">    signingConfigs &#123;</div><div class="line">        debug &#123;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        release &#123;<span class="comment">// 自己的签名文件</span></div><div class="line">            storeFile <span class="keyword">file</span>(<span class="string">"doc/****.jks"</span>) </div><div class="line">            storePassword <span class="string">"******"</span></div><div class="line">            keyAlias <span class="string">"******"</span></div><div class="line">            keyPassword <span class="string">"******"</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    buildTypes &#123;</div><div class="line">        debug &#123;</div><div class="line">            <span class="comment">// 显示Log</span></div><div class="line">            buildConfigField <span class="string">"boolean"</span>, <span class="string">"LOG_DEBUG"</span>, <span class="string">"true"</span></div><div class="line">            versionNameSuffix <span class="string">"-debug"</span></div><div class="line">            minifyEnabled <span class="keyword">false</span></div><div class="line">            zipAlignEnabled <span class="keyword">false</span></div><div class="line">            shrinkResources <span class="keyword">false</span></div><div class="line">            signingConfig signingConfigs.debug</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        release &#123;</div><div class="line">            <span class="comment">// 不显示Log</span></div><div class="line">            buildConfigField <span class="string">"boolean"</span>, <span class="string">"LOG_DEBUG"</span>, <span class="string">"false"</span></div><div class="line">            <span class="comment">//混淆</span></div><div class="line">            minifyEnabled <span class="keyword">true</span></div><div class="line">            <span class="comment">//Zipalign优化</span></div><div class="line">            zipAlignEnabled <span class="keyword">true</span></div><div class="line"></div><div class="line">            <span class="comment">// 移除无用的resource文件</span></div><div class="line">            shrinkResources <span class="keyword">true</span></div><div class="line">            <span class="comment">//前一部分代表系统默认的android程序的混淆文件，该文件已经包含了基本的混淆声明，后一个文件是自己的定义混淆文件</span></div><div class="line">            proguardFiles getDefaultProguardFile(<span class="string">'proguard-android.txt'</span>), <span class="string">'proguard-rules.pro'</span></div><div class="line">            <span class="comment">//签名</span></div><div class="line">            signingConfig signingConfigs.release</div><div class="line"></div><div class="line">            applicationVariants.all &#123; variant -&gt;</div><div class="line">                variant.outputs.<span class="keyword">each</span> &#123; output -&gt;</div><div class="line">                    <span class="keyword">def</span> outputFile = output.outputFile</div><div class="line">                    <span class="keyword">if</span> (outputFile != <span class="keyword">null</span> &amp;&amp; outputFile.name.endsWith(<span class="string">'.apk'</span>)) &#123;</div><div class="line">                        <span class="comment">// 输出apk名称为app_v1.0_2015-xx-xx_xxxx.apk</span></div><div class="line">                        <span class="comment">//def fileName = "app_v$&#123;defaultConfig.versionName&#125;_$&#123;releaseTime()&#125;.apk"</span></div><div class="line">                        <span class="keyword">def</span> fileName = <span class="string">"app_v$&#123;defaultConfig.versionName&#125;_$&#123;variant.productFlavors[0].name&#125;.apk"</span></div><div class="line">                        output.outputFile = <span class="keyword">new</span> <span class="keyword">File</span>(outputFile.parent, fileName)</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">//渠道Flavors，配置不同风格的app,友盟渠道统计时用到</span></div><div class="line">    productFlavors &#123;</div><div class="line">        <span class="string">"offical"</span> &#123;&#125;</div><div class="line">        <span class="string">"360"</span> &#123;&#125;</div><div class="line">        yingyongbao &#123;&#125;</div><div class="line">        wandoujia &#123;&#125;</div><div class="line">        baidu &#123;&#125;</div><div class="line">        <span class="string">"91"</span> &#123;&#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">dependencies</span> &#123;</div><div class="line">    <span class="keyword">compile</span> <span class="keyword">fileTree</span>(dir: <span class="string">'libs'</span>, <span class="keyword">include</span>: [<span class="string">'*.jar'</span>])</div><div class="line">    <span class="keyword">compile</span> <span class="keyword">project</span>(<span class="string">':appsdk'</span>)</div><div class="line">    <span class="keyword">compile</span> <span class="string">'com.jakewharton:butterknife:7.0.1'</span></div><div class="line">    <span class="comment">//compile 'com.faradaj:blur-behind:1.1'</span></div><div class="line">    <span class="keyword">compile</span> <span class="string">'com.github.ksoichiro:android-observablescrollview:1.6.0'</span></div><div class="line">    <span class="keyword">compile</span> <span class="string">'com.nineoldandroids:library:2.4.0'</span></div><div class="line">    <span class="keyword">compile</span> <span class="string">'in.srain.cube:ultra-ptr:1.0.10'</span></div><div class="line">    <span class="keyword">compile</span> <span class="string">'com.android.support:cardview-v7:22.1.0'</span></div><div class="line">    <span class="keyword">compile</span> <span class="keyword">project</span>(<span class="string">':multi-image-selector'</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>proguard-rules.pro文件中则定义了项目的混淆选项，定义如下：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Add project specific ProGuard rules here.</span></div><div class="line"><span class="comment"># By default, the flags in this file are appended to flags specified</span></div><div class="line"><span class="comment"># in D:\Android\sdk/tools/proguard/proguard-android.txt</span></div><div class="line"><span class="comment"># You can edit the include path and order by changing the proguardFiles</span></div><div class="line"><span class="comment"># directive in build.gradle.</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># For more details, see</span></div><div class="line"><span class="comment">#   http://developer.android.com/guide/developing/tools/proguard.html</span></div><div class="line"></div><div class="line"><span class="comment"># Add any project specific keep options here:</span></div><div class="line"></div><div class="line"><span class="comment"># If your project uses WebView with JS, uncomment the following</span></div><div class="line"><span class="comment"># and specify the fully qualified class name to the JavaScript interface</span></div><div class="line"><span class="comment"># class:</span></div><div class="line">-keepclassmembers <span class="class"><span class="keyword">class</span> <span class="title">fqcn</span>.<span class="title">of</span>.<span class="title">javascript</span>.<span class="title">interface</span>.<span class="title">for</span>.<span class="title">webview</span> &#123;</span></div><div class="line">   public *;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">#指定代码的压缩级别</span></div><div class="line">-optimizationpasses <span class="number">5</span></div><div class="line"></div><div class="line"><span class="comment">#包明不混合大小写</span></div><div class="line">-dontusemixedcaseclassnames</div><div class="line"></div><div class="line"><span class="comment">#不去忽略非公共的库类</span></div><div class="line">-dontskipnonpubliclibraryclasses</div><div class="line"></div><div class="line"> <span class="comment">#优化  不优化输入的类文件</span></div><div class="line">-dontoptimize</div><div class="line"></div><div class="line"> <span class="comment">#预校验</span></div><div class="line">-dontpreverify</div><div class="line"></div><div class="line"> <span class="comment">#混淆时是否记录日志</span></div><div class="line">-verbose</div><div class="line"></div><div class="line"> <span class="comment"># 混淆时所采用的算法</span></div><div class="line">-optimizations !code/simplification/arithmetic,!field/*,!<span class="class"><span class="keyword">class</span>/<span class="title">merging</span>/*</span></div><div class="line"></div><div class="line"><span class="comment">#保护注解</span></div><div class="line">-keepattributes *Annotation*</div><div class="line"></div><div class="line"><span class="comment"># 保持哪些类不被混淆</span></div><div class="line">-keep public <span class="class"><span class="keyword">class</span> * <span class="title">extends</span> <span class="title">android</span>.<span class="title">app</span>.<span class="title">Fragment</span></span></div><div class="line">-keep public <span class="class"><span class="keyword">class</span> * <span class="title">extends</span> <span class="title">android</span>.<span class="title">app</span>.<span class="title">Activity</span></span></div><div class="line">-keep public <span class="class"><span class="keyword">class</span> * <span class="title">extends</span> <span class="title">android</span>.<span class="title">app</span>.<span class="title">Application</span></span></div><div class="line">-keep public <span class="class"><span class="keyword">class</span> * <span class="title">extends</span> <span class="title">android</span>.<span class="title">app</span>.<span class="title">Service</span></span></div><div class="line">-keep public <span class="class"><span class="keyword">class</span> * <span class="title">extends</span> <span class="title">android</span>.<span class="title">content</span>.<span class="title">BroadcastReceiver</span></span></div><div class="line">-keep public <span class="class"><span class="keyword">class</span> * <span class="title">extends</span> <span class="title">android</span>.<span class="title">content</span>.<span class="title">ContentProvider</span></span></div><div class="line">-keep public <span class="class"><span class="keyword">class</span> * <span class="title">extends</span> <span class="title">android</span>.<span class="title">app</span>.<span class="title">backup</span>.<span class="title">BackupAgentHelper</span></span></div><div class="line">-keep public <span class="class"><span class="keyword">class</span> * <span class="title">extends</span> <span class="title">android</span>.<span class="title">preference</span>.<span class="title">Preference</span></span></div><div class="line">-keep public <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">android</span>.<span class="title">vending</span>.<span class="title">licensing</span>.<span class="title">ILicensingService</span></span></div><div class="line"><span class="comment">#如果有引用v4包可以添加下面这行</span></div><div class="line">-keep public <span class="class"><span class="keyword">class</span> * <span class="title">extends</span> <span class="title">android</span>.<span class="title">support</span>.<span class="title">v4</span>.<span class="title">app</span>.<span class="title">Fragment</span></span></div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">#忽略警告</span></div><div class="line">-ignorewarning</div><div class="line"></div><div class="line"><span class="comment">##记录生成的日志数据,gradle build时在本项目根目录输出##</span></div><div class="line"><span class="comment">#apk 包内所有 class 的内部结构</span></div><div class="line">-dump proguard/class_files.txt</div><div class="line"><span class="comment">#未混淆的类和成员</span></div><div class="line">-printseeds proguard/seeds.txt</div><div class="line"><span class="comment">#列出从 apk 中删除的代码</span></div><div class="line">-printusage proguard/unused.txt</div><div class="line"><span class="comment">#混淆前后的映射</span></div><div class="line">-printmapping proguard/mapping.txt</div><div class="line"><span class="comment">########记录生成的日志数据，gradle build时 在本项目根目录输出-end######</span></div><div class="line"></div><div class="line"><span class="comment">#如果引用了v4或者v7包</span></div><div class="line">-dontwarn android.support.**</div><div class="line"></div><div class="line"><span class="comment">####混淆保护自己项目的部分代码以及引用的第三方jar包library-end####</span></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">#保持 native 方法不被混淆</span></div><div class="line">-keepclasseswithmembernames <span class="class"><span class="keyword">class</span> * &#123;</span></div><div class="line">    native &lt;methods&gt;;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">#保持自定义控件类不被混淆</span></div><div class="line">-keepclasseswithmembers <span class="class"><span class="keyword">class</span> * &#123;</span></div><div class="line">    public &lt;init&gt;(android.content.Context, android.util.AttributeSet);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">#保持自定义控件类不被混淆</span></div><div class="line">-keepclassmembers <span class="class"><span class="keyword">class</span> * <span class="title">extends</span> <span class="title">android</span>.<span class="title">app</span>.<span class="title">Activity</span> &#123;</span></div><div class="line">   public void *(android.view.View);</div><div class="line">&#125;</div><div class="line"></div><div class="line">-keep public <span class="class"><span class="keyword">class</span> * <span class="title">extends</span> <span class="title">android</span>.<span class="title">view</span>.<span class="title">View</span> &#123;</span></div><div class="line">    public &lt;init&gt;(android.content.Context);</div><div class="line">    public &lt;init&gt;(android.content.Context, android.util.AttributeSet);</div><div class="line">    public &lt;init&gt;(android.content.Context, android.util.AttributeSet, int);</div><div class="line">    public void set*(...);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">#保持 Parcelable 不被混淆</span></div><div class="line">-keep <span class="class"><span class="keyword">class</span> * <span class="title">implements</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">Parcelable</span> &#123;</span></div><div class="line">  public static final android.os.Parcelable$Creator *;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">#保持 Serializable 不被混淆</span></div><div class="line">-keepnames <span class="class"><span class="keyword">class</span> * <span class="title">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span></div><div class="line"></div><div class="line"><span class="comment">#保持 Serializable 不被混淆并且enum 类也不被混淆</span></div><div class="line">-keepclassmembers <span class="class"><span class="keyword">class</span> * <span class="title">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> &#123;</span></div><div class="line">    static final long serialVersionUID;</div><div class="line">    private static final java.io.ObjectStreamField[] serialPersistentFields;</div><div class="line">    !static !transient &lt;fields&gt;;</div><div class="line">    !private &lt;fields&gt;;</div><div class="line">    !private &lt;methods&gt;;</div><div class="line">    private void writeObject(java.io.ObjectOutputStream);</div><div class="line">    private void readObject(java.io.ObjectInputStream);</div><div class="line">    java.lang.Object writeReplace();</div><div class="line">    java.lang.Object readResolve();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">#保持枚举 enum 类不被混淆</span></div><div class="line">-keepclassmembers enum * &#123;</div><div class="line">  public static **[] values();</div><div class="line">  public static ** valueOf(java.lang.String);</div><div class="line">&#125;</div><div class="line"></div><div class="line">-keepclassmembers <span class="class"><span class="keyword">class</span> * &#123;</span></div><div class="line">    public void *ButtonClicked(android.view.View);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">#不混淆资源类</span></div><div class="line">-keepclassmembers <span class="class"><span class="keyword">class</span> **.<span class="title">R</span>$* &#123;</span></div><div class="line">    public static &lt;fields&gt;;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">#避免混淆泛型 如果混淆报错建议关掉</span></div><div class="line"><span class="comment">#-keepattributes Signature</span></div><div class="line"></div><div class="line"><span class="comment">#移除Log类打印各个等级日志的代码，打正式包的时候可以做为禁log使用，这里可以作为禁止log打印的功能使用，另外的一种实现方案是通过BuildConfig.DEBUG的变量来控制</span></div><div class="line"><span class="comment">#-assumenosideeffects class android.util.Log &#123;</span></div><div class="line"><span class="comment">#    public static *** v(...);</span></div><div class="line"><span class="comment">#    public static *** i(...);</span></div><div class="line"><span class="comment">#    public static *** d(...);</span></div><div class="line"><span class="comment">#    public static *** w(...);</span></div><div class="line"><span class="comment">#    public static *** e(...);</span></div><div class="line"><span class="comment">#&#125;</span></div><div class="line"></div><div class="line"><span class="comment">#############################################################################################</span></div><div class="line"><span class="comment">########################                 以上通用           ##################################</span></div><div class="line"><span class="comment">#############################################################################################</span></div><div class="line"></div><div class="line"><span class="comment">#######################     常用第三方模块的混淆选项         ###################################</span></div><div class="line"><span class="comment">#gson</span></div><div class="line"><span class="comment">#如果用用到Gson解析包的，直接添加下面这几行就能成功混淆，不然会报错。</span></div><div class="line">-keepattributes Signature</div><div class="line"><span class="comment"># Gson specific classes</span></div><div class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">sun</span>.<span class="title">misc</span>.<span class="title">Unsafe</span> &#123; *;</span> &#125;</div><div class="line"><span class="comment"># Application classes that will be serialized/deserialized over Gson</span></div><div class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">google</span>.<span class="title">gson</span>.** &#123; *;</span> &#125;</div><div class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">google</span>.<span class="title">gson</span>.<span class="title">stream</span>.** &#123; *;</span> &#125;</div><div class="line"></div><div class="line"><span class="comment">#mob</span></div><div class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">android</span>.<span class="title">net</span>.<span class="title">http</span>.<span class="title">SslError</span></span></div><div class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">android</span>.<span class="title">webkit</span>.**&#123;*;</span>&#125;</div><div class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">cn</span>.<span class="title">sharesdk</span>.**&#123;*;</span>&#125;</div><div class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">sina</span>.**&#123;*;</span>&#125;</div><div class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">m</span>.<span class="title">framework</span>.**&#123;*;</span>&#125;</div><div class="line">-keep <span class="class"><span class="keyword">class</span> **.<span class="title">R</span>$* &#123;*;</span>&#125;</div><div class="line">-keep <span class="class"><span class="keyword">class</span> **.<span class="title">R</span>&#123;*;</span>&#125;</div><div class="line">-dontwarn cn.sharesdk.**</div><div class="line">-dontwarn **.R$*</div><div class="line"></div><div class="line"><span class="comment">#butterknife</span></div><div class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">butterknife</span>.** &#123; *;</span> &#125;</div><div class="line">-dontwarn butterknife.internal.**</div><div class="line">-keep <span class="class"><span class="keyword">class</span> **$$<span class="title">ViewBinder</span> &#123; *;</span> &#125;</div><div class="line"></div><div class="line">-keepclasseswithmembernames <span class="class"><span class="keyword">class</span> * &#123;</span></div><div class="line">    @butterknife.* &lt;fields&gt;;</div><div class="line">&#125;</div><div class="line"></div><div class="line">-keepclasseswithmembernames <span class="class"><span class="keyword">class</span> * &#123;</span></div><div class="line">    @butterknife.* &lt;methods&gt;;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">######引用的其他Module可以直接在app的这个混淆文件里配置</span></div><div class="line"></div><div class="line"><span class="comment"># 如果使用了Gson之类的工具要使被它解析的JavaBean类即实体类不被混淆。</span></div><div class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">matrix</span>.<span class="title">app</span>.<span class="title">entity</span>.<span class="title">json</span>.** &#123; *;</span> &#125;</div><div class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">matrix</span>.<span class="title">appsdk</span>.<span class="title">network</span>.<span class="title">model</span>.** &#123; *;</span> &#125;</div><div class="line"></div><div class="line"><span class="comment">#####混淆保护自己项目的部分代码以及引用的第三方jar包library#######</span></div><div class="line"><span class="comment">#如果在当前的application module或者依赖的library module中使用了第三方的库，并不需要显式添加规则</span></div><div class="line"><span class="comment">#-libraryjars xxx</span></div><div class="line"><span class="comment">#添加了反而有可能在打包的时候遭遇同一个jar多次被指定的错误，一般只需要添加忽略警告和保持某些class不被混淆的声明。</span></div><div class="line"><span class="comment">#以libaray的形式引用了开源项目,如果不想混淆 keep 掉，在引入的module的build.gradle中设置minifyEnabled=false</span></div><div class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">nineoldandroids</span>.** &#123; *;</span> &#125;</div><div class="line">-keep interface com.nineoldandroids.** &#123; *; &#125;</div><div class="line">-dontwarn com.nineoldandroids.**</div><div class="line"><span class="comment"># 下拉刷新</span></div><div class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">in</span>.<span class="title">srain</span>.<span class="title">cube</span>.** &#123; *;</span> &#125;</div><div class="line">-keep interface <span class="keyword">in</span>.srain.cube.** &#123; *; &#125;</div><div class="line">-dontwarn <span class="keyword">in</span>.srain.cube.**</div><div class="line"><span class="comment"># observablescrollview：tab fragment</span></div><div class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">github</span>.<span class="title">ksoichiro</span>.** &#123; *;</span> &#125;</div><div class="line">-keep interface com.github.ksoichiro.** &#123; *; &#125;</div><div class="line">-dontwarn com.github.ksoichiro.**</div></pre></td></tr></table></figure>
+<p>然后执行build的release打包，会在app目录下生成一个proguard文件夹，里面有混淆前后文件的映射信息等文本文件，以后bug定位就靠它了：</p>
 
       
 
@@ -740,11 +427,11 @@ dependencies {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -752,11 +439,11 @@ dependencies {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -772,15 +459,11 @@ dependencies {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -788,15 +471,15 @@ dependencies {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -805,6 +488,10 @@ dependencies {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

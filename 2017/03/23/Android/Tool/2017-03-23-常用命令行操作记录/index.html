@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://blog.hsujee.io/2017/03/23/Android/Tool/2017-03-23-常用命令行操作记录/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="常用命令行操作记录">
-<meta property="og:updated_time" content="2017-04-12T02:25:36.153Z">
+<meta property="og:updated_time" content="2017-06-13T11:40:38.444Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="常用命令行操作记录">
 <meta name="twitter:description" content="常用命令行操作记录">
@@ -186,55 +186,32 @@
         <ul>
 <li>更改邮箱</li>
 </ul>
-<p><code>repo forall -c git config user.email xuyanjie@163.com</code>    </p>
 <a id="more"></a>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">repo forall -c git config user.email xuyanjie@<span class="number">163</span>.com</div><div class="line">```	</div><div class="line"></div><div class="line">+ 建立分支</div><div class="line"></div><div class="line">&gt; repo 管理所有的Git仓库</div><div class="line"></div><div class="line">所有目录：repo start 分支名 --all</div><div class="line"></div><div class="line">指定目录：repo start 分支名 abi/</div><div class="line"></div><div class="line">当前目录：repo start 分支名 .</div><div class="line"></div><div class="line">查看分支：repo branch</div><div class="line"></div><div class="line">&gt; git</div><div class="line"></div><div class="line">创建分支：git branch 分支名</div><div class="line"></div><div class="line">切换分支：git checkout 分支名</div><div class="line"></div><div class="line">+ 更新最新代码</div><div class="line"></div><div class="line">repo sync -c -j4</div><div class="line"></div><div class="line">```java</div><div class="line">	repo forall -c git reset --hard HEAD &amp;&amp; repo forall -c git clean -dfxq  &amp;&amp; repo sync</div></pre></td></tr></table></figure>
 <ul>
-<li>建立分支</li>
-</ul>
-<blockquote>
-<p>repo 管理所有的Git仓库</p>
-</blockquote>
-<p>所有目录：repo start 分支名 –all</p>
-<!-- more -->
-<p>指定目录：repo start 分支名 abi/</p>
-<p>当前目录：repo start 分支名 .</p>
-<p>查看分支：repo branch</p>
-<blockquote>
-<p>git</p>
-</blockquote>
-<p>创建分支：git branch 分支名</p>
-<p>切换分支：git checkout 分支名</p>
-<ul>
-<li>更新最新代码</li>
-</ul>
-<p>repo sync -c -j4</p>
-<pre><code>repo forall -c git reset --hard HEAD &amp;&amp; repo forall -c git clean -dfxq  &amp;&amp; repo sync
-</code></pre><ul>
 <li>代码编译</li>
 </ul>
 <p>预编译处理：source rlk_setenv.sh 项目名 userdebug</p>
 <p>整体编译：make -j24 2&gt;&amp;1 | tee build.log</p>
 <p>休眠2小时后编译：sleep 2h &amp;&amp; make -j24 2&gt;&amp;1 | tee build.log</p>
-<pre><code>make -j24 2&gt;&amp;1 | tee build.log
-</code></pre><ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">make -j24 <span class="number">2</span>&gt;&amp;<span class="number">1</span> | tee build.log</div></pre></td></tr></table></figure>
+<ul>
 <li>Git代码仓库操作</li>
 </ul>
 <p>从服务器拉取仓库：git pull </p>
 <p>从本地推送仓库到服务器：git push origin HEAD:refs/for/分支名  或 更目录repo upload</p>
 <p>查看改变的文件内容：git diff</p>
 <p>添加新建文件到仓库：git add 文件名</p>
-<pre><code>git add .
-</code></pre><p>提交修改文件到本地仓库：git commit -a 后修改日志文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git add .</div></pre></td></tr></table></figure>
+<p>提交修改文件到本地仓库：git commit -a 后修改日志文件</p>
 <p>查看所有分支：git branch -a </p>
 <ul>
 <li>搜索文件</li>
 </ul>
 <p>查找文件：find ./ -name “xxx”</p>
 <p>查找文包含xxx的文件：grep “xxx”</p>
-<pre><code>find ./ -name &quot;mtk_dialer_search_item_view.xml&quot;
-
-find ./ -name &quot;*.xml&quot; | xargs grep --color &quot;labelAndNumber&quot;
-</code></pre><p>查看服务器运行状态：top</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">find ./ -name <span class="string">"mtk_dialer_search_item_view.xml"</span></div><div class="line"></div><div class="line">find ./ -name <span class="string">"*.xml"</span> | xargs grep --color <span class="string">"labelAndNumber"</span></div></pre></td></tr></table></figure>
+<p>查看服务器运行状态：top</p>
 <p>重置最近一次提交：git reset HEAD^</p>
 <p>配置编译环境：source build/envsetup.sh</p>
 <ul>
@@ -487,11 +464,11 @@ find ./ -name &quot;*.xml&quot; | xargs grep --color &quot;labelAndNumber&quot;
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -499,11 +476,11 @@ find ./ -name &quot;*.xml&quot; | xargs grep --color &quot;labelAndNumber&quot;
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -519,15 +496,11 @@ find ./ -name &quot;*.xml&quot; | xargs grep --color &quot;labelAndNumber&quot;
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -535,15 +508,15 @@ find ./ -name &quot;*.xml&quot; | xargs grep --color &quot;labelAndNumber&quot;
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -552,6 +525,10 @@ find ./ -name &quot;*.xml&quot; | xargs grep --color &quot;labelAndNumber&quot;
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

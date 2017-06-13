@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://blog.hsujee.io/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总PlaySvervice/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="Android人脸检测汇总PlaySvervice">
-<meta property="og:updated_time" content="2017-04-12T02:21:54.687Z">
+<meta property="og:updated_time" content="2017-06-13T11:12:01.283Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android人脸检测汇总PlaySvervice">
 <meta name="twitter:description" content="Android人脸检测汇总PlaySvervice">
@@ -189,105 +189,26 @@
 <p>如果想了解更多请查看 <a href="http://android-developers.blogspot.com/2015/08/face-detection-in-google-play-services.html" target="_blank" rel="external">官方文档</a></p>
 <p>使用方法：</p>
 <p>build.gradle文件中添加依赖库,8.1以上版本可以根据自己需求添加</p>
-<pre><code>dependencies {
-    compile fileTree(include: [&apos;*.jar&apos;], dir: &apos;libs&apos;)
-    ...
-    ...
-    compile &apos;com.google.android.gms:play-services:9.8.0&apos;
-}
-</code></pre><p>AndroidManifest.xml的Application 中添加如下代码</p>
-<pre><code>&lt;meta-data android:name=&quot;com.google.android.gms.vision.DEPENDENCIES&quot; android:value=&quot;face&quot;/&gt;
-</code></pre><p>接下来我们获取位图对象，这是实例具体可以根据自己的方式获取Bitmap对象</p>
-<pre><code>InputStream stream = getResources().openRawResource( R.raw.face );
-Bitmap bitmap = BitmapFactory.decodeStream(stream);
-</code></pre><p>下面正式进入<strong>人脸检测</strong>阶段：</p>
-<pre><code>import com.google.android.gms.vision.face.Face;//导入人脸对象
-import com.google.android.gms.vision.face.FaceDetector;//导入人脸检测器
-
-...    ...    ...
-
-/** 创建人脸检测器 */
-FaceDetector detector = new FaceDetector.Builder( getContext() )
-        .setTrackingEnabled(false)
-        .setLandmarkType(FaceDetector.ALL_LANDMARKS)
-        .setMode(FaceDetector.FAST_MODE)
-        .build();
-
-...    ...    ...
-
-/** 进行人脸检测 */
-if (!detector.isOperational()) {//判断人脸检测器是否可用
-    //Handle contingency
-} else {
-    Frame frame = new Frame.Builder().setBitmap(bitmap).build();//需要将Bitmap文件转换成Frame对象
-    Face[] mFaces = detector.detect(frame);
-    detector.release();//使用后及时释放资源
-
-    for( int i = 0; i &lt; mFaces.size(); i++ ) {
-        Face face = mFaces.valueAt(i);
-        //绘制人脸框， scale为图片实际大小与显示大小的比例
-        left = (float) ( face.getPosition().x * scale );
-        top = (float) ( face.getPosition().y * scale );
-        right = (float) scale * ( face.getPosition().x + face.getWidth() );
-        bottom = (float) scale * ( face.getPosition().y + face.getHeight() );
-
-        canvas.drawRect( left, top, right, bottom, paint );
-    }
-}
-</code></pre><p>通过上面代码我们获取到了人脸信息，并将之绘制到图片上去，别急还有其他功能，通过人脸对象我们还可以获取到<strong>人脸关键点</strong>的信息，</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">dependencies</span> &#123;</div><div class="line">    <span class="keyword">compile</span> <span class="keyword">fileTree</span>(<span class="keyword">include</span>: [<span class="string">'*.jar'</span>], dir: <span class="string">'libs'</span>)</div><div class="line">    ...</div><div class="line">	...</div><div class="line">    <span class="keyword">compile</span> <span class="string">'com.google.android.gms:play-services:9.8.0'</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>AndroidManifest.xml的Application 中添加如下代码</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">meta-data</span> <span class="attr">android:name</span>=<span class="string">"com.google.android.gms.vision.DEPENDENCIES"</span> <span class="attr">android:value</span>=<span class="string">"face"</span>/&gt;</span></div></pre></td></tr></table></figure>
+<p>接下来我们获取位图对象，这是实例具体可以根据自己的方式获取Bitmap对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">InputStream stream = getResources().openRawResource( R.raw.face );</div><div class="line">Bitmap bitmap = BitmapFactory.decodeStream(stream);</div></pre></td></tr></table></figure>
+<p>下面正式进入<strong>人脸检测</strong>阶段：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> com.google.android.gms.vision.face.Face;<span class="comment">//导入人脸对象</span></div><div class="line"><span class="keyword">import</span> com.google.android.gms.vision.face.FaceDetector;<span class="comment">//导入人脸检测器</span></div><div class="line"></div><div class="line">...    ...    ...</div><div class="line"></div><div class="line"><span class="comment">/** 创建人脸检测器 */</span></div><div class="line">FaceDetector detector = <span class="keyword">new</span> FaceDetector.Builder( getContext() )</div><div class="line">        .setTrackingEnabled(<span class="keyword">false</span>)</div><div class="line">        .setLandmarkType(FaceDetector.ALL_LANDMARKS)</div><div class="line">        .setMode(FaceDetector.FAST_MODE)</div><div class="line">        .build();</div><div class="line"></div><div class="line">...    ...    ...</div><div class="line"></div><div class="line"><span class="comment">/** 进行人脸检测 */</span></div><div class="line"><span class="keyword">if</span> (!detector.isOperational()) &#123;<span class="comment">//判断人脸检测器是否可用</span></div><div class="line">    <span class="comment">//Handle contingency</span></div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">    Frame frame = <span class="keyword">new</span> Frame.Builder().setBitmap(bitmap).build();<span class="comment">//需要将Bitmap文件转换成Frame对象</span></div><div class="line">    Face[] mFaces = detector.detect(frame);</div><div class="line">    detector.release();<span class="comment">//使用后及时释放资源</span></div><div class="line"></div><div class="line">	<span class="keyword">for</span>( <span class="keyword">int</span> i = <span class="number">0</span>; i &lt; mFaces.size(); i++ ) &#123;</div><div class="line">        Face face = mFaces.valueAt(i);</div><div class="line">		<span class="comment">//绘制人脸框， scale为图片实际大小与显示大小的比例</span></div><div class="line">        left = (<span class="keyword">float</span>) ( face.getPosition().x * scale );</div><div class="line">        top = (<span class="keyword">float</span>) ( face.getPosition().y * scale );</div><div class="line">        right = (<span class="keyword">float</span>) scale * ( face.getPosition().x + face.getWidth() );</div><div class="line">        bottom = (<span class="keyword">float</span>) scale * ( face.getPosition().y + face.getHeight() );</div><div class="line"></div><div class="line">        canvas.drawRect( left, top, right, bottom, paint );</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过上面代码我们获取到了人脸信息，并将之绘制到图片上去，别急还有其他功能，通过人脸对象我们还可以获取到<strong>人脸关键点</strong>的信息，</p>
 <p>共十二个关键点信息：左右眼 左右耳 左右耳廓尖 鼻子基部 左右脸颊 嘴的左右角 嘴基部</p>
 <p>注：关键点信息的多少取决于人脸角度</p>
 <p>主要代码如下：</p>
-<pre><code>//通过Face对象获取人脸关键点集合
-List&lt;Landmark&gt; landmark = face.getLandmarks()
-
-... ... ...
-
-//通过循环画出所有人脸关键点信息
-for ( Landmark landmark : face.getLandmarks() ) {
-    int cx = (int) ( landmark.getPosition().x * scale );
-    int cy = (int) ( landmark.getPosition().y * scale );
-    canvas.drawCircle( cx, cy, 10, paint );
-}
-
-
-//Landmark对象
-public static final int BOTTOM_MOUTH = 0;
-public static final int LEFT_CHEEK = 1;
-public static final int LEFT_EAR_TIP = 2;
-public static final int LEFT_EAR = 3;
-public static final int LEFT_EYE = 4;
-public static final int LEFT_MOUTH = 5;
-public static final int NOSE_BASE = 6;
-public static final int RIGHT_CHEEK = 7;
-public static final int RIGHT_EAR_TIP = 8;
-public static final int RIGHT_EAR = 9;
-public static final int RIGHT_EYE = 10;
-public static final int RIGHT_MOUTH = 11;
-private final PointF aOa;
-private final int nV;
-</code></pre><p>上面我们知悉了人脸检测，人脸关键点的获取，接下来我们学习<strong>额外人脸数据</strong>的获取，通过这些数据我们可以判断人练动作，是不是很有意思！！！</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//通过Face对象获取人脸关键点集合</span></div><div class="line">List&lt;Landmark&gt; landmark = face.getLandmarks()</div><div class="line"></div><div class="line">... ... ...</div><div class="line"></div><div class="line"><span class="comment">//通过循环画出所有人脸关键点信息</span></div><div class="line"><span class="keyword">for</span> ( Landmark landmark : face.getLandmarks() ) &#123;</div><div class="line">    <span class="keyword">int</span> cx = (<span class="keyword">int</span>) ( landmark.getPosition().x * scale );</div><div class="line">    <span class="keyword">int</span> cy = (<span class="keyword">int</span>) ( landmark.getPosition().y * scale );</div><div class="line">    canvas.drawCircle( cx, cy, <span class="number">10</span>, paint );</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">//Landmark对象</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> BOTTOM_MOUTH = <span class="number">0</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> LEFT_CHEEK = <span class="number">1</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> LEFT_EAR_TIP = <span class="number">2</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> LEFT_EAR = <span class="number">3</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> LEFT_EYE = <span class="number">4</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> LEFT_MOUTH = <span class="number">5</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> NOSE_BASE = <span class="number">6</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RIGHT_CHEEK = <span class="number">7</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RIGHT_EAR_TIP = <span class="number">8</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RIGHT_EAR = <span class="number">9</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RIGHT_EYE = <span class="number">10</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RIGHT_MOUTH = <span class="number">11</span>;</div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> PointF aOa;</div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> nV;</div></pre></td></tr></table></figure>
+<p>上面我们知悉了人脸检测，人脸关键点的获取，接下来我们学习<strong>额外人脸数据</strong>的获取，通过这些数据我们可以判断人练动作，是不是很有意思！！！</p>
 <p>getIsSmilingProbability(),getIsLeftEyeOpenProbability()和getIsRightEyeOpenProbability()方法会返回一个0.0到1.0的浮点数，你可以用其确定眼睛是否睁开或者检测到的这个人是否在笑。返回值越接近1.0，这个人就越有可能在小或者他的左右眼越有可能是睁开的。</p>
 <p>你也可以通过检查图像的欧拉值找出一张图像中人脸在Y轴和Z轴上的角度。Z欧拉值的一直都能收到。但是，要想接受到X值你必须使用精确模式。在下面的代码片段中你会看到如何获取这些值。</p>
-<pre><code>for( int i = 0; i &lt; mFaces.size(); i++ ) {
-    Face face = mFaces.valueAt(i);
-    float smilingProbability = face.getIsSmilingProbability();//微笑
-    float leftEyeOpenProbability = face.getIsLeftEyeOpenProbability();//左眼状态
-    float rightEyeOpenProbability = face.getIsRightEyeOpenProbability();//右眼状态
-    float eulerY = face.getEulerY();
-    float eulerZ = face.getEulerZ();
-}
-</code></pre><ul>
-<li><p>欧拉Y角度参考</p>
-<pre><code>欧拉 Y 角度         可见的关键点
-&lt; -36°             左眼，嘴的左半边，左耳，鼻子基部，左脸颊
--36° to -12°     嘴的左半边，鼻子基部，嘴的底部，右眼，左眼，左脸颊，左耳尖
--12° to 12°         右眼，左眼，鼻子基部，左脸颊，右脸颊，嘴的左半边，嘴的右半边，嘴的底部
-12° to 36°         嘴的右半边，鼻子基部，嘴的底部，左眼，右眼，右脸颊，右耳尖
-&gt; 36°             右眼，嘴的右半边，右耳，鼻子基部，右脸颊
-</code></pre></li>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span>( <span class="keyword">int</span> i = <span class="number">0</span>; i &lt; mFaces.size(); i++ ) &#123;</div><div class="line">	Face face = mFaces.valueAt(i);</div><div class="line">	<span class="keyword">float</span> smilingProbability = face.getIsSmilingProbability();<span class="comment">//微笑</span></div><div class="line">	<span class="keyword">float</span> leftEyeOpenProbability = face.getIsLeftEyeOpenProbability();<span class="comment">//左眼状态</span></div><div class="line">	<span class="keyword">float</span> rightEyeOpenProbability = face.getIsRightEyeOpenProbability();<span class="comment">//右眼状态</span></div><div class="line">	<span class="keyword">float</span> eulerY = face.getEulerY();</div><div class="line">	<span class="keyword">float</span> eulerZ = face.getEulerZ();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>欧拉Y角度参考</li>
 </ul>
-
+<figure class="highlight md"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">欧拉 Y 角度	     可见的关键点</div><div class="line"><span class="xml"><span class="tag">&lt; <span class="attr">-36</span>°	         左眼，嘴的左半边，左耳，鼻子基部，左脸颊</span></span></div><div class="line"><span class="attr">-36</span>° <span class="attr">to</span> <span class="attr">-12</span>°	 嘴的左半边，鼻子基部，嘴的底部，右眼，左眼，左脸颊，左耳尖</div><div class="line"><span class="attr">-12</span>° <span class="attr">to</span> <span class="attr">12</span>°	     右眼，左眼，鼻子基部，左脸颊，右脸颊，嘴的左半边，嘴的右半边，嘴的底部</div><div class="line"><span class="attr">12</span>° <span class="attr">to</span> <span class="attr">36</span>°	     嘴的右半边，鼻子基部，嘴的底部，左眼，右眼，右脸颊，右耳尖</div><div class="line">&gt; 36°	         右眼，嘴的右半边，右耳，鼻子基部，右脸颊</div></pre></td></tr></table></figure>
       
 
       
@@ -385,11 +306,11 @@ private final int nV;
   
 <nav id="article-nav">
   
-    <a href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总-Media-FaceDetector/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2017/01/25/Android/CustemView/2017-01-25-Android自定义相机简介/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Android人脸检测汇总Media-FaceDetection
+          Android自定义相机简介
         
       </div>
     </a>
@@ -520,11 +441,11 @@ private final int nV;
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -532,11 +453,11 @@ private final int nV;
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -552,15 +473,11 @@ private final int nV;
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -568,15 +485,15 @@ private final int nV;
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -585,6 +502,10 @@ private final int nV;
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

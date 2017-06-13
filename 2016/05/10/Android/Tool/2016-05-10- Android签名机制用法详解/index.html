@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://blog.hsujee.io/2016/05/10/Android/Tool/2016-05-10- Android签名机制用法详解/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="Android签名机制">
-<meta property="og:updated_time" content="2017-04-12T02:24:44.903Z">
+<meta property="og:updated_time" content="2017-06-13T11:34:58.429Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android签名机制用法详解">
 <meta name="twitter:description" content="Android签名机制">
@@ -185,93 +185,29 @@
       
         <p>Android独有的安全机制有：权限机制，签名机制，混淆机制等，这里我们来了解签名机制的使用方法<br>签名机制主要作用：升级App，检查权限</p>
 <a id="more"></a>
-<ul>
-<li><p><strong>升级App</strong></p>
-<p>  用户在升级一款已经安装过的App时，如果程序的修改来自于同一来源，则允许升级安装，否则会提示签名不一致无法安装的提示。</p>
-</li>
-<li><p><strong>权限检查</strong></p>
-<p>  对于申请权限的  protection level 为 signature 或者 signatureOrSystem 的，会检查权限申请者和权限声明者的证书是否是一致的。</p>
-</li>
-<li><p><strong>生成keystore</strong></p>
-<pre><code>[plain] view plain copy
-keytool -genkey -alias mykey -keyalg RSA -validity 40000 -keystore demo.keystore  
-</code></pre></li>
-<li><p><strong>命令说明：</strong></p>
-<pre><code>-genkey 产生密钥  
--alias mykey 别名 mykey  
--keyalg RSA 使用RSA算法对签名加密  
--validity 40000 有效期限4000天  
--keystore demo.keystore  
-</code></pre></li>
-<li><p><strong>密钥和证书管理工具命令解释如下（keytool）</strong></p>
-<pre><code>-certreq            生成证书请求
--changealias        更改条目的别名
--delete             删除条目
--exportcert         导出证书
--genkeypair         生成密钥对
--genseckey          生成密钥
--gencert            根据证书请求生成证书
--importcert         导入证书或证书链
--importpass         导入口令
--importkeystore     从其他密钥库导入一个或所有条目
--keypasswd          更改条目的密钥口令
--list               列出密钥库中的条目
--printcert          打印证书内容
--printcertreq       打印证书请求的内容
--printcrl           打印 CRL 文件的内容
--storepasswd        更改密钥库的存储口令
-</code></pre></li>
-</ul>
-<ul>
-<li><p><strong>对apk进行签名</strong></p>
-<pre><code>[plain] view plain copy
-jarsigner -verbose -keystore demo.keystore -signedjar test_signed.apk test.apk mykey  
-</code></pre><p>  test_signed.apk是签名之后的文件<br>  test.apk是需要签名的文件<br>  另外需要注意的是，如果你的jdk版本在1.7以上，你在对apk签名时，需要加上这个参数：</p>
-<pre><code>[plain] view plain copy
--digestalg SHA1 -sigalg MD5withRSA  
-</code></pre><p>  否则会出现：Failure [INSTALL_PARSE_FAILED_NO_CERTIFICATES]的错误。</p>
-</li>
-<li><p><strong>签名工具用法:（jarsigner）</strong></p>
-<pre><code>jarsigner [选项] jar-file 别名
-jarsigner -verify [选项] jar-file [别名...]
-[-keystore &lt;url&gt;]           密钥库位置
-[-storepass &lt;口令&gt;]         用于密钥库完整性的口令
-[-storetype &lt;类型&gt;]         密钥库类型
-[-keypass &lt;口令&gt;]           私有密钥的口令 (如果不同)
-[-certchain &lt;文件&gt;]         替代证书链文件的名称
-[-sigfile &lt;文件&gt;]           .SF/.DSA 文件的名称
-[-signedjar &lt;文件&gt;]         已签名的 JAR 文件的名称
-[-digestalg &lt;算法&gt;]        摘要算法的名称
-[-sigalg &lt;算法&gt;]           签名算法的名称
-[-verify]                   验证已签名的 JAR 文件
-[-verbose[:suboptions]]     签名/验证时输出详细信息。子选项可以是 all, grouped 或 summary
-[-certs]                    输出详细信息和验证时显示证书
-[-tsa &lt;url&gt;]                时间戳颁发机构的位置
-[-tsacert &lt;别名&gt;]           时间戳颁发机构的公共密钥证书
-[-tsapolicyid &lt;oid&gt;]        时间戳颁发机构的 TSAPolicyID
-[-altsigner &lt;类&gt;]           替代的签名机制的类名
-[-altsignerpath &lt;路径列表&gt;] 替代的签名机制的位置
-[-internalsf]               在签名块内包含 .SF 文件
-[-sectionsonly]             不计算整个清单的散列
-[-protected]                密钥库具有受保护验证路径
-[-providerName &lt;名称&gt;]      提供方名称
-[-providerClass &lt;类&gt;        加密服务提供方的名称
-  [-providerArg &lt;参数&gt;]]... 主类文件和构造器参数
-[-strict]                   将警告视为错误
-</code></pre></li>
-<li><p><strong>查看签名信息</strong></p>
-<p>  1、查看keystore的信息</p>
-<pre><code>[plain] view plain copy
-keytool -list -keystore demo.keystore -alias mykey -v  
-</code></pre><p>  2、查看keystore的公钥证书信息</p>
-<pre><code>[plain] view plain copy
-keytool -list -keystore demo.keystore -alias mykey -rfc  
-</code></pre><p>  （注：获取Base64格式的公钥证书，RFC 1421）</p>
-<p>  3、查看apk的签名信息</p>
-<pre><code>[plain] view plain copy
-jarsigner -verify -verbose -certs &lt;your_apk_path.apk&gt;  
-</code></pre></li>
-</ul>
+<p><strong>升级App</strong></p>
+<p>用户在升级一款已经安装过的App时，如果程序的修改来自于同一来源，则允许升级安装，否则会提示签名不一致无法安装的提示。</p>
+<p><strong>权限检查</strong></p>
+<p>对于申请权限的  protection level 为 signature 或者 signatureOrSystem 的，会检查权限申请者和权限声明者的证书是否是一致的。</p>
+<p><strong>生成keystore</strong></p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">keytool -genkey -alias mykey -keyalg RSA -validity 40000 -keystore demo.keystore</div></pre></td></tr></table></figure>
+<p><strong>命令说明：</strong></p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">	-genkey 产生密钥  </div><div class="line">	-alias mykey 别名 mykey  </div><div class="line">	-keyalg RSA 使用RSA算法对签名加密  </div><div class="line">	-validity 40000 有效期限4000天  </div><div class="line">	-keystore demo.keystore </div><div class="line">``` </div><div class="line"></div><div class="line">**密钥和证书管理工具命令解释如下（keytool）**</div><div class="line"></div><div class="line">```mk</div><div class="line">	-certreq            生成证书请求</div><div class="line">	-changealias        更改条目的别名</div><div class="line">	-delete             删除条目</div><div class="line">	-exportcert         导出证书</div><div class="line">	-genkeypair         生成密钥对</div><div class="line">	-genseckey          生成密钥</div><div class="line">	-gencert            根据证书请求生成证书</div><div class="line">	-importcert         导入证书或证书链</div><div class="line">	-importpass         导入口令</div><div class="line">	-importkeystore     从其他密钥库导入一个或所有条目</div><div class="line">	-keypasswd          更改条目的密钥口令</div><div class="line">	-list               列出密钥库中的条目</div><div class="line">	-printcert          打印证书内容</div><div class="line">	-printcertreq       打印证书请求的内容</div><div class="line">	-printcrl           打印 CRL 文件的内容</div><div class="line">	-storepasswd        更改密钥库的存储口令</div></pre></td></tr></table></figure>
+<p><strong>对apk进行签名</strong></p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[plain] view plain copy</div><div class="line">jarsigner -verbose -keystore demo.keystore -signedjar test_signed.apk test.apk mykey</div></pre></td></tr></table></figure>
+<p>test_signed.apk是签名之后的文件<br>test.apk是需要签名的文件<br>另外需要注意的是，如果你的jdk版本在1.7以上，你在对apk签名时，需要加上这个参数：</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[plain] view plain copy</div><div class="line">-digestalg SHA1 -sigalg MD5withRSA</div></pre></td></tr></table></figure>
+<p>否则会出现：Failure [INSTALL_PARSE_FAILED_NO_CERTIFICATES]的错误。</p>
+<p><strong>签名工具用法:（jarsigner）</strong></p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">jarsigner [选项] jar-file 别名</div><div class="line">jarsigner -verify [选项] jar-file [别名...]</div><div class="line">[-keystore &lt;url&gt;]           密钥库位置</div><div class="line">[-storepass &lt;口令&gt;]         用于密钥库完整性的口令</div><div class="line">[-storetype &lt;类型&gt;]         密钥库类型</div><div class="line">[-keypass &lt;口令&gt;]           私有密钥的口令 (如果不同)</div><div class="line">[-certchain &lt;文件&gt;]         替代证书链文件的名称</div><div class="line">[-sigfile &lt;文件&gt;]           .SF/.DSA 文件的名称</div><div class="line">[-signedjar &lt;文件&gt;]         已签名的 JAR 文件的名称</div><div class="line">[-digestalg &lt;算法&gt;]        摘要算法的名称</div><div class="line">[-sigalg &lt;算法&gt;]           签名算法的名称</div><div class="line">[-verify]                   验证已签名的 JAR 文件</div><div class="line">[-verbose[:suboptions]]     签名/验证时输出详细信息。子选项可以是 all, grouped 或 summary</div><div class="line">[-certs]                    输出详细信息和验证时显示证书</div><div class="line">[-tsa &lt;url&gt;]                时间戳颁发机构的位置</div><div class="line">[-tsacert &lt;别名&gt;]           时间戳颁发机构的公共密钥证书</div><div class="line">[-tsapolicyid &lt;oid&gt;]        时间戳颁发机构的 TSAPolicyID</div><div class="line">[-altsigner &lt;类&gt;]           替代的签名机制的类名</div><div class="line">[-altsignerpath &lt;路径列表&gt;] 替代的签名机制的位置</div><div class="line">[-internalsf]               在签名块内包含 .SF 文件</div><div class="line">[-sectionsonly]             不计算整个清单的散列</div><div class="line">[-protected]                密钥库具有受保护验证路径</div><div class="line">[-providerName &lt;名称&gt;]      提供方名称</div><div class="line">[-providerClass &lt;类&gt;        加密服务提供方的名称</div><div class="line">[-providerArg &lt;参数&gt;]]... 主类文件和构造器参数</div><div class="line">[-strict]                   将警告视为错误</div></pre></td></tr></table></figure>
+<p><strong>查看签名信息</strong></p>
+<p>1、查看keystore的信息</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[plain] view plain copy</div><div class="line">keytool -list -keystore demo.keystore -alias mykey -v</div></pre></td></tr></table></figure>
+<p>2、查看keystore的公钥证书信息</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[plain] view plain copy</div><div class="line">keytool -list -keystore demo.keystore -alias mykey -rfc</div></pre></td></tr></table></figure>
+<p>（注：获取Base64格式的公钥证书，RFC 1421）</p>
+<p>3、查看apk的签名信息</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[plain] view plain copy</div><div class="line">jarsigner -verify -verbose -certs &lt;your_apk_path.apk&gt;</div></pre></td></tr></table></figure>
 
       
 
@@ -505,11 +441,11 @@ jarsigner -verify -verbose -certs &lt;your_apk_path.apk&gt;
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -517,11 +453,11 @@ jarsigner -verify -verbose -certs &lt;your_apk_path.apk&gt;
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -537,15 +473,11 @@ jarsigner -verify -verbose -certs &lt;your_apk_path.apk&gt;
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -553,15 +485,15 @@ jarsigner -verify -verbose -certs &lt;your_apk_path.apk&gt;
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -570,6 +502,10 @@ jarsigner -verify -verbose -certs &lt;your_apk_path.apk&gt;
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

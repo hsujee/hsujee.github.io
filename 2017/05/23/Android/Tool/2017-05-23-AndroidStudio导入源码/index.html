@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://blog.hsujee.io/2017/05/23/Android/Tool/2017-05-23-AndroidStudio导入源码/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="AndroidStudio导入源码">
-<meta property="og:updated_time" content="2017-06-06T11:55:55.061Z">
+<meta property="og:updated_time" content="2017-06-13T11:41:36.406Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="AndroidStudio导入源码">
 <meta name="twitter:description" content="AndroidStudio导入源码">
@@ -187,10 +187,8 @@
 <p>较新版本的AS中自带SDK，然后第一次用的时候新的SDK会下载Build Tool 等，大约需要2.25G空间。不想下载的话可以找到android-studio/bin目录下的idea.properties文件，在最后添加一行disable.android.first.run=true，然后再启动AS就好了,然后进去手动配置SDK位置。<br>（注：每次升级后这些配置都会恢复默认。但SDK不用重新配置）</p>
 <a id="more"></a>
 <p>二、生成导入AS所需配置文件(*.ipr)<br>为了成功将源码导入AS，我们需要先生成AS可是别的项目工程配置文件<br>在源码根目录依次执行</p>
-<pre><code>source build/ensetup.sh
-
-make idegen &amp;&amp; development/tools/idegen/idegen.sh
-</code></pre><p>之后会出现类似下面的结果:</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">source build/ensetup.sh</div><div class="line">make idegen &amp;&amp; development/tools/idegen/idegen.sh</div></pre></td></tr></table></figure>
+<p>之后会出现类似下面的结果:</p>
 <p>这时会在源码的根目录下生成android.ipr，android.iws和android.iml三个文件</p>
 <p>注:生成的文件包括：</p>
 <p>①android.iws 包含工作区的个人设置，比如打开过的文件，版本控制工具的配置，本地修改历史，运行和debug的配置等。</p>
@@ -431,11 +429,11 @@ make idegen &amp;&amp; development/tools/idegen/idegen.sh
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -443,11 +441,11 @@ make idegen &amp;&amp; development/tools/idegen/idegen.sh
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -463,15 +461,11 @@ make idegen &amp;&amp; development/tools/idegen/idegen.sh
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -479,15 +473,15 @@ make idegen &amp;&amp; development/tools/idegen/idegen.sh
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -496,6 +490,10 @@ make idegen &amp;&amp; development/tools/idegen/idegen.sh
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

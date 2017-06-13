@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://blog.hsujee.io/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总-Media-FaceDetector/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="基于android.media.FaceDetector的静态人脸检测">
-<meta property="og:updated_time" content="2017-04-12T02:21:45.277Z">
+<meta property="og:updated_time" content="2017-06-13T11:06:41.539Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android人脸检测汇总Media-FaceDetection">
 <meta name="twitter:description" content="基于android.media.FaceDetector的静态人脸检测">
@@ -185,31 +185,32 @@
       
         <h3 id="基于android-media-FaceDetector的静态人脸检测"><a href="#基于android-media-FaceDetector的静态人脸检测" class="headerlink" title="基于android.media.FaceDetector的静态人脸检测"></a>基于android.media.FaceDetector的静态人脸检测</h3><p>使用android.media.FaceDetector可以对图片中的人脸进行检测，此API的不足之处由一下使用代码可见，只能识别人脸眼睛中点Point和眼睛之间的距离，再无其他识别，请大家根据实际需求选择和使用，曾经在相机中抓取数据流，转换成bitmap试过，由于内存有限发现卡顿现象严重</p>
 <a id="more"></a>
-<pre><code>import android.media.FaceDetector;  //人脸识别的关键类  
-import android.media.FaceDetector.Face;  
+<pre><code class="java"><span class="keyword">import</span> android.media.FaceDetector;  <span class="comment">//人脸识别的关键类  </span>
+<span class="keyword">import</span> android.media.FaceDetector.Face;  
 
-int numberOfFace = 5;
-BitmapFactory.Options option = new BitmapFactory.Options();  
-option.inPreferredConfig = Bitmap.Config.RGB_565;  //构造位图生成的参数，必须为565。类名+enum
+<span class="keyword">int</span> numberOfFace = <span class="number">5</span>;
+BitmapFactory.Options option = <span class="keyword">new</span> BitmapFactory.Options();  
+option.inPreferredConfig = Bitmap.Config.RGB_565;  <span class="comment">//构造位图生成的参数，必须为565。类名+enum</span>
 
 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ddd, BitmapFactoryOptionsbfo);
-FaceDetector.Face[] faces = new FaceDetector.Face[numberOfFace]; //分配人脸数组空间 
-FaceDetector detector= new FaceDetector(bitmap.getWidth(), bitmap.getHeight(), numberOfFace);
-int numberOfFaceDetected = detector.findFaces(myBitmap, myFace);    //FaceDetector 构造实例并解析人脸,返回实际检测人脸个数
+FaceDetector.Face[] faces = <span class="keyword">new</span> FaceDetector.Face[numberOfFace]; <span class="comment">//分配人脸数组空间 </span>
+FaceDetector detector= <span class="keyword">new</span> FaceDetector(bitmap.getWidth(), bitmap.getHeight(), numberOfFace);
+<span class="keyword">int</span> numberOfFaceDetected = detector.findFaces(myBitmap, myFace);    <span class="comment">//FaceDetector 构造实例并解析人脸,返回实际检测人脸个数</span>
 
-for(int i=0; i &lt; numberOfFaceDetected; i++){  
+<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; numberOfFaceDetected; i++){  
     Face face = faces[i];  
-    PointF point = new PointF();  
-    face.getMidPoint(point);  //获取眼睛中点
-    int eyesDistance = face.eyesDistance();   //得到人脸中心点和眼间距离参数，并对每个人脸进行画框  
-    canvas.drawRect(            //矩形框的位置参数  
-            (int)(myMidPoint.x - myEyesDistance),  
-            (int)(myMidPoint.y - myEyesDistance),  
-            (int)(myMidPoint.x + myEyesDistance),  
-            (int)(myMidPoint.y + myEyesDistance),  
+    PointF point = <span class="keyword">new</span> PointF();  
+    face.getMidPoint(point);  <span class="comment">//获取眼睛中点</span>
+    <span class="keyword">int</span> eyesDistance = face.eyesDistance();   <span class="comment">//得到人脸中心点和眼间距离参数，并对每个人脸进行画框  </span>
+    canvas.drawRect(            <span class="comment">//矩形框的位置参数  </span>
+            (<span class="keyword">int</span>)(myMidPoint.x - myEyesDistance),  
+            (<span class="keyword">int</span>)(myMidPoint.y - myEyesDistance),  
+            (<span class="keyword">int</span>)(myMidPoint.x + myEyesDistance),  
+            (<span class="keyword">int</span>)(myMidPoint.y + myEyesDistance),  
             myPaint);  
-}  
+}
 </code></pre>
+
       
 
       
@@ -307,18 +308,18 @@ for(int i=0; i &lt; numberOfFaceDetected; i++){
   
 <nav id="article-nav">
   
-    <a href="/2017/01/25/Android/CustemView/2017-01-25-Android自定义相机简介/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2017/02/15/Android/CustemView/2017-02-16-Android自定义View扫描界面/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Android自定义相机简介
+          Android自定义View扫描界面
         
       </div>
     </a>
   
   
-    <a href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总PlaySvervice/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Android人脸检测汇总PlaySvervice</div>
+    <a href="/2017/02/17/Android/exeption/2017-02-17-解决Android65535问题/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">解决Android65535问题</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -442,11 +443,11 @@ for(int i=0; i &lt; numberOfFaceDetected; i++){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -454,11 +455,11 @@ for(int i=0; i &lt; numberOfFaceDetected; i++){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -474,15 +475,11 @@ for(int i=0; i &lt; numberOfFaceDetected; i++){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -490,15 +487,15 @@ for(int i=0; i &lt; numberOfFaceDetected; i++){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -507,6 +504,10 @@ for(int i=0; i &lt; numberOfFaceDetected; i++){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

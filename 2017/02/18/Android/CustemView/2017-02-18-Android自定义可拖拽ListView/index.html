@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="Android自定义可拖拽ListView">
 <meta property="og:image" content="https://blog.hsujee.io/assets/images/android/android自定义可拖拽ListView.gif">
-<meta property="og:updated_time" content="2017-04-12T02:18:13.226Z">
+<meta property="og:updated_time" content="2017-06-13T11:20:09.931Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android自定义可拖拽ListView">
 <meta name="twitter:description" content="Android自定义可拖拽ListView">
@@ -191,584 +191,30 @@
 <p>下面先罗列出此自定义view中所用到的主要方法，在这些基础上我们进行如题所说的控件，会变得简单起来</p>
 <blockquote>
 <p>映射一个点到列表的位置。就是说：参数是手指按在屏幕的坐标，返回值是这个坐标所存在的item的position值。</p>
-</blockquote>
-<pre><code>/** 
- * Maps a point to a position in the list. 
- * 
- * @param x X in local coordinate 
- * @param y Y in local coordinate 
- * @return The position of the item which contains the specified point, or 
- *         {@link #INVALID_POSITION} if the point does not intersect an item. 
- */  
-public int pointToPosition(int x, int y)
-</code></pre><blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/** </span></div><div class="line"> * Maps a point to a position in the list. </div><div class="line"> * </div><div class="line"> * <span class="doctag">@param</span> x X in local coordinate </div><div class="line"> * <span class="doctag">@param</span> y Y in local coordinate </div><div class="line"> * <span class="doctag">@return</span> The position of the item which contains the specified point, or </div><div class="line"> *         &#123;<span class="doctag">@link</span> #INVALID_POSITION&#125; if the point does not intersect an item. </div><div class="line"> */  </div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">pointToPosition</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span></span></div></pre></td></tr></table></figure>
 <p>此方法是根据获得的position值来获取对应position的item的View对象。</p>
 </blockquote>
-<pre><code>/** 
- * Returns the view at the specified position in the group. 
- * 
- * @param index the position at which to get the view from 
- * @return the view at the specified position or null if the position 
- *         does not exist within the group 
- */  
-public View getChildAt(int index)  
-</code></pre><blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/** </span></div><div class="line"> * Returns the view at the specified position in the group. </div><div class="line"> * </div><div class="line"> * <span class="doctag">@param</span> index the position at which to get the view from </div><div class="line"> * <span class="doctag">@return</span> the view at the specified position or null if the position </div><div class="line"> *         does not exist within the group </div><div class="line"> */  </div><div class="line"><span class="function"><span class="keyword">public</span> View <span class="title">getChildAt</span><span class="params">(<span class="keyword">int</span> index)</span></span></div></pre></td></tr></table></figure>
+<blockquote>
 <p>使用以上方法需要注意，在我们日常的ListView开发中，经常需要对View对象进行复用优化。那么着就引起了接下来的问题，对象被复用后，在传入position这个位置值时，那么我们获取的对象就有可能是之前复用的。换句话说，我们的ListView优化后，屏幕上显示多少个item，也就有多少个View对象，如果有10个View对象的话，当我点击第18个item的时候，通过此方法，返回的对象实际上就是第八个item的实例，那么如何解决这个问题，Google提供了下面这个方法:</p>
 </blockquote>
-<pre><code>/** 
- * Returns the position within the adapter&apos;s data set for the first item 
- * displayed on screen. 
- * 
- * @return The position within the adapter&apos;s data set 
- */  
-public int getFirstVisiblePosition()  
-</code></pre><p>这里返回的值，是当前屏幕上显示的所有item中得第一个item的position值。所以我们的用法如下，这样我们得到的对象就是当前点击的item正在使用的View对象（如果复用，就是复用后的）。</p>
-<pre><code>getChildAt(position - getFirstVisiblePosition())  
-</code></pre><blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/** </span></div><div class="line"> * Returns the position within the adapter's data set for the first item </div><div class="line"> * displayed on screen. </div><div class="line"> * </div><div class="line"> * <span class="doctag">@return</span> The position within the adapter's data set </div><div class="line"> */  </div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getFirstVisiblePosition</span><span class="params">()</span></span></div></pre></td></tr></table></figure>
+<p>这里返回的值，是当前屏幕上显示的所有item中得第一个item的position值。所以我们的用法如下，这样我们得到的对象就是当前点击的item正在使用的View对象（如果复用，就是复用后的）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">getChildAt(position - getFirstVisiblePosition())</div></pre></td></tr></table></figure>
+<blockquote>
 <p> 当我们拖动item的时候，为了知道此时是正在拖动的状态和拖动的item是哪个，就需要让这个item的整体布局跟着手指来移动。那么我们获取到item的布局，然后让他跟着手指移动？很抱歉，布局已经绘制了，状态是locked。重新new一个布局来跟着手指拖动？先不说这样很麻烦，对于应用中得各种各样的item布局，难道还要绘制各种各样的View来对应？google同样提供了如下方法：</p>
 </blockquote>
-<pre><code>/** 
- * &lt;p&gt;Enables or disables the drawing cache. When the drawing cache is enabled, the next call 
- * to {@link #getDrawingCache()} or {@link #buildDrawingCache()} will draw the view in a 
- * bitmap. Calling {@link #draw(android.graphics.Canvas)} will not draw from the cache when 
- * the cache is enabled. To benefit from the cache, you must request the drawing cache by 
- * calling {@link #getDrawingCache()} and draw it on screen if the returned bitmap is not 
- * null.&lt;/p&gt; 
- * 
- * &lt;p&gt;Enabling the drawing cache is similar to 
- * {@link #setLayerType(int, android.graphics.Paint) setting a layer} when hardware 
- * acceleration is turned off. When hardware acceleration is turned on, enabling the 
- * drawing cache has no effect on rendering because the system uses a different mechanism 
- * for acceleration which ignores the flag. If you want to use a Bitmap for the view, even 
- * when hardware acceleration is enabled, see {@link #setLayerType(int, android.graphics.Paint)} 
- * for information on how to enable software and hardware layers.&lt;/p&gt; 
- * 
- * &lt;p&gt;This API can be used to manually generate 
- * a bitmap copy of this view, by setting the flag to &lt;code&gt;true&lt;/code&gt; and calling 
- * {@link #getDrawingCache()}.&lt;/p&gt; 
- * 
- * @param enabled true to enable the drawing cache, false otherwise 
- * 
- * @see #isDrawingCacheEnabled() 
- * @see #getDrawingCache() 
- * @see #buildDrawingCache() 
- * @see #setLayerType(int, android.graphics.Paint) 
- */  
-public void setDrawingCacheEnabled(boolean enabled)  
-</code></pre><p>将View的绘制进行缓存成Bitmap，那这回简单了，拖动哪个item，将它变成皂片就可以了。</p>
-<pre><code>/** 
- * &lt;p&gt;Calling this method is equivalent to calling &lt;code&gt;getDrawingCache(false)&lt;/code&gt;.&lt;/p&gt; 
- * 
- * @return A non-scaled bitmap representing this view or null if cache is disabled. 
- * 
- * @see #getDrawingCache(boolean) 
- */  
-public Bitmap getDrawingCache() 
-</code></pre><blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/** </span></div><div class="line"> * &lt;p&gt;Enables or disables the drawing cache. When the drawing cache is enabled, the next call </div><div class="line"> * to &#123;<span class="doctag">@link</span> #getDrawingCache()&#125; or &#123;<span class="doctag">@link</span> #buildDrawingCache()&#125; will draw the view in a </div><div class="line"> * bitmap. Calling &#123;<span class="doctag">@link</span> #draw(android.graphics.Canvas)&#125; will not draw from the cache when </div><div class="line"> * the cache is enabled. To benefit from the cache, you must request the drawing cache by </div><div class="line"> * calling &#123;<span class="doctag">@link</span> #getDrawingCache()&#125; and draw it on screen if the returned bitmap is not </div><div class="line"> * null.&lt;/p&gt; </div><div class="line"> * </div><div class="line"> * &lt;p&gt;Enabling the drawing cache is similar to </div><div class="line"> * &#123;<span class="doctag">@link</span> #setLayerType(int, android.graphics.Paint) setting a layer&#125; when hardware </div><div class="line"> * acceleration is turned off. When hardware acceleration is turned on, enabling the </div><div class="line"> * drawing cache has no effect on rendering because the system uses a different mechanism </div><div class="line"> * for acceleration which ignores the flag. If you want to use a Bitmap for the view, even </div><div class="line"> * when hardware acceleration is enabled, see &#123;<span class="doctag">@link</span> #setLayerType(int, android.graphics.Paint)&#125; </div><div class="line"> * for information on how to enable software and hardware layers.&lt;/p&gt; </div><div class="line"> * </div><div class="line"> * &lt;p&gt;This API can be used to manually generate </div><div class="line"> * a bitmap copy of this view, by setting the flag to &lt;code&gt;true&lt;/code&gt; and calling </div><div class="line"> * &#123;<span class="doctag">@link</span> #getDrawingCache()&#125;.&lt;/p&gt; </div><div class="line"> * </div><div class="line"> * <span class="doctag">@param</span> enabled true to enable the drawing cache, false otherwise </div><div class="line"> * </div><div class="line"> * <span class="doctag">@see</span> #isDrawingCacheEnabled() </div><div class="line"> * <span class="doctag">@see</span> #getDrawingCache() </div><div class="line"> * <span class="doctag">@see</span> #buildDrawingCache() </div><div class="line"> * <span class="doctag">@see</span> #setLayerType(int, android.graphics.Paint) </div><div class="line"> */  </div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDrawingCacheEnabled</span><span class="params">(<span class="keyword">boolean</span> enabled)</span></span></div></pre></td></tr></table></figure>
+<p>将View的绘制进行缓存成Bitmap，那这回简单了，拖动哪个item，将它变成皂片就可以了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/** </span></div><div class="line"> * &lt;p&gt;Calling this method is equivalent to calling &lt;code&gt;getDrawingCache(false)&lt;/code&gt;.&lt;/p&gt; </div><div class="line"> * </div><div class="line"> * <span class="doctag">@return</span> A non-scaled bitmap representing this view or null if cache is disabled. </div><div class="line"> * </div><div class="line"> * <span class="doctag">@see</span> #getDrawingCache(boolean) </div><div class="line"> */  </div><div class="line"><span class="function"><span class="keyword">public</span> Bitmap <span class="title">getDrawingCache</span><span class="params">()</span></span></div></pre></td></tr></table></figure>
+<blockquote>
 <p>了解了以上所有方法，那么我们可以开始我们的正式开发了，首先我们理清思路：在按下一定时间后，显示出对应item的皂片，咱后根据手指拖动，实时跟新皂片的位置，并进行item的更新，以达到替换效果。然后在停止拖动的时候释放资源。</p>
 </blockquote>
-<pre><code>package com.example.view;  
-
-import android.R.integer;  
-import android.app.Activity;  
-import android.content.Context;  
-import android.graphics.Bitmap;  
-import android.graphics.BitmapFactory;  
-import android.graphics.PixelFormat;  
-import android.graphics.Rect;  
-import android.os.Handler;  
-import android.os.Vibrator;  
-import android.util.AttributeSet;  
-import android.util.Log;  
-import android.view.Gravity;  
-import android.view.MotionEvent;  
-import android.view.View;  
-import android.view.WindowManager;  
-import android.widget.AdapterView;  
-import android.widget.ImageView;  
-import android.widget.ListAdapter;  
-import android.widget.ListView;  
-
-public class CanDragListView extends ListView {  
-
-    private ListAdapter mAdapter;  
-    private WindowManager mWindowManager;  
-    /** 
-     * item镜像的布局参数 
-     */  
-    private WindowManager.LayoutParams mWindowLayoutParams;  
-    private WindowManager.LayoutParams mNewWindowLayoutParams;  
-    /** 
-     * 振动器 
-     */  
-    private Vibrator mVibrator;  
-    /** 
-     * 选中的item的position 
-     */  
-    private int mSelectedPosition;  
-    /** 
-     * 选中的item的View对象 
-     */  
-    private View mItemView;  
-    /** 
-     * 用于拖拽的镜像，这里直接用一个ImageView装载Bitmap 
-     */  
-    private ImageView mDragIV;  
-    private ImageView mNewDragIv;  
-    /** 
-     * 选中的item的镜像Bitmap 
-     */  
-    private Bitmap mBitmap;  
-    /** 
-     * 按下的点到所在item的上边缘的距离 
-     */  
-    private int mPoint2ItemTop;  
-
-    /** 
-     * 按下的点到所在item的左边缘的距离 
-     */  
-    private int mPoint2ItemLeft;  
-
-    /** 
-     * CanDragListView距离屏幕顶部的偏移量 
-     */  
-    private int mOffset2Top;  
-    /** 
-     * CanDragListView自动向下滚动的边界值 
-     */  
-    private int mDownScrollBorder;  
-
-    /** 
-     * CanDragListView自动向上滚动的边界值 
-     */  
-    private int mUpScrollBorder;  
-    /** 
-     * CanDragListView自动滚动的速度 
-     */  
-    private static final int speed = 20;  
-
-    /** 
-     * CanDragListView距离屏幕左边的偏移量 
-     */  
-    private int mOffset2Left;  
-    /** 
-     * 状态栏的高度 
-     */  
-    private int mStatusHeight;  
-    /** 
-     * 按下的系统时间 
-     */  
-    private long mActionDownTime = 0;  
-    /** 
-     * 移动的系统时间 
-     */  
-    private long mActionMoveTime = 0;  
-    /** 
-     * 默认长按事件时间是1000毫秒 
-     */  
-    private long mLongClickTime = 1000;  
-    /** 
-     * 是否可拖拽，默认为false 
-     */  
-    private boolean isDrag = false;  
-    /** 
-     * 按下是的x坐标 
-     */  
-    private int mDownX;  
-    /** 
-     * 按下是的y坐标 
-     */  
-    private int mDownY;  
-
-    /** 
-     * item发生变化回调的接口 
-     */  
-    private OnChanageListener onChanageListener;  
-
-    /** 
-     * 设置回调接口 
-     *  
-     * @param onChanageListener 
-     */  
-    public void setOnChangeListener(OnChanageListener onChanageListener) {  
-        this.onChanageListener = onChanageListener;  
-    }  
-
-    public CanDragListView(Context context) {  
-        this(context, null);  
-    }  
-
-    public CanDragListView(Context context, AttributeSet attrs) {  
-        this(context, attrs, 0);  
-    }  
-
-    public CanDragListView(Context context, AttributeSet attrs, int defStyle) {  
-        super(context, attrs, defStyle);  
-        mAdapter = getAdapter();  
-        mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);  
-        mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);  
-        mStatusHeight = getStatusHeight(context); // 获取状态栏的高度  
-    }  
-
-    private Handler mHandler = new Handler();  
-
-    // 用来处理长按的Runnable  
-    private Runnable mLongClickRunnable = new Runnable() {  
-
-        @Override  
-        public void run() {  
-            isDrag = true; // 设置可以拖拽  
-            mVibrator.vibrate(100); // 震动100毫秒  
-            if (mItemView != null) {  
-                mItemView.setVisibility(View.INVISIBLE);// 隐藏该item  
-            }  
-            Log.i(&quot;CanDragListView&quot;, &quot;**mLongClickRunnable**&quot;);  
-            // 根据我们按下的点显示item镜像  
-            createDragImage(mBitmap, mDownX, mDownY);  
-        }  
-    };  
-
-    /** 
-     * 当mDownY的值大于向上滚动的边界值，触发自动向上滚动 当mDownY的值小于向下滚动的边界值，触犯自动向下滚动 否则不进行滚动 
-     */  
-    private Runnable mScrollRunnable = new Runnable() {  
-
-        @Override  
-        public void run() {  
-            int scrollY;  
-            if (mDownY &gt; mUpScrollBorder) {  
-                scrollY = speed;  
-                mHandler.postDelayed(mScrollRunnable, 25);  
-            } else if (mDownY &lt; mDownScrollBorder) {  
-                scrollY = -speed;  
-                mHandler.postDelayed(mScrollRunnable, 25);  
-            } else {  
-                scrollY = 0;  
-                mHandler.removeCallbacks(mScrollRunnable);  
-            }  
-
-            // 所以我们在这里调用下onSwapItem()方法来交换item  
-            onSwapItem(mDownY, mDownY);  
-
-            smoothScrollBy(scrollY, 10);  
-        }  
-    };  
-
-    @Override  
-    public boolean onTouchEvent(MotionEvent event) {  
-        // Log.i(&quot;CanDragListView&quot;, mSelectedPosition+&quot;****&quot;+mItemView);  
-        switch (event.getAction()) {  
-        case MotionEvent.ACTION_DOWN:  
-            mActionDownTime = event.getDownTime();  
-            mDownX = (int) event.getX();  
-            mDownY = (int) event.getY();  
-
-            // 根据按下的坐标获取item对应的position  
-            mSelectedPosition = pointToPosition(mDownX, mDownY);  
-            // 如果是无效的position，即值为-1  
-            if (mSelectedPosition == AdapterView.INVALID_POSITION) {  
-                return super.onTouchEvent(event);  
-            }  
-            // 根据position获取对应的item  
-            mItemView = getChildAt(mSelectedPosition - getFirstVisiblePosition());  
-            // 使用Handler延迟mLongClickTime执行mLongClickRunnable  
-            mHandler.postDelayed(mLongClickRunnable, mLongClickTime);  
-            if (mItemView != null) {  
-                // 下面这几个距离大家可以参考我的博客上面的图来理解下  
-                mPoint2ItemTop = mDownY - mItemView.getTop();  
-                mPoint2ItemLeft = mDownX - mItemView.getLeft();  
-
-                mOffset2Top = (int) (event.getRawY() - mDownY);  
-                mOffset2Left = (int) (event.getRawX() - mDownX);  
-
-                // 获取CanDragListView自动向上滚动的偏移量，小于这个值，CanDragListView向下滚动  
-                mDownScrollBorder = getHeight() / 4;  
-                // 获取CanDragListView自动向下滚动的偏移量，大于这个值，CanDragListView向上滚动  
-                mUpScrollBorder = getHeight() * 3 / 4;  
-
-                // 将该item进行绘图缓存  
-                mItemView.setDrawingCacheEnabled(true);  
-                // 从缓存中获取bitmap  
-                mBitmap = Bitmap.createBitmap(mItemView.getDrawingCache());  
-                // 释放绘图缓存，避免出现重复的缓存对象  
-                mItemView.destroyDrawingCache();  
-            }  
-
-            // Log.i(&quot;CanDragListView&quot;, &quot;****&quot;+isDrag);  
-            break;  
-        case MotionEvent.ACTION_MOVE:  
-            // TODO  
-            if (isDrag) {  
-                int moveX = (int) event.getX();  
-                int moveY = (int) event.getY();  
-                if (!isOnTouchInItem(mItemView, moveX, moveY)) {  
-                    mHandler.removeCallbacks(mLongClickRunnable);  
-                }  
-                mDownX = moveX;  
-                mDownY = moveY;  
-                onDragItem(moveX, moveY);  
-            }  
-            break;  
-        case MotionEvent.ACTION_UP:  
-            onStopDrag();  
-            mHandler.removeCallbacks(mLongClickRunnable);  
-            mHandler.removeCallbacks(mScrollRunnable);  
-
-            isDrag = false;  
-            break;  
-        default:  
-            break;  
-        }  
-
-        return super.onTouchEvent(event);  
-    }  
-
-    /** 
-     * 判断手指按下的坐标是否在item范围内 
-     *  
-     * @param view 
-     * @param downX 
-     * @param downY 
-     * @return 
-     */  
-    private boolean isOnTouchInItem(View view, int downX, int downY) {  
-        if (view == null) {  
-            return false;  
-        }  
-        int leftX = view.getLeft();  
-        int topY = view.getTop();  
-        if (downX &lt; leftX || downX &gt; leftX + view.getWidth()) {  
-            return false;  
-        }  
-        if (downY &lt; topY || downY &gt; topY + view.getHeight()) {  
-            return false;  
-        }  
-        return true;  
-    }  
-
-    /** 
-     * 创建拖动的镜像 
-     *  
-     * @param bitmap 
-     * @param downX 
-     *            按下的点相对父控件的X坐标 
-     * @param downY 
-     *            按下的点相对父控件的X坐标 
-     */  
-    private void createDragImage(Bitmap bitmap, int downX, int downY) {  
-        mWindowLayoutParams = new WindowManager.LayoutParams();  
-        mWindowLayoutParams.format = PixelFormat.TRANSLUCENT; // 图片之外的其他地方透明  
-        mWindowLayoutParams.gravity = Gravity.TOP | Gravity.LEFT;  
-        mWindowLayoutParams.x = downX - mPoint2ItemLeft + mOffset2Left;  
-        mWindowLayoutParams.y = downY - mPoint2ItemTop + mOffset2Top - mStatusHeight;  
-        mWindowLayoutParams.alpha = 0.55f; // 透明度  
-        mWindowLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;  
-        mWindowLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;  
-        mWindowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;  
-
-        mNewWindowLayoutParams = new WindowManager.LayoutParams();  
-        mNewWindowLayoutParams.format = PixelFormat.TRANSLUCENT; // 图片之外的其他地方透明  
-        mNewWindowLayoutParams.gravity = Gravity.TOP | Gravity.LEFT;  
-        mNewWindowLayoutParams.x = downX - mPoint2ItemLeft + mOffset2Left;  
-        mNewWindowLayoutParams.y = downY - mPoint2ItemTop + mOffset2Top - mStatusHeight;  
-        // mNewWindowLayoutParams.alpha = 0.55f; // 透明度  
-        mNewWindowLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;  
-        mNewWindowLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;  
-        mNewWindowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;  
-
-        mDragIV = new ImageView(getContext());  
-        mNewDragIv = new ImageView(getContext());  
-        mDragIV.setImageBitmap(bitmap);  
-        mWindowManager.addView(mDragIV, mWindowLayoutParams);  
-        mWindowManager.addView(mNewDragIv, mNewWindowLayoutParams);  
-    }  
-
-    /** 
-     * 移除镜像 
-     */  
-    private void removeDragImage() {  
-        if (mDragIV != null) {  
-            mWindowManager.removeView(mDragIV);  
-            mDragIV = null;  
-        }  
-        if (mNewDragIv != null) {  
-            mWindowManager.removeView(mNewDragIv);  
-            mNewDragIv = null;  
-        }  
-    }  
-
-    /** 
-     * 拖动item，在里面实现了item镜像的位置更新，item的相互交换以及ListView的自行滚动 
-     *  
-     * @param x 
-     * @param y 
-     */  
-    private void onDragItem(int moveX, int moveY) {  
-        if (mWindowLayoutParams != null &amp;&amp; mDragIV != null) {  
-            mWindowLayoutParams.x = moveX - mPoint2ItemLeft + mOffset2Left;  
-            mWindowLayoutParams.y = moveY - mPoint2ItemTop + mOffset2Top - mStatusHeight;  
-            mWindowManager.updateViewLayout(mDragIV, mWindowLayoutParams); // 更新镜像的位置  
-        }  
-        onSwapItem(moveX, moveY);  
-        // ListView自动滚动  
-        mHandler.post(mScrollRunnable);  
-
-    }  
-
-    /** 
-     * 交换item,并且控制item之间的显示与隐藏效果 
-     *  
-     * @param moveX 
-     * @param moveY 
-     */  
-    private void onSwapItem(int moveX, int moveY) {  
-        // 获取我们手指移动到的那个item的position  
-        int position = pointToPosition(moveX, moveY);  
-
-        // 假如tempPosition 改变了并且tempPosition不等于-1,则进行交换  
-        if (position != mSelectedPosition &amp;&amp; position != AdapterView.INVALID_POSITION) {  
-
-            // mAdapter.getItem(mSelectedPosition);  
-            View newItem = getChildAt(position - getFirstVisiblePosition());  
-            View oldItem = getChildAt(mSelectedPosition - getFirstVisiblePosition());  
-
-            mNewWindowLayoutParams.x = moveX - (moveX - oldItem.getLeft()) + mOffset2Left;  
-            mNewWindowLayoutParams.y = moveY - (moveY - oldItem.getTop()) + mOffset2Top - mStatusHeight;  
-
-            newItem.setDrawingCacheEnabled(true);  
-            Bitmap bitmap = Bitmap.createBitmap(newItem.getDrawingCache());  
-            newItem.destroyDrawingCache();  
-            mNewDragIv.setImageBitmap(bitmap);  
-            if (newItem != null &amp;&amp; oldItem != null) {  
-                newItem.setVisibility(INVISIBLE);// 隐藏拖动到的位置的item  
-                 oldItem.setVisibility(VISIBLE);//显示之前的  
-                mWindowManager.updateViewLayout(mNewDragIv, mNewWindowLayoutParams); // 更新镜像的位置  
-                if (onChanageListener != null) {  
-                     Log.i(&quot;CanDragListView&quot;, &quot;**onSwapItem**&quot;);  
-                    onChanageListener.onChange(mSelectedPosition, position);  
-                }  
-            }  
-
-            mSelectedPosition = position;  
-        }  
-    }  
-
-    /** 
-     * 停止拖拽我们将之前隐藏的item显示出来，并将镜像移除 
-     */  
-    private void onStopDrag() {  
-        View view = getChildAt(mSelectedPosition - getFirstVisiblePosition());  
-        if (view != null) {  
-            view.setVisibility(View.VISIBLE);  
-        }  
-        // ((DragAdapter)this.getAdapter()).setItemHide(-1);  
-        removeDragImage();  
-    }  
-
-    /** 
-     * 获取状态栏的高度 
-     *  
-     * @param context 
-     * @return 
-     */  
-    private static int getStatusHeight(Context context) {  
-        int statusHeight = 0;  
-        Rect localRect = new Rect();  
-        ((Activity) context).getWindow().getDecorView().getWindowVisibleDisplayFrame(localRect);  
-        statusHeight = localRect.top;  
-        if (0 == statusHeight) {  
-            Class&lt;?&gt; localClass;  
-            try {  
-                localClass = Class.forName(&quot;com.android.internal.R$dimen&quot;);  
-                Object localObject = localClass.newInstance();  
-                int i5 = Integer.parseInt(localClass.getField(&quot;status_bar_height&quot;).get(localObject).toString());  
-                statusHeight = context.getResources().getDimensionPixelSize(i5);  
-            } catch (Exception e) {  
-                e.printStackTrace();  
-            }  
-        }  
-        return statusHeight;  
-    }  
-
-    /** 
-     * 监听数据拖拽的接口，用来更新数据显示 
-     */  
-    public interface OnChanageListener {  
-
-        /** 
-         * 当item交换位置的时候回调的方法，在此处实现数据的交换 
-         *  
-         * @param start 
-         *            开始的position 
-         * @param to 
-         *            拖拽到的position 
-         */  
-        public void onChange(int start, int to);  
-    }  
-
-}  
-</code></pre><p>在代码里定义了改变的回调接口，目的是对item进行交换并且更新。开始我是想将item的更新都固定在自定义的ListView中，这样拿来就能直接用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div><div class="line">272</div><div class="line">273</div><div class="line">274</div><div class="line">275</div><div class="line">276</div><div class="line">277</div><div class="line">278</div><div class="line">279</div><div class="line">280</div><div class="line">281</div><div class="line">282</div><div class="line">283</div><div class="line">284</div><div class="line">285</div><div class="line">286</div><div class="line">287</div><div class="line">288</div><div class="line">289</div><div class="line">290</div><div class="line">291</div><div class="line">292</div><div class="line">293</div><div class="line">294</div><div class="line">295</div><div class="line">296</div><div class="line">297</div><div class="line">298</div><div class="line">299</div><div class="line">300</div><div class="line">301</div><div class="line">302</div><div class="line">303</div><div class="line">304</div><div class="line">305</div><div class="line">306</div><div class="line">307</div><div class="line">308</div><div class="line">309</div><div class="line">310</div><div class="line">311</div><div class="line">312</div><div class="line">313</div><div class="line">314</div><div class="line">315</div><div class="line">316</div><div class="line">317</div><div class="line">318</div><div class="line">319</div><div class="line">320</div><div class="line">321</div><div class="line">322</div><div class="line">323</div><div class="line">324</div><div class="line">325</div><div class="line">326</div><div class="line">327</div><div class="line">328</div><div class="line">329</div><div class="line">330</div><div class="line">331</div><div class="line">332</div><div class="line">333</div><div class="line">334</div><div class="line">335</div><div class="line">336</div><div class="line">337</div><div class="line">338</div><div class="line">339</div><div class="line">340</div><div class="line">341</div><div class="line">342</div><div class="line">343</div><div class="line">344</div><div class="line">345</div><div class="line">346</div><div class="line">347</div><div class="line">348</div><div class="line">349</div><div class="line">350</div><div class="line">351</div><div class="line">352</div><div class="line">353</div><div class="line">354</div><div class="line">355</div><div class="line">356</div><div class="line">357</div><div class="line">358</div><div class="line">359</div><div class="line">360</div><div class="line">361</div><div class="line">362</div><div class="line">363</div><div class="line">364</div><div class="line">365</div><div class="line">366</div><div class="line">367</div><div class="line">368</div><div class="line">369</div><div class="line">370</div><div class="line">371</div><div class="line">372</div><div class="line">373</div><div class="line">374</div><div class="line">375</div><div class="line">376</div><div class="line">377</div><div class="line">378</div><div class="line">379</div><div class="line">380</div><div class="line">381</div><div class="line">382</div><div class="line">383</div><div class="line">384</div><div class="line">385</div><div class="line">386</div><div class="line">387</div><div class="line">388</div><div class="line">389</div><div class="line">390</div><div class="line">391</div><div class="line">392</div><div class="line">393</div><div class="line">394</div><div class="line">395</div><div class="line">396</div><div class="line">397</div><div class="line">398</div><div class="line">399</div><div class="line">400</div><div class="line">401</div><div class="line">402</div><div class="line">403</div><div class="line">404</div><div class="line">405</div><div class="line">406</div><div class="line">407</div><div class="line">408</div><div class="line">409</div><div class="line">410</div><div class="line">411</div><div class="line">412</div><div class="line">413</div><div class="line">414</div><div class="line">415</div><div class="line">416</div><div class="line">417</div><div class="line">418</div><div class="line">419</div><div class="line">420</div><div class="line">421</div><div class="line">422</div><div class="line">423</div><div class="line">424</div><div class="line">425</div><div class="line">426</div><div class="line">427</div><div class="line">428</div><div class="line">429</div><div class="line">430</div><div class="line">431</div><div class="line">432</div><div class="line">433</div><div class="line">434</div><div class="line">435</div><div class="line">436</div><div class="line">437</div><div class="line">438</div><div class="line">439</div><div class="line">440</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.example.view;  </div><div class="line">  </div><div class="line"><span class="keyword">import</span> android.R.integer;  </div><div class="line"><span class="keyword">import</span> android.app.Activity;  </div><div class="line"><span class="keyword">import</span> android.content.Context;  </div><div class="line"><span class="keyword">import</span> android.graphics.Bitmap;  </div><div class="line"><span class="keyword">import</span> android.graphics.BitmapFactory;  </div><div class="line"><span class="keyword">import</span> android.graphics.PixelFormat;  </div><div class="line"><span class="keyword">import</span> android.graphics.Rect;  </div><div class="line"><span class="keyword">import</span> android.os.Handler;  </div><div class="line"><span class="keyword">import</span> android.os.Vibrator;  </div><div class="line"><span class="keyword">import</span> android.util.AttributeSet;  </div><div class="line"><span class="keyword">import</span> android.util.Log;  </div><div class="line"><span class="keyword">import</span> android.view.Gravity;  </div><div class="line"><span class="keyword">import</span> android.view.MotionEvent;  </div><div class="line"><span class="keyword">import</span> android.view.View;  </div><div class="line"><span class="keyword">import</span> android.view.WindowManager;  </div><div class="line"><span class="keyword">import</span> android.widget.AdapterView;  </div><div class="line"><span class="keyword">import</span> android.widget.ImageView;  </div><div class="line"><span class="keyword">import</span> android.widget.ListAdapter;  </div><div class="line"><span class="keyword">import</span> android.widget.ListView;  </div><div class="line">  </div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CanDragListView</span> <span class="keyword">extends</span> <span class="title">ListView</span> </span>&#123;  </div><div class="line">  </div><div class="line">    <span class="keyword">private</span> ListAdapter mAdapter;  </div><div class="line">    <span class="keyword">private</span> WindowManager mWindowManager;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * item镜像的布局参数 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> WindowManager.LayoutParams mWindowLayoutParams;  </div><div class="line">    <span class="keyword">private</span> WindowManager.LayoutParams mNewWindowLayoutParams;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 振动器 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> Vibrator mVibrator;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 选中的item的position </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mSelectedPosition;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 选中的item的View对象 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> View mItemView;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 用于拖拽的镜像，这里直接用一个ImageView装载Bitmap </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> ImageView mDragIV;  </div><div class="line">    <span class="keyword">private</span> ImageView mNewDragIv;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 选中的item的镜像Bitmap </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> Bitmap mBitmap;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 按下的点到所在item的上边缘的距离 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mPoint2ItemTop;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 按下的点到所在item的左边缘的距离 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mPoint2ItemLeft;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * CanDragListView距离屏幕顶部的偏移量 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mOffset2Top;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * CanDragListView自动向下滚动的边界值 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mDownScrollBorder;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * CanDragListView自动向上滚动的边界值 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mUpScrollBorder;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * CanDragListView自动滚动的速度 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> speed = <span class="number">20</span>;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * CanDragListView距离屏幕左边的偏移量 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mOffset2Left;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 状态栏的高度 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mStatusHeight;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 按下的系统时间 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">long</span> mActionDownTime = <span class="number">0</span>;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 移动的系统时间 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">long</span> mActionMoveTime = <span class="number">0</span>;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 默认长按事件时间是1000毫秒 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">long</span> mLongClickTime = <span class="number">1000</span>;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 是否可拖拽，默认为false </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> isDrag = <span class="keyword">false</span>;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 按下是的x坐标 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mDownX;  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 按下是的y坐标 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mDownY;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * item发生变化回调的接口 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> OnChanageListener onChanageListener;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 设置回调接口 </div><div class="line">     *  </div><div class="line">     * <span class="doctag">@param</span> onChanageListener </div><div class="line">     */  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOnChangeListener</span><span class="params">(OnChanageListener onChanageListener)</span> </span>&#123;  </div><div class="line">        <span class="keyword">this</span>.onChanageListener = onChanageListener;  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CanDragListView</span><span class="params">(Context context)</span> </span>&#123;  </div><div class="line">        <span class="keyword">this</span>(context, <span class="keyword">null</span>);  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CanDragListView</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;  </div><div class="line">        <span class="keyword">this</span>(context, attrs, <span class="number">0</span>);  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CanDragListView</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyle)</span> </span>&#123;  </div><div class="line">        <span class="keyword">super</span>(context, attrs, defStyle);  </div><div class="line">        mAdapter = getAdapter();  </div><div class="line">        mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);  </div><div class="line">        mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);  </div><div class="line">        mStatusHeight = getStatusHeight(context); <span class="comment">// 获取状态栏的高度  </span></div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="keyword">private</span> Handler mHandler = <span class="keyword">new</span> Handler();  </div><div class="line">  </div><div class="line">    <span class="comment">// 用来处理长按的Runnable  </span></div><div class="line">    <span class="keyword">private</span> Runnable mLongClickRunnable = <span class="keyword">new</span> Runnable() &#123;  </div><div class="line">  </div><div class="line">        <span class="meta">@Override</span>  </div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;  </div><div class="line">            isDrag = <span class="keyword">true</span>; <span class="comment">// 设置可以拖拽  </span></div><div class="line">            mVibrator.vibrate(<span class="number">100</span>); <span class="comment">// 震动100毫秒  </span></div><div class="line">            <span class="keyword">if</span> (mItemView != <span class="keyword">null</span>) &#123;  </div><div class="line">                mItemView.setVisibility(View.INVISIBLE);<span class="comment">// 隐藏该item  </span></div><div class="line">            &#125;  </div><div class="line">            Log.i(<span class="string">"CanDragListView"</span>, <span class="string">"**mLongClickRunnable**"</span>);  </div><div class="line">            <span class="comment">// 根据我们按下的点显示item镜像  </span></div><div class="line">            createDragImage(mBitmap, mDownX, mDownY);  </div><div class="line">        &#125;  </div><div class="line">    &#125;;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 当mDownY的值大于向上滚动的边界值，触发自动向上滚动 当mDownY的值小于向下滚动的边界值，触犯自动向下滚动 否则不进行滚动 </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> Runnable mScrollRunnable = <span class="keyword">new</span> Runnable() &#123;  </div><div class="line">  </div><div class="line">        <span class="meta">@Override</span>  </div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;  </div><div class="line">            <span class="keyword">int</span> scrollY;  </div><div class="line">            <span class="keyword">if</span> (mDownY &gt; mUpScrollBorder) &#123;  </div><div class="line">                scrollY = speed;  </div><div class="line">                mHandler.postDelayed(mScrollRunnable, <span class="number">25</span>);  </div><div class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mDownY &lt; mDownScrollBorder) &#123;  </div><div class="line">                scrollY = -speed;  </div><div class="line">                mHandler.postDelayed(mScrollRunnable, <span class="number">25</span>);  </div><div class="line">            &#125; <span class="keyword">else</span> &#123;  </div><div class="line">                scrollY = <span class="number">0</span>;  </div><div class="line">                mHandler.removeCallbacks(mScrollRunnable);  </div><div class="line">            &#125;  </div><div class="line">  </div><div class="line">            <span class="comment">// 所以我们在这里调用下onSwapItem()方法来交换item  </span></div><div class="line">            onSwapItem(mDownY, mDownY);  </div><div class="line">  </div><div class="line">            smoothScrollBy(scrollY, <span class="number">10</span>);  </div><div class="line">        &#125;  </div><div class="line">    &#125;;  </div><div class="line">  </div><div class="line">    <span class="meta">@Override</span>  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent event)</span> </span>&#123;  </div><div class="line">        <span class="comment">// Log.i("CanDragListView", mSelectedPosition+"****"+mItemView);  </span></div><div class="line">        <span class="keyword">switch</span> (event.getAction()) &#123;  </div><div class="line">        <span class="keyword">case</span> MotionEvent.ACTION_DOWN:  </div><div class="line">            mActionDownTime = event.getDownTime();  </div><div class="line">            mDownX = (<span class="keyword">int</span>) event.getX();  </div><div class="line">            mDownY = (<span class="keyword">int</span>) event.getY();  </div><div class="line">  </div><div class="line">            <span class="comment">// 根据按下的坐标获取item对应的position  </span></div><div class="line">            mSelectedPosition = pointToPosition(mDownX, mDownY);  </div><div class="line">            <span class="comment">// 如果是无效的position，即值为-1  </span></div><div class="line">            <span class="keyword">if</span> (mSelectedPosition == AdapterView.INVALID_POSITION) &#123;  </div><div class="line">                <span class="keyword">return</span> <span class="keyword">super</span>.onTouchEvent(event);  </div><div class="line">            &#125;  </div><div class="line">            <span class="comment">// 根据position获取对应的item  </span></div><div class="line">            mItemView = getChildAt(mSelectedPosition - getFirstVisiblePosition());  </div><div class="line">            <span class="comment">// 使用Handler延迟mLongClickTime执行mLongClickRunnable  </span></div><div class="line">            mHandler.postDelayed(mLongClickRunnable, mLongClickTime);  </div><div class="line">            <span class="keyword">if</span> (mItemView != <span class="keyword">null</span>) &#123;  </div><div class="line">                <span class="comment">// 下面这几个距离大家可以参考我的博客上面的图来理解下  </span></div><div class="line">                mPoint2ItemTop = mDownY - mItemView.getTop();  </div><div class="line">                mPoint2ItemLeft = mDownX - mItemView.getLeft();  </div><div class="line">  </div><div class="line">                mOffset2Top = (<span class="keyword">int</span>) (event.getRawY() - mDownY);  </div><div class="line">                mOffset2Left = (<span class="keyword">int</span>) (event.getRawX() - mDownX);  </div><div class="line">  </div><div class="line">                <span class="comment">// 获取CanDragListView自动向上滚动的偏移量，小于这个值，CanDragListView向下滚动  </span></div><div class="line">                mDownScrollBorder = getHeight() / <span class="number">4</span>;  </div><div class="line">                <span class="comment">// 获取CanDragListView自动向下滚动的偏移量，大于这个值，CanDragListView向上滚动  </span></div><div class="line">                mUpScrollBorder = getHeight() * <span class="number">3</span> / <span class="number">4</span>;  </div><div class="line">  </div><div class="line">                <span class="comment">// 将该item进行绘图缓存  </span></div><div class="line">                mItemView.setDrawingCacheEnabled(<span class="keyword">true</span>);  </div><div class="line">                <span class="comment">// 从缓存中获取bitmap  </span></div><div class="line">                mBitmap = Bitmap.createBitmap(mItemView.getDrawingCache());  </div><div class="line">                <span class="comment">// 释放绘图缓存，避免出现重复的缓存对象  </span></div><div class="line">                mItemView.destroyDrawingCache();  </div><div class="line">            &#125;  </div><div class="line">  </div><div class="line">            <span class="comment">// Log.i("CanDragListView", "****"+isDrag);  </span></div><div class="line">            <span class="keyword">break</span>;  </div><div class="line">        <span class="keyword">case</span> MotionEvent.ACTION_MOVE:  </div><div class="line">            <span class="comment">// TODO  </span></div><div class="line">            <span class="keyword">if</span> (isDrag) &#123;  </div><div class="line">                <span class="keyword">int</span> moveX = (<span class="keyword">int</span>) event.getX();  </div><div class="line">                <span class="keyword">int</span> moveY = (<span class="keyword">int</span>) event.getY();  </div><div class="line">                <span class="keyword">if</span> (!isOnTouchInItem(mItemView, moveX, moveY)) &#123;  </div><div class="line">                    mHandler.removeCallbacks(mLongClickRunnable);  </div><div class="line">                &#125;  </div><div class="line">                mDownX = moveX;  </div><div class="line">                mDownY = moveY;  </div><div class="line">                onDragItem(moveX, moveY);  </div><div class="line">            &#125;  </div><div class="line">            <span class="keyword">break</span>;  </div><div class="line">        <span class="keyword">case</span> MotionEvent.ACTION_UP:  </div><div class="line">            onStopDrag();  </div><div class="line">            mHandler.removeCallbacks(mLongClickRunnable);  </div><div class="line">            mHandler.removeCallbacks(mScrollRunnable);  </div><div class="line">  </div><div class="line">            isDrag = <span class="keyword">false</span>;  </div><div class="line">            <span class="keyword">break</span>;  </div><div class="line">        <span class="keyword">default</span>:  </div><div class="line">            <span class="keyword">break</span>;  </div><div class="line">        &#125;  </div><div class="line">  </div><div class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onTouchEvent(event);  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 判断手指按下的坐标是否在item范围内 </div><div class="line">     *  </div><div class="line">     * <span class="doctag">@param</span> view </div><div class="line">     * <span class="doctag">@param</span> downX </div><div class="line">     * <span class="doctag">@param</span> downY </div><div class="line">     * <span class="doctag">@return</span> </div><div class="line">     */  </div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isOnTouchInItem</span><span class="params">(View view, <span class="keyword">int</span> downX, <span class="keyword">int</span> downY)</span> </span>&#123;  </div><div class="line">        <span class="keyword">if</span> (view == <span class="keyword">null</span>) &#123;  </div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;  </div><div class="line">        &#125;  </div><div class="line">        <span class="keyword">int</span> leftX = view.getLeft();  </div><div class="line">        <span class="keyword">int</span> topY = view.getTop();  </div><div class="line">        <span class="keyword">if</span> (downX &lt; leftX || downX &gt; leftX + view.getWidth()) &#123;  </div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;  </div><div class="line">        &#125;  </div><div class="line">        <span class="keyword">if</span> (downY &lt; topY || downY &gt; topY + view.getHeight()) &#123;  </div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;  </div><div class="line">        &#125;  </div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 创建拖动的镜像 </div><div class="line">     *  </div><div class="line">     * <span class="doctag">@param</span> bitmap </div><div class="line">     * <span class="doctag">@param</span> downX </div><div class="line">     *            按下的点相对父控件的X坐标 </div><div class="line">     * <span class="doctag">@param</span> downY </div><div class="line">     *            按下的点相对父控件的X坐标 </div><div class="line">     */  </div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createDragImage</span><span class="params">(Bitmap bitmap, <span class="keyword">int</span> downX, <span class="keyword">int</span> downY)</span> </span>&#123;  </div><div class="line">        mWindowLayoutParams = <span class="keyword">new</span> WindowManager.LayoutParams();  </div><div class="line">        mWindowLayoutParams.format = PixelFormat.TRANSLUCENT; <span class="comment">// 图片之外的其他地方透明  </span></div><div class="line">        mWindowLayoutParams.gravity = Gravity.TOP | Gravity.LEFT;  </div><div class="line">        mWindowLayoutParams.x = downX - mPoint2ItemLeft + mOffset2Left;  </div><div class="line">        mWindowLayoutParams.y = downY - mPoint2ItemTop + mOffset2Top - mStatusHeight;  </div><div class="line">        mWindowLayoutParams.alpha = <span class="number">0.55f</span>; <span class="comment">// 透明度  </span></div><div class="line">        mWindowLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;  </div><div class="line">        mWindowLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;  </div><div class="line">        mWindowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;  </div><div class="line">  </div><div class="line">        mNewWindowLayoutParams = <span class="keyword">new</span> WindowManager.LayoutParams();  </div><div class="line">        mNewWindowLayoutParams.format = PixelFormat.TRANSLUCENT; <span class="comment">// 图片之外的其他地方透明  </span></div><div class="line">        mNewWindowLayoutParams.gravity = Gravity.TOP | Gravity.LEFT;  </div><div class="line">        mNewWindowLayoutParams.x = downX - mPoint2ItemLeft + mOffset2Left;  </div><div class="line">        mNewWindowLayoutParams.y = downY - mPoint2ItemTop + mOffset2Top - mStatusHeight;  </div><div class="line">        <span class="comment">// mNewWindowLayoutParams.alpha = 0.55f; // 透明度  </span></div><div class="line">        mNewWindowLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;  </div><div class="line">        mNewWindowLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;  </div><div class="line">        mNewWindowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;  </div><div class="line">  </div><div class="line">        mDragIV = <span class="keyword">new</span> ImageView(getContext());  </div><div class="line">        mNewDragIv = <span class="keyword">new</span> ImageView(getContext());  </div><div class="line">        mDragIV.setImageBitmap(bitmap);  </div><div class="line">        mWindowManager.addView(mDragIV, mWindowLayoutParams);  </div><div class="line">        mWindowManager.addView(mNewDragIv, mNewWindowLayoutParams);  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 移除镜像 </div><div class="line">     */  </div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">removeDragImage</span><span class="params">()</span> </span>&#123;  </div><div class="line">        <span class="keyword">if</span> (mDragIV != <span class="keyword">null</span>) &#123;  </div><div class="line">            mWindowManager.removeView(mDragIV);  </div><div class="line">            mDragIV = <span class="keyword">null</span>;  </div><div class="line">        &#125;  </div><div class="line">        <span class="keyword">if</span> (mNewDragIv != <span class="keyword">null</span>) &#123;  </div><div class="line">            mWindowManager.removeView(mNewDragIv);  </div><div class="line">            mNewDragIv = <span class="keyword">null</span>;  </div><div class="line">        &#125;  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 拖动item，在里面实现了item镜像的位置更新，item的相互交换以及ListView的自行滚动 </div><div class="line">     *  </div><div class="line">     * <span class="doctag">@param</span> x </div><div class="line">     * <span class="doctag">@param</span> y </div><div class="line">     */  </div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">onDragItem</span><span class="params">(<span class="keyword">int</span> moveX, <span class="keyword">int</span> moveY)</span> </span>&#123;  </div><div class="line">        <span class="keyword">if</span> (mWindowLayoutParams != <span class="keyword">null</span> &amp;&amp; mDragIV != <span class="keyword">null</span>) &#123;  </div><div class="line">            mWindowLayoutParams.x = moveX - mPoint2ItemLeft + mOffset2Left;  </div><div class="line">            mWindowLayoutParams.y = moveY - mPoint2ItemTop + mOffset2Top - mStatusHeight;  </div><div class="line">            mWindowManager.updateViewLayout(mDragIV, mWindowLayoutParams); <span class="comment">// 更新镜像的位置  </span></div><div class="line">        &#125;  </div><div class="line">        onSwapItem(moveX, moveY);  </div><div class="line">        <span class="comment">// ListView自动滚动  </span></div><div class="line">        mHandler.post(mScrollRunnable);  </div><div class="line">  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 交换item,并且控制item之间的显示与隐藏效果 </div><div class="line">     *  </div><div class="line">     * <span class="doctag">@param</span> moveX </div><div class="line">     * <span class="doctag">@param</span> moveY </div><div class="line">     */  </div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">onSwapItem</span><span class="params">(<span class="keyword">int</span> moveX, <span class="keyword">int</span> moveY)</span> </span>&#123;  </div><div class="line">        <span class="comment">// 获取我们手指移动到的那个item的position  </span></div><div class="line">        <span class="keyword">int</span> position = pointToPosition(moveX, moveY);  </div><div class="line">  </div><div class="line">        <span class="comment">// 假如tempPosition 改变了并且tempPosition不等于-1,则进行交换  </span></div><div class="line">        <span class="keyword">if</span> (position != mSelectedPosition &amp;&amp; position != AdapterView.INVALID_POSITION) &#123;  </div><div class="line">              </div><div class="line">            <span class="comment">// mAdapter.getItem(mSelectedPosition);  </span></div><div class="line">            View newItem = getChildAt(position - getFirstVisiblePosition());  </div><div class="line">            View oldItem = getChildAt(mSelectedPosition - getFirstVisiblePosition());  </div><div class="line">  </div><div class="line">            mNewWindowLayoutParams.x = moveX - (moveX - oldItem.getLeft()) + mOffset2Left;  </div><div class="line">            mNewWindowLayoutParams.y = moveY - (moveY - oldItem.getTop()) + mOffset2Top - mStatusHeight;  </div><div class="line">  </div><div class="line">            newItem.setDrawingCacheEnabled(<span class="keyword">true</span>);  </div><div class="line">            Bitmap bitmap = Bitmap.createBitmap(newItem.getDrawingCache());  </div><div class="line">            newItem.destroyDrawingCache();  </div><div class="line">            mNewDragIv.setImageBitmap(bitmap);  </div><div class="line">            <span class="keyword">if</span> (newItem != <span class="keyword">null</span> &amp;&amp; oldItem != <span class="keyword">null</span>) &#123;  </div><div class="line">                newItem.setVisibility(INVISIBLE);<span class="comment">// 隐藏拖动到的位置的item  </span></div><div class="line">                 oldItem.setVisibility(VISIBLE);<span class="comment">//显示之前的  </span></div><div class="line">                mWindowManager.updateViewLayout(mNewDragIv, mNewWindowLayoutParams); <span class="comment">// 更新镜像的位置  </span></div><div class="line">                <span class="keyword">if</span> (onChanageListener != <span class="keyword">null</span>) &#123;  </div><div class="line">                     Log.i(<span class="string">"CanDragListView"</span>, <span class="string">"**onSwapItem**"</span>);  </div><div class="line">                    onChanageListener.onChange(mSelectedPosition, position);  </div><div class="line">                &#125;  </div><div class="line">            &#125;  </div><div class="line">  </div><div class="line">            mSelectedPosition = position;  </div><div class="line">        &#125;  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 停止拖拽我们将之前隐藏的item显示出来，并将镜像移除 </div><div class="line">     */  </div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">onStopDrag</span><span class="params">()</span> </span>&#123;  </div><div class="line">        View view = getChildAt(mSelectedPosition - getFirstVisiblePosition());  </div><div class="line">        <span class="keyword">if</span> (view != <span class="keyword">null</span>) &#123;  </div><div class="line">            view.setVisibility(View.VISIBLE);  </div><div class="line">        &#125;  </div><div class="line">        <span class="comment">// ((DragAdapter)this.getAdapter()).setItemHide(-1);  </span></div><div class="line">        removeDragImage();  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 获取状态栏的高度 </div><div class="line">     *  </div><div class="line">     * <span class="doctag">@param</span> context </div><div class="line">     * <span class="doctag">@return</span> </div><div class="line">     */  </div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getStatusHeight</span><span class="params">(Context context)</span> </span>&#123;  </div><div class="line">        <span class="keyword">int</span> statusHeight = <span class="number">0</span>;  </div><div class="line">        Rect localRect = <span class="keyword">new</span> Rect();  </div><div class="line">        ((Activity) context).getWindow().getDecorView().getWindowVisibleDisplayFrame(localRect);  </div><div class="line">        statusHeight = localRect.top;  </div><div class="line">        <span class="keyword">if</span> (<span class="number">0</span> == statusHeight) &#123;  </div><div class="line">            Class&lt;?&gt; localClass;  </div><div class="line">            <span class="keyword">try</span> &#123;  </div><div class="line">                localClass = Class.forName(<span class="string">"com.android.internal.R$dimen"</span>);  </div><div class="line">                Object localObject = localClass.newInstance();  </div><div class="line">                <span class="keyword">int</span> i5 = Integer.parseInt(localClass.getField(<span class="string">"status_bar_height"</span>).get(localObject).toString());  </div><div class="line">                statusHeight = context.getResources().getDimensionPixelSize(i5);  </div><div class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;  </div><div class="line">                e.printStackTrace();  </div><div class="line">            &#125;  </div><div class="line">        &#125;  </div><div class="line">        <span class="keyword">return</span> statusHeight;  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 监听数据拖拽的接口，用来更新数据显示 </div><div class="line">     */  </div><div class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OnChanageListener</span> </span>&#123;  </div><div class="line">  </div><div class="line">        <span class="comment">/** </span></div><div class="line">         * 当item交换位置的时候回调的方法，在此处实现数据的交换 </div><div class="line">         *  </div><div class="line">         * <span class="doctag">@param</span> start </div><div class="line">         *            开始的position </div><div class="line">         * <span class="doctag">@param</span> to </div><div class="line">         *            拖拽到的position </div><div class="line">         */  </div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onChange</span><span class="params">(<span class="keyword">int</span> start, <span class="keyword">int</span> to)</span></span>;  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在代码里定义了改变的回调接口，目的是对item进行交换并且更新。开始我是想将item的更新都固定在自定义的ListView中，这样拿来就能直接用。</p>
 <p>对于item的更新，一定要在Activity中实现OnChanageListener后，在方法里对数据集合进行元素位置交换。这里用的方法是：</p>
-<pre><code>/** 
- * Swaps the elements of list {@code list} at indices {@code index1} and 
- * {@code index2}. 
- * 
- * @param list 
- *            the list to manipulate. 
- * @param index1 
- *            position of the first element to swap with the element in 
- *            index2. 
- * @param index2 
- *            position of the other element. 
- * 
- * @throws IndexOutOfBoundsException 
- *             if index1 or index2 is out of range of this list. 
- * @since 1.4 
- */  
-@SuppressWarnings(&quot;unchecked&quot;)  
-public static void swap(List&lt;?&gt; list, int index1, int index2)  
-</code></pre><p>参数是要交换数据的集合，和要交换的两个元素的位置。用法是：</p>
-<pre><code>mListView.setOnChangeListener(new OnChanageListener() {  
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line">	/** </div><div class="line">	 * Swaps the elements of list &#123;@code list&#125; at indices &#123;@code index1&#125; and </div><div class="line">	 * &#123;@code index2&#125;. </div><div class="line">	 * </div><div class="line">	 * @param list </div><div class="line">	 *            the list to manipulate. </div><div class="line">	 * @param index1 </div><div class="line">	 *            position of the first element to swap with the element in </div><div class="line">	 *            index2. </div><div class="line">	 * @param index2 </div><div class="line">	 *            position of the other element. </div><div class="line">	 * </div><div class="line">	 * @throws IndexOutOfBoundsException </div><div class="line">	 *             if index1 or index2 is out of range of this list. </div><div class="line">	 * @since 1.4 </div><div class="line">	 */  </div><div class="line">	@SuppressWarnings("unchecked")  </div><div class="line">	public static void swap(List&lt;?&gt; list, int index1, int index2)  </div><div class="line"></div><div class="line">参数是要交换数据的集合，和要交换的两个元素的位置。用法是：</div><div class="line"></div><div class="line">	mListView.setOnChangeListener(new OnChanageListener() &#123;  </div><div class="line">	      </div><div class="line">	    @Override  </div><div class="line">	    public void onChange(int start, int to) &#123;  </div><div class="line">	        //数据交换  </div><div class="line">	              if(start &lt; to)&#123;    </div><div class="line">	                  for(int i=start; i&lt;to; i++)&#123;    </div><div class="line">	                      Collections.swap(mList, i, i+1);    </div><div class="line">	                  &#125;    </div><div class="line">	              &#125;else if(start &gt; to)&#123;    </div><div class="line">	                  for(int i=start; i&gt;to; i--)&#123;    </div><div class="line">	                      Collections.swap(mList, i, i-1);    </div><div class="line">	                  &#125;    </div><div class="line">	              &#125;  </div><div class="line">	              mAdapter.notifyDataSetChanged();  </div><div class="line">	    &#125;  </div><div class="line">	&#125;); </div><div class="line">``` </div><div class="line"></div><div class="line">到此，可拖拽的ListView完成。</div><div class="line"></div><div class="line">xml布局文件示例如下：</div><div class="line"></div><div class="line">```xml</div><div class="line">	&lt;?xml version="1.0" encoding="utf-8"?&gt;  </div><div class="line">	&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  </div><div class="line">	    android:layout_width="match_parent"  </div><div class="line">	    android:layout_height="match_parent"  </div><div class="line">	    android:orientation="vertical" &gt;  </div><div class="line">	  </div><div class="line">	    &lt;include  </div><div class="line">	        android:layout_width="match_parent"  </div><div class="line">	        android:layout_height="wrap_content"  </div><div class="line">	        layout="@layout/include_title" /&gt;  </div><div class="line">	  </div><div class="line">	    &lt;com.qiyuan.activity.view.CanDragListView  </div><div class="line">	        android:id="@+id/main_activity_lv"  </div><div class="line">	        android:dividerHeight="0.2dp"  </div><div class="line">	        android:divider="@color/blueviolet"  </div><div class="line">	        android:footerDividersEnabled="false"  </div><div class="line">	        android:layout_width="match_parent"  </div><div class="line">	        android:layout_height="0dp"  </div><div class="line">	        android:layout_weight="1" /&gt;  </div><div class="line">	  </div><div class="line">	&lt;/LinearLayout&gt;</div></pre></td></tr></table></figure>
 
-    @Override  
-    public void onChange(int start, int to) {  
-        //数据交换  
-              if(start &lt; to){    
-                  for(int i=start; i&lt;to; i++){    
-                      Collections.swap(mList, i, i+1);    
-                  }    
-              }else if(start &gt; to){    
-                  for(int i=start; i&gt;to; i--){    
-                      Collections.swap(mList, i, i-1);    
-                  }    
-              }  
-              mAdapter.notifyDataSetChanged();  
-    }  
-});  
-</code></pre><p>到此，可拖拽的ListView完成。</p>
-<p>xml布局文件示例如下：</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;  
-&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;  
-    android:layout_width=&quot;match_parent&quot;  
-    android:layout_height=&quot;match_parent&quot;  
-    android:orientation=&quot;vertical&quot; &gt;  
-
-    &lt;include  
-        android:layout_width=&quot;match_parent&quot;  
-        android:layout_height=&quot;wrap_content&quot;  
-        layout=&quot;@layout/include_title&quot; /&gt;  
-
-    &lt;com.qiyuan.activity.view.CanDragListView  
-        android:id=&quot;@+id/main_activity_lv&quot;  
-        android:dividerHeight=&quot;0.2dp&quot;  
-        android:divider=&quot;@color/blueviolet&quot;  
-        android:footerDividersEnabled=&quot;false&quot;  
-        android:layout_width=&quot;match_parent&quot;  
-        android:layout_height=&quot;0dp&quot;  
-        android:layout_weight=&quot;1&quot; /&gt;  
-
-&lt;/LinearLayout&gt;  
-</code></pre>
       
 
       
@@ -1001,11 +447,11 @@ public static void swap(List&lt;?&gt; list, int index1, int index2)
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1013,11 +459,11 @@ public static void swap(List&lt;?&gt; list, int index1, int index2)
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1033,15 +479,11 @@ public static void swap(List&lt;?&gt; list, int index1, int index2)
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1049,15 +491,15 @@ public static void swap(List&lt;?&gt; list, int index1, int index2)
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1066,6 +508,10 @@ public static void swap(List&lt;?&gt; list, int index1, int index2)
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

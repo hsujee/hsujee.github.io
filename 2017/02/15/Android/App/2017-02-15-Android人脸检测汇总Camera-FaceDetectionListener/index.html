@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://blog.hsujee.io/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总Camera-FaceDetectionListener/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="基于android.hardware.Camera.FaceDetectionListener的相机人脸检测">
-<meta property="og:updated_time" content="2017-04-12T02:21:30.596Z">
+<meta property="og:updated_time" content="2017-06-13T11:05:42.381Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android人脸检测汇总Camera-FaceDetectionListener">
 <meta name="twitter:description" content="基于android.hardware.Camera.FaceDetectionListener的相机人脸检测">
@@ -186,41 +186,7 @@
         <h3 id="基于android-hardware-Camera-FaceDetectionListener的相机人脸检测"><a href="#基于android-hardware-Camera-FaceDetectionListener的相机人脸检测" class="headerlink" title="基于android.hardware.Camera.FaceDetectionListener的相机人脸检测"></a>基于android.hardware.Camera.FaceDetectionListener的相机人脸检测</h3><p>相信大家可能遇到过相机中人脸检测的案例，那么在自定义的相机中如何使用人脸检测呢？</p>
 <a id="more"></a>
 <p>简略代码如下：</p>
-<pre><code>import android.hardware.Camera;
-import android.hardware.Camera.Face;
-import android.hardware.Camera.FaceDetectionListener;
-
-Camera mCamera;
-
-FaceDetectionListener detectionListener = new FaceDetectionListener(){
-    @Override
-    public void onFaceDetection(Face[] faces, Camera camera) {
-        // TODO Auto-generated method stub
-
-        Log.i(TAG, &quot;onFaceDetection...&quot;);
-        if(faces != null){
-
-            Message m = mHander.obtainMessage();
-            m.what = EventUtil.UPDATE_FACE_RECT;
-            m.obj = faces;
-            m.sendToTarget();
-        }
-    }
-}; 
-
-...........
-
-public void openCamera(){
-    mCamera = Camera.open(cameraId);
-
-    ...........
-
-    mCamera.setFaceDetectionListener(detectionListener); //设置检测监听
-    mCamera.startFaceDetection(); //开启检测
-
-    ...........
-}
-</code></pre>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> android.hardware.Camera;</div><div class="line"><span class="keyword">import</span> android.hardware.Camera.Face;</div><div class="line"><span class="keyword">import</span> android.hardware.Camera.FaceDetectionListener;</div><div class="line"></div><div class="line">Camera mCamera;</div><div class="line"></div><div class="line">FaceDetectionListener detectionListener = <span class="keyword">new</span> FaceDetectionListener()&#123;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFaceDetection</span><span class="params">(Face[] faces, Camera camera)</span> </span>&#123;</div><div class="line">		<span class="comment">// TODO Auto-generated method stub</span></div><div class="line">		</div><div class="line">		Log.i(TAG, <span class="string">"onFaceDetection..."</span>);</div><div class="line">		<span class="keyword">if</span>(faces != <span class="keyword">null</span>)&#123;</div><div class="line">		</div><div class="line">			Message m = mHander.obtainMessage();</div><div class="line">			m.what = EventUtil.UPDATE_FACE_RECT;</div><div class="line">			m.obj = faces;</div><div class="line">			m.sendToTarget();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;; </div><div class="line"></div><div class="line">...........</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">openCamera</span><span class="params">()</span></span>&#123;</div><div class="line">	mCamera = Camera.open(cameraId);</div><div class="line">	</div><div class="line">	...........</div><div class="line"></div><div class="line">	mCamera.setFaceDetectionListener(detectionListener); <span class="comment">//设置检测监听</span></div><div class="line">	mCamera.startFaceDetection(); <span class="comment">//开启检测</span></div><div class="line"></div><div class="line">	...........</div><div class="line">&#125;</div></pre></td></tr></table></figure>
       
 
       
@@ -453,11 +419,11 @@ public void openCamera(){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -465,11 +431,11 @@ public void openCamera(){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -485,15 +451,11 @@ public void openCamera(){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -501,15 +463,15 @@ public void openCamera(){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -518,6 +480,10 @@ public void openCamera(){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

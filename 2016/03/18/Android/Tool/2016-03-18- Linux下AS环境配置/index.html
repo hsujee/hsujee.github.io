@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://blog.hsujee.io/2016/03/18/Android/Tool/2016-03-18- Linux下AS环境配置/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="Linux下AS环境配置">
-<meta property="og:updated_time" content="2017-04-12T02:24:32.983Z">
+<meta property="og:updated_time" content="2017-06-13T11:28:32.908Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux下AS环境配置">
 <meta name="twitter:description" content="Linux下AS环境配置">
@@ -185,44 +185,9 @@
       
         <p>sudo gedit /etc/profile</p>
 <a id="more"></a>
-<pre><code>#set jdk environment
-#jdk1.7.0_25  jdk1.8.0_101
-export JAVA_HOME=/usr/lib/jvm/jdk1.8.0_101
-export CLASSPATH=.:$JAVA_HOME/lib:$JAVA_HOME/jre/lib:$CLASSPATH
-export PATH=$JAVA_HOME:$JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH
-
-#set android environment
-export ANDROID_HOME=/home/jerry/Softwares/android-sdk-linux
-export PATH=$PATH:/home/jerry/Softwares/android-sdk-linux/tools/
-export PATH=$PATH:/home/jerry/Softwares/android-sdk-linux/platform-tools/
-
-#set maven environment
-export M2_HOME=/home/jerry/Softwares/myEclipse/apache-maven-3.3.9
-export PATH=$M2_HOME/bin:$PATH
-
-#set tomcat environment
-export TOMCAT_HOME=/home/jerry/Softwares/myEclipse/apache-tomcat-7.0.72
-export CATALINA_HOME=$TOMCAT_HOME
-export PATH=$TOMCAT_HOME/bin:$PATH
-</code></pre><p>快捷方式<br>sudo gedit  /usr/share/applications/Studio.desktop</p>
-<pre><code>[Desktop Entry]
-Name = Studio
-Comment= android studio
-Exec=/home/young/android/android-studio/bin/studio.sh
-Icon=/home/young/android/android-studio/bin/idea.png
-Terminal=false
-Type=Application
-
-[Desktop Entry]
-Type=Application
-Name=Android Studio
-Exec=~/Softwares/android-studio/bin/studio.sh %f
-Icon=~/Softwares/android-studio/bin/studio.png
-Categories=development;IDE;
-Terminal=false
-StartupNotify=true
-StartupWMClass=jetbrains-android-studio
-</code></pre>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#set jdk environment</span></div><div class="line"><span class="comment">#jdk1.7.0_25  jdk1.8.0_101</span></div><div class="line">export JAVA_HOME=/usr/lib/jvm/jdk1.8.0_101</div><div class="line">export CLASSPATH=.:$JAVA_HOME/lib:$JAVA_HOME/jre/lib:$CLASSPATH</div><div class="line">export PATH=$JAVA_HOME:$JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH</div><div class="line"></div><div class="line"><span class="comment">#set android environment</span></div><div class="line">export ANDROID_HOME=/home/jerry/Softwares/android-sdk-linux</div><div class="line">export PATH=$PATH:/home/jerry/Softwares/android-sdk-linux/tools/</div><div class="line">export PATH=$PATH:/home/jerry/Softwares/android-sdk-linux/platform-tools/</div><div class="line"></div><div class="line"><span class="comment">#set maven environment</span></div><div class="line">export M2_HOME=/home/jerry/Softwares/myEclipse/apache-maven-3.3.9</div><div class="line">export PATH=$M2_HOME/bin:$PATH</div><div class="line"></div><div class="line"><span class="comment">#set tomcat environment</span></div><div class="line">export TOMCAT_HOME=/home/jerry/Softwares/myEclipse/apache-tomcat-7.0.72</div><div class="line">export CATALINA_HOME=$TOMCAT_HOME</div><div class="line">export PATH=$TOMCAT_HOME/bin:$PATH</div></pre></td></tr></table></figure>
+<p>快捷方式<br>sudo gedit  /usr/share/applications/Studio.desktop</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">[Desktop Entry]</div><div class="line">Name = Studio</div><div class="line">Comment= android studio</div><div class="line">Exec=/home/young/android/android-studio/bin/studio.sh</div><div class="line">Icon=/home/young/android/android-studio/bin/idea.png</div><div class="line">Terminal=false</div><div class="line">Type=Application</div><div class="line"></div><div class="line">[Desktop Entry]</div><div class="line">Type=Application</div><div class="line">Name=Android Studio</div><div class="line">Exec=~/Softwares/android-studio/bin/studio.sh %f</div><div class="line">Icon=~/Softwares/android-studio/bin/studio.png</div><div class="line">Categories=development;IDE;</div><div class="line">Terminal=false</div><div class="line">StartupNotify=true</div><div class="line">StartupWMClass=jetbrains-android-studio</div></pre></td></tr></table></figure>
       
 
       
@@ -459,11 +424,11 @@ StartupWMClass=jetbrains-android-studio
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -471,11 +436,11 @@ StartupWMClass=jetbrains-android-studio
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -491,15 +456,11 @@ StartupWMClass=jetbrains-android-studio
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -507,15 +468,15 @@ StartupWMClass=jetbrains-android-studio
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -524,6 +485,10 @@ StartupWMClass=jetbrains-android-studio
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

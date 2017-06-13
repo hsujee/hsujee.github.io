@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://blog.hsujee.io/2017/01/24/Android/CustemView/2017-01-23-Android图片手势缩放功能的实现/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="Android图片手势缩放功能的实现">
-<meta property="og:updated_time" content="2017-04-12T02:22:47.425Z">
+<meta property="og:updated_time" content="2017-06-13T11:16:46.100Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android图片手势缩放功能的实现">
 <meta name="twitter:description" content="Android图片手势缩放功能的实现">
@@ -193,659 +193,15 @@
 <blockquote>
 <p>Activity文件中直接使用：</p>
 </blockquote>
-<pre><code>public class MainActivity extends Activity {
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-        ZoomImageView img = (ZoomImageView) findViewById(R.id.snoop);
-        img.setImageResource(R.drawable.snoopy);
-        img.setMaxZoom(4f);
-    }
-}
-</code></pre><p>下面是自定义代码：ZoomImageView.java</p>
-<pre><code>import android.content.Context;
-import android.graphics.Matrix;
-import android.graphics.PointF;
-import android.graphics.drawable.Drawable;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
-import android.view.View;
-import android.widget.ImageView;
-
-public class ZoomImageView extends ImageView {
-
-    Matrix matrix;
-
-    // We can be in one of these 3 states
-    static final int NONE = 0;
-    static final int DRAG = 1;
-    static final int ZOOM = 2;
-    int mode = NONE;
-
-    // Remember some things for zooming
-    PointF last = new PointF();
-    PointF start = new PointF();
-    float minScale = 1f;
-    float maxScale = 3f;
-    float[] m;
-
-
-    int viewWidth, viewHeight;
-    static final int CLICK = 3;
-    float saveScale = 1f;
-    protected float origWidth, origHeight;
-    int oldMeasuredWidth, oldMeasuredHeight;
-
-
-    ScaleGestureDetector mScaleDetector;
-
-    Context context;
-
-    public TouchImageView(Context context) {
-        super(context);
-        sharedConstructing(context);
-    }
-
-    public TouchImageView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        sharedConstructing(context);
-    }
-
-    private void sharedConstructing(Context context) {
-        super.setClickable(true);
-        this.context = context;
-        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
-        matrix = new Matrix();
-        m = new float[9];
-        setImageMatrix(matrix);
-        setScaleType(ScaleType.MATRIX);
-
-        setOnTouchListener(new OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                mScaleDetector.onTouchEvent(event);
-                PointF curr = new PointF(event.getX(), event.getY());
-
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        last.set(curr);
-                        start.set(last);
-                        mode = DRAG;
-                        break;
-
-                    case MotionEvent.ACTION_MOVE:
-                        if (mode == DRAG) {
-                            float deltaX = curr.x - last.x;
-                            float deltaY = curr.y - last.y;
-                            float fixTransX = getFixDragTrans(deltaX, viewWidth, origWidth * saveScale);
-                            float fixTransY = getFixDragTrans(deltaY, viewHeight, origHeight * saveScale);
-                            matrix.postTranslate(fixTransX, fixTransY);
-                            fixTrans();
-                            last.set(curr.x, curr.y);
-                        }
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        mode = NONE;
-                        int xDiff = (int) Math.abs(curr.x - start.x);
-                        int yDiff = (int) Math.abs(curr.y - start.y);
-                        if (xDiff &lt; CLICK &amp;&amp; yDiff &lt; CLICK)
-                            performClick();
-                        break;
-
-                    case MotionEvent.ACTION_POINTER_UP:
-                        mode = NONE;
-                        break;
-                }
-
-                setImageMatrix(matrix);
-                invalidate();
-                return true; // indicate event was handled
-            }
-
-        });
-    }
-
-    public void setMaxZoom(float x) {
-        maxScale = x;
-    }
-
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-        @Override
-        public boolean onScaleBegin(ScaleGestureDetector detector) {
-            mode = ZOOM;
-            return true;
-        }
-
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            float mScaleFactor = detector.getScaleFactor();
-            float origScale = saveScale;
-            saveScale *= mScaleFactor;
-            if (saveScale &gt; maxScale) {
-                saveScale = maxScale;
-                mScaleFactor = maxScale / origScale;
-            } else if (saveScale &lt; minScale) {
-                saveScale = minScale;
-                mScaleFactor = minScale / origScale;
-            }
-
-            if (origWidth * saveScale &lt;= viewWidth || origHeight * saveScale &lt;= viewHeight)
-                matrix.postScale(mScaleFactor, mScaleFactor, viewWidth / 2, viewHeight / 2);
-            else
-                matrix.postScale(mScaleFactor, mScaleFactor, detector.getFocusX(), detector.getFocusY());
-
-            fixTrans();
-            return true;
-        }
-    }
-
-    void fixTrans() {
-        matrix.getValues(m);
-        float transX = m[Matrix.MTRANS_X];
-        float transY = m[Matrix.MTRANS_Y];
-
-        float fixTransX = getFixTrans(transX, viewWidth, origWidth * saveScale);
-        float fixTransY = getFixTrans(transY, viewHeight, origHeight * saveScale);
-
-        if (fixTransX != 0 || fixTransY != 0)
-            matrix.postTranslate(fixTransX, fixTransY);
-    }
-
-    float getFixTrans(float trans, float viewSize, float contentSize) {
-        float minTrans, maxTrans;
-
-        if (contentSize &lt;= viewSize) {
-            minTrans = 0;
-            maxTrans = viewSize - contentSize;
-        } else {
-            minTrans = viewSize - contentSize;
-            maxTrans = 0;
-        }
-
-        if (trans &lt; minTrans)
-            return -trans + minTrans;
-        if (trans &gt; maxTrans)
-            return -trans + maxTrans;
-        return 0;
-    }
-
-    float getFixDragTrans(float delta, float viewSize, float contentSize) {
-        if (contentSize &lt;= viewSize) {
-            return 0;
-        }
-        return delta;
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        viewWidth = MeasureSpec.getSize(widthMeasureSpec);
-        viewHeight = MeasureSpec.getSize(heightMeasureSpec);
-
-        //
-        // Rescales image on rotation
-        //
-        if (oldMeasuredHeight == viewWidth &amp;&amp; oldMeasuredHeight == viewHeight
-                || viewWidth == 0 || viewHeight == 0)
-            return;
-        oldMeasuredHeight = viewHeight;
-        oldMeasuredWidth = viewWidth;
-
-        if (saveScale == 1) {
-            //Fit to screen.
-            float scale;
-
-            Drawable drawable = getDrawable();
-            if (drawable == null || drawable.getIntrinsicWidth() == 0 || drawable.getIntrinsicHeight() == 0)
-                return;
-            int bmWidth = drawable.getIntrinsicWidth();
-            int bmHeight = drawable.getIntrinsicHeight();
-
-            Log.d(&quot;bmSize&quot;, &quot;bmWidth: &quot; + bmWidth + &quot; bmHeight : &quot; + bmHeight);
-
-            float scaleX = (float) viewWidth / (float) bmWidth;
-            float scaleY = (float) viewHeight / (float) bmHeight;
-            scale = Math.min(scaleX, scaleY);
-            matrix.setScale(scale, scale);
-
-            // Center the image
-            float redundantYSpace = (float) viewHeight - (scale * (float) bmHeight);
-            float redundantXSpace = (float) viewWidth - (scale * (float) bmWidth);
-            redundantYSpace /= (float) 2;
-            redundantXSpace /= (float) 2;
-
-            matrix.postTranslate(redundantXSpace, redundantYSpace);
-
-            origWidth = viewWidth - 2 * redundantXSpace;
-            origHeight = viewHeight - 2 * redundantYSpace;
-            setImageMatrix(matrix);
-        }
-        fixTrans();
-    }
-}
-</code></pre><ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</div><div class="line">    <span class="comment">/** Called when the activity is first created. */</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.main);</div><div class="line">        ZoomImageView img = (ZoomImageView) findViewById(R.id.snoop);</div><div class="line">        img.setImageResource(R.drawable.snoopy);</div><div class="line">        img.setMaxZoom(<span class="number">4f</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>下面是自定义代码：ZoomImageView.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> android.content.Context;</div><div class="line"><span class="keyword">import</span> android.graphics.Matrix;</div><div class="line"><span class="keyword">import</span> android.graphics.PointF;</div><div class="line"><span class="keyword">import</span> android.graphics.drawable.Drawable;</div><div class="line"><span class="keyword">import</span> android.util.AttributeSet;</div><div class="line"><span class="keyword">import</span> android.util.Log;</div><div class="line"><span class="keyword">import</span> android.view.MotionEvent;</div><div class="line"><span class="keyword">import</span> android.view.ScaleGestureDetector;</div><div class="line"><span class="keyword">import</span> android.view.View;</div><div class="line"><span class="keyword">import</span> android.widget.ImageView;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ZoomImageView</span> <span class="keyword">extends</span> <span class="title">ImageView</span> </span>&#123;</div><div class="line"></div><div class="line">    Matrix matrix;</div><div class="line"></div><div class="line">    <span class="comment">// We can be in one of these 3 states</span></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> NONE = <span class="number">0</span>;</div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DRAG = <span class="number">1</span>;</div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ZOOM = <span class="number">2</span>;</div><div class="line">    <span class="keyword">int</span> mode = NONE;</div><div class="line"></div><div class="line">    <span class="comment">// Remember some things for zooming</span></div><div class="line">    PointF last = <span class="keyword">new</span> PointF();</div><div class="line">    PointF start = <span class="keyword">new</span> PointF();</div><div class="line">    <span class="keyword">float</span> minScale = <span class="number">1f</span>;</div><div class="line">    <span class="keyword">float</span> maxScale = <span class="number">3f</span>;</div><div class="line">    <span class="keyword">float</span>[] m;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="keyword">int</span> viewWidth, viewHeight;</div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> CLICK = <span class="number">3</span>;</div><div class="line">    <span class="keyword">float</span> saveScale = <span class="number">1f</span>;</div><div class="line">    <span class="keyword">protected</span> <span class="keyword">float</span> origWidth, origHeight;</div><div class="line">    <span class="keyword">int</span> oldMeasuredWidth, oldMeasuredHeight;</div><div class="line"></div><div class="line"></div><div class="line">    ScaleGestureDetector mScaleDetector;</div><div class="line"></div><div class="line">    Context context;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TouchImageView</span><span class="params">(Context context)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context);</div><div class="line">        sharedConstructing(context);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TouchImageView</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context, attrs);</div><div class="line">        sharedConstructing(context);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">sharedConstructing</span><span class="params">(Context context)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.setClickable(<span class="keyword">true</span>);</div><div class="line">        <span class="keyword">this</span>.context = context;</div><div class="line">        mScaleDetector = <span class="keyword">new</span> ScaleGestureDetector(context, <span class="keyword">new</span> ScaleListener());</div><div class="line">        matrix = <span class="keyword">new</span> Matrix();</div><div class="line">        m = <span class="keyword">new</span> <span class="keyword">float</span>[<span class="number">9</span>];</div><div class="line">        setImageMatrix(matrix);</div><div class="line">        setScaleType(ScaleType.MATRIX);</div><div class="line"></div><div class="line">        setOnTouchListener(<span class="keyword">new</span> OnTouchListener() &#123;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouch</span><span class="params">(View v, MotionEvent event)</span> </span>&#123;</div><div class="line">                mScaleDetector.onTouchEvent(event);</div><div class="line">                PointF curr = <span class="keyword">new</span> PointF(event.getX(), event.getY());</div><div class="line"></div><div class="line">                <span class="keyword">switch</span> (event.getAction()) &#123;</div><div class="line">                    <span class="keyword">case</span> MotionEvent.ACTION_DOWN:</div><div class="line">                    	last.set(curr);</div><div class="line">                        start.set(last);</div><div class="line">                        mode = DRAG;</div><div class="line">                        <span class="keyword">break</span>;</div><div class="line">                        </div><div class="line">                    <span class="keyword">case</span> MotionEvent.ACTION_MOVE:</div><div class="line">                        <span class="keyword">if</span> (mode == DRAG) &#123;</div><div class="line">                            <span class="keyword">float</span> deltaX = curr.x - last.x;</div><div class="line">                            <span class="keyword">float</span> deltaY = curr.y - last.y;</div><div class="line">                            <span class="keyword">float</span> fixTransX = getFixDragTrans(deltaX, viewWidth, origWidth * saveScale);</div><div class="line">                            <span class="keyword">float</span> fixTransY = getFixDragTrans(deltaY, viewHeight, origHeight * saveScale);</div><div class="line">                            matrix.postTranslate(fixTransX, fixTransY);</div><div class="line">                            fixTrans();</div><div class="line">                            last.set(curr.x, curr.y);</div><div class="line">                        &#125;</div><div class="line">                        <span class="keyword">break</span>;</div><div class="line"></div><div class="line">                    <span class="keyword">case</span> MotionEvent.ACTION_UP:</div><div class="line">                        mode = NONE;</div><div class="line">                        <span class="keyword">int</span> xDiff = (<span class="keyword">int</span>) Math.abs(curr.x - start.x);</div><div class="line">                        <span class="keyword">int</span> yDiff = (<span class="keyword">int</span>) Math.abs(curr.y - start.y);</div><div class="line">                        <span class="keyword">if</span> (xDiff &lt; CLICK &amp;&amp; yDiff &lt; CLICK)</div><div class="line">                            performClick();</div><div class="line">                        <span class="keyword">break</span>;</div><div class="line"></div><div class="line">                    <span class="keyword">case</span> MotionEvent.ACTION_POINTER_UP:</div><div class="line">                        mode = NONE;</div><div class="line">                        <span class="keyword">break</span>;</div><div class="line">                &#125;</div><div class="line">                </div><div class="line">                setImageMatrix(matrix);</div><div class="line">                invalidate();</div><div class="line">                <span class="keyword">return</span> <span class="keyword">true</span>; <span class="comment">// indicate event was handled</span></div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMaxZoom</span><span class="params">(<span class="keyword">float</span> x)</span> </span>&#123;</div><div class="line">        maxScale = x;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">ScaleListener</span> <span class="keyword">extends</span> <span class="title">ScaleGestureDetector</span>.<span class="title">SimpleOnScaleGestureListener</span> </span>&#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onScaleBegin</span><span class="params">(ScaleGestureDetector detector)</span> </span>&#123;</div><div class="line">            mode = ZOOM;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onScale</span><span class="params">(ScaleGestureDetector detector)</span> </span>&#123;</div><div class="line">            <span class="keyword">float</span> mScaleFactor = detector.getScaleFactor();</div><div class="line">            <span class="keyword">float</span> origScale = saveScale;</div><div class="line">            saveScale *= mScaleFactor;</div><div class="line">            <span class="keyword">if</span> (saveScale &gt; maxScale) &#123;</div><div class="line">                saveScale = maxScale;</div><div class="line">                mScaleFactor = maxScale / origScale;</div><div class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (saveScale &lt; minScale) &#123;</div><div class="line">                saveScale = minScale;</div><div class="line">                mScaleFactor = minScale / origScale;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="keyword">if</span> (origWidth * saveScale &lt;= viewWidth || origHeight * saveScale &lt;= viewHeight)</div><div class="line">                matrix.postScale(mScaleFactor, mScaleFactor, viewWidth / <span class="number">2</span>, viewHeight / <span class="number">2</span>);</div><div class="line">            <span class="keyword">else</span></div><div class="line">                matrix.postScale(mScaleFactor, mScaleFactor, detector.getFocusX(), detector.getFocusY());</div><div class="line"></div><div class="line">            fixTrans();</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">fixTrans</span><span class="params">()</span> </span>&#123;</div><div class="line">        matrix.getValues(m);</div><div class="line">        <span class="keyword">float</span> transX = m[Matrix.MTRANS_X];</div><div class="line">        <span class="keyword">float</span> transY = m[Matrix.MTRANS_Y];</div><div class="line">        </div><div class="line">        <span class="keyword">float</span> fixTransX = getFixTrans(transX, viewWidth, origWidth * saveScale);</div><div class="line">        <span class="keyword">float</span> fixTransY = getFixTrans(transY, viewHeight, origHeight * saveScale);</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (fixTransX != <span class="number">0</span> || fixTransY != <span class="number">0</span>)</div><div class="line">            matrix.postTranslate(fixTransX, fixTransY);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">float</span> <span class="title">getFixTrans</span><span class="params">(<span class="keyword">float</span> trans, <span class="keyword">float</span> viewSize, <span class="keyword">float</span> contentSize)</span> </span>&#123;</div><div class="line">        <span class="keyword">float</span> minTrans, maxTrans;</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (contentSize &lt;= viewSize) &#123;</div><div class="line">            minTrans = <span class="number">0</span>;</div><div class="line">            maxTrans = viewSize - contentSize;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            minTrans = viewSize - contentSize;</div><div class="line">            maxTrans = <span class="number">0</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (trans &lt; minTrans)</div><div class="line">            <span class="keyword">return</span> -trans + minTrans;</div><div class="line">        <span class="keyword">if</span> (trans &gt; maxTrans)</div><div class="line">            <span class="keyword">return</span> -trans + maxTrans;</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">float</span> <span class="title">getFixDragTrans</span><span class="params">(<span class="keyword">float</span> delta, <span class="keyword">float</span> viewSize, <span class="keyword">float</span> contentSize)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (contentSize &lt;= viewSize) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> delta;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onMeasure(widthMeasureSpec, heightMeasureSpec);</div><div class="line">        viewWidth = MeasureSpec.getSize(widthMeasureSpec);</div><div class="line">        viewHeight = MeasureSpec.getSize(heightMeasureSpec);</div><div class="line">        </div><div class="line">        <span class="comment">//</span></div><div class="line">        <span class="comment">// Rescales image on rotation</span></div><div class="line">        <span class="comment">//</span></div><div class="line">        <span class="keyword">if</span> (oldMeasuredHeight == viewWidth &amp;&amp; oldMeasuredHeight == viewHeight</div><div class="line">                || viewWidth == <span class="number">0</span> || viewHeight == <span class="number">0</span>)</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        oldMeasuredHeight = viewHeight;</div><div class="line">        oldMeasuredWidth = viewWidth;</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (saveScale == <span class="number">1</span>) &#123;</div><div class="line">            <span class="comment">//Fit to screen.</span></div><div class="line">            <span class="keyword">float</span> scale;</div><div class="line"></div><div class="line">            Drawable drawable = getDrawable();</div><div class="line">            <span class="keyword">if</span> (drawable == <span class="keyword">null</span> || drawable.getIntrinsicWidth() == <span class="number">0</span> || drawable.getIntrinsicHeight() == <span class="number">0</span>)</div><div class="line">                <span class="keyword">return</span>;</div><div class="line">            <span class="keyword">int</span> bmWidth = drawable.getIntrinsicWidth();</div><div class="line">            <span class="keyword">int</span> bmHeight = drawable.getIntrinsicHeight();</div><div class="line">            </div><div class="line">            Log.d(<span class="string">"bmSize"</span>, <span class="string">"bmWidth: "</span> + bmWidth + <span class="string">" bmHeight : "</span> + bmHeight);</div><div class="line"></div><div class="line">            <span class="keyword">float</span> scaleX = (<span class="keyword">float</span>) viewWidth / (<span class="keyword">float</span>) bmWidth;</div><div class="line">            <span class="keyword">float</span> scaleY = (<span class="keyword">float</span>) viewHeight / (<span class="keyword">float</span>) bmHeight;</div><div class="line">            scale = Math.min(scaleX, scaleY);</div><div class="line">            matrix.setScale(scale, scale);</div><div class="line"></div><div class="line">            <span class="comment">// Center the image</span></div><div class="line">            <span class="keyword">float</span> redundantYSpace = (<span class="keyword">float</span>) viewHeight - (scale * (<span class="keyword">float</span>) bmHeight);</div><div class="line">            <span class="keyword">float</span> redundantXSpace = (<span class="keyword">float</span>) viewWidth - (scale * (<span class="keyword">float</span>) bmWidth);</div><div class="line">            redundantYSpace /= (<span class="keyword">float</span>) <span class="number">2</span>;</div><div class="line">            redundantXSpace /= (<span class="keyword">float</span>) <span class="number">2</span>;</div><div class="line"></div><div class="line">            matrix.postTranslate(redundantXSpace, redundantYSpace);</div><div class="line"></div><div class="line">            origWidth = viewWidth - <span class="number">2</span> * redundantXSpace;</div><div class="line">            origHeight = viewHeight - <span class="number">2</span> * redundantYSpace;</div><div class="line">            setImageMatrix(matrix);</div><div class="line">        &#125;</div><div class="line">        fixTrans();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
 <li>方法2： 另一篇自定义一个ImageView</li>
 </ul>
 <p>可根据个人使用情况修改</p>
-<pre><code>import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ImageView;
-
-/**
- * 自定义的ImageView控制，可对图片进行多点触控缩放和拖动
- */
-public class ZoomImageView extends ImageView {
-
-    /**
-     * 初始化状态常量
-     */
-    public static final int STATUS_INIT = 1;
-
-    /**
-     * 图片放大状态常量
-     */
-    public static final int STATUS_ZOOM_OUT = 2;
-
-    /**
-     * 图片缩小状态常量
-     */
-    public static final int STATUS_ZOOM_IN = 3;
-
-    /**
-     * 图片拖动状态常量
-     */
-    public static final int STATUS_MOVE = 4;
-
-    /**
-     * 用于对图片进行移动和缩放变换的矩阵
-     */
-    private Matrix matrix = new Matrix();
-
-    /**
-     * 待展示的Bitmap对象
-     */
-    private Bitmap sourceBitmap;
-
-    /**
-     * 记录当前操作的状态，可选值为STATUS_INIT、STATUS_ZOOM_OUT、STATUS_ZOOM_IN和STATUS_MOVE
-     */
-    private int currentStatus;
-
-    /**
-     * ZoomImageView控件的宽度
-     */
-    private int width;
-
-    /**
-     * ZoomImageView控件的高度
-     */
-    private int height;
-
-    /**
-     * 记录两指同时放在屏幕上时，中心点的横坐标值
-     */
-    private float centerPointX;
-
-    /**
-     * 记录两指同时放在屏幕上时，中心点的纵坐标值
-     */
-    private float centerPointY;
-
-    /**
-     * 记录当前图片的宽度，图片被缩放时，这个值会一起变动
-     */
-    private float currentBitmapWidth;
-
-    /**
-     * 记录当前图片的高度，图片被缩放时，这个值会一起变动
-     */
-    private float currentBitmapHeight;
-
-    /**
-     * 记录上次手指移动时的横坐标
-     */
-    private float lastXMove = -1;
-
-    /**
-     * 记录上次手指移动时的纵坐标
-     */
-    private float lastYMove = -1;
-
-    /**
-     * 记录手指在横坐标方向上的移动距离
-     */
-    private float movedDistanceX;
-
-    /**
-     * 记录手指在纵坐标方向上的移动距离
-     */
-    private float movedDistanceY;
-
-    /**
-     * 记录图片在矩阵上的横向偏移值
-     */
-    private float totalTranslateX;
-
-    /**
-     * 记录图片在矩阵上的纵向偏移值
-     */
-    private float totalTranslateY;
-
-    /**
-     * 记录图片在矩阵上的总缩放比例
-     */
-    private float totalRatio;
-
-    /**
-     * 记录手指移动的距离所造成的缩放比例
-     */
-    private float scaledRatio;
-
-    /**
-     * 记录图片初始化时的缩放比例
-     */
-    private float initRatio;
-
-    /**
-     * 记录上次两指之间的距离
-     */
-    private double lastFingerDis;
-
-    /**
-     * ZoomImageView构造函数，将当前操作状态设为STATUS_INIT。
-     * 
-     * @param context
-     * @param attrs
-     */
-    public ZoomImageView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        currentStatus = STATUS_INIT;
-    }
-
-    /**
-     * 将待展示的图片设置进来。
-     * 
-     * @param bitmap
-     *            待展示的Bitmap对象
-     */
-    public void setImageBitmap(Bitmap bitmap) {
-        sourceBitmap = bitmap;
-        invalidate();
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right,
-            int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-        if (changed) {
-            // 分别获取到ZoomImageView的宽度和高度
-            width = getWidth();
-            height = getHeight();
-        }
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (initRatio == totalRatio) {
-            getParent().requestDisallowInterceptTouchEvent(false);
-        } else {
-            getParent().requestDisallowInterceptTouchEvent(true);
-        }
-        switch (event.getActionMasked()) {
-        case MotionEvent.ACTION_POINTER_DOWN:
-            if (event.getPointerCount() == 2) {
-                // 当有两个手指按在屏幕上时，计算两指之间的距离
-                lastFingerDis = distanceBetweenFingers(event);
-            }
-            break;
-        case MotionEvent.ACTION_CANCEL:
-        case MotionEvent.ACTION_MOVE:
-            if (event.getPointerCount() == 1) {
-                // 只有单指按在屏幕上移动时，为拖动状态
-                float xMove = event.getX();
-                float yMove = event.getY();
-                if (lastXMove == -1 &amp;&amp; lastYMove == -1) {
-                    lastXMove = xMove;
-                    lastYMove = yMove;
-                }
-                currentStatus = STATUS_MOVE;
-                movedDistanceX = xMove - lastXMove;
-                movedDistanceY = yMove - lastYMove;
-                // 进行边界检查，不允许将图片拖出边界
-                if (totalTranslateX + movedDistanceX &gt; 0) {
-                    movedDistanceX = 0;
-                } else if (width - (totalTranslateX + movedDistanceX) &gt; currentBitmapWidth) {
-                    movedDistanceX = 0;
-                }
-                if (totalTranslateY + movedDistanceY &gt; 0) {
-                    movedDistanceY = 0;
-                } else if (height - (totalTranslateY + movedDistanceY) &gt; currentBitmapHeight) {
-                    movedDistanceY = 0;
-                }
-                // 调用onDraw()方法绘制图片
-                invalidate();
-                lastXMove = xMove;
-                lastYMove = yMove;
-            } else if (event.getPointerCount() == 2) {
-                // 有两个手指按在屏幕上移动时，为缩放状态
-                centerPointBetweenFingers(event);
-                double fingerDis = distanceBetweenFingers(event);
-                if (fingerDis &gt; lastFingerDis) {
-                    currentStatus = STATUS_ZOOM_OUT;
-                } else {
-                    currentStatus = STATUS_ZOOM_IN;
-                }
-                // 进行缩放倍数检查，最大只允许将图片放大4倍，最小可以缩小到初始化比例
-                if ((currentStatus == STATUS_ZOOM_OUT &amp;&amp; totalRatio &lt; 4 * initRatio)
-                        || (currentStatus == STATUS_ZOOM_IN &amp;&amp; totalRatio &gt; initRatio)) {
-                    scaledRatio = (float) (fingerDis / lastFingerDis);
-                    totalRatio = totalRatio * scaledRatio;
-                    if (totalRatio &gt; 4 * initRatio) {
-                        totalRatio = 4 * initRatio;
-                    } else if (totalRatio &lt; initRatio) {
-                        totalRatio = initRatio;
-                    }
-                    // 调用onDraw()方法绘制图片
-                    invalidate();
-                    lastFingerDis = fingerDis;
-                }
-            }
-            break;
-        case MotionEvent.ACTION_POINTER_UP:
-            if (event.getPointerCount() == 2) {
-                // 手指离开屏幕时将临时值还原
-                lastXMove = -1;
-                lastYMove = -1;
-            }
-            break;
-        case MotionEvent.ACTION_UP:
-            // 手指离开屏幕时将临时值还原
-            lastXMove = -1;
-            lastYMove = -1;
-            break;
-        default:
-            break;
-        }
-        return true;
-    }
-
-    /**
-     * 根据currentStatus的值来决定对图片进行什么样的绘制操作。
-     */
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        switch (currentStatus) {
-        case STATUS_ZOOM_OUT:
-        case STATUS_ZOOM_IN:
-            zoom(canvas);
-            break;
-        case STATUS_MOVE:
-            move(canvas);
-            break;
-        case STATUS_INIT:
-            initBitmap(canvas);
-        default:
-            if (sourceBitmap != null) {
-                canvas.drawBitmap(sourceBitmap, matrix, null);
-            }
-            break;
-        }
-    }
-
-    /**
-     * 对图片进行缩放处理。
-     * 
-     * @param canvas
-     */
-    private void zoom(Canvas canvas) {
-        matrix.reset();
-        // 将图片按总缩放比例进行缩放
-        matrix.postScale(totalRatio, totalRatio);
-        float scaledWidth = sourceBitmap.getWidth() * totalRatio;
-        float scaledHeight = sourceBitmap.getHeight() * totalRatio;
-        float translateX = 0f;
-        float translateY = 0f;
-        // 如果当前图片宽度小于屏幕宽度，则按屏幕中心的横坐标进行水平缩放。否则按两指的中心点的横坐标进行水平缩放
-        if (currentBitmapWidth &lt; width) {
-            translateX = (width - scaledWidth) / 2f;
-        } else {
-            translateX = totalTranslateX * scaledRatio + centerPointX
-                    * (1 - scaledRatio);
-            // 进行边界检查，保证图片缩放后在水平方向上不会偏移出屏幕
-            if (translateX &gt; 0) {
-                translateX = 0;
-            } else if (width - translateX &gt; scaledWidth) {
-                translateX = width - scaledWidth;
-            }
-        }
-        // 如果当前图片高度小于屏幕高度，则按屏幕中心的纵坐标进行垂直缩放。否则按两指的中心点的纵坐标进行垂直缩放
-        if (currentBitmapHeight &lt; height) {
-            translateY = (height - scaledHeight) / 2f;
-        } else {
-            translateY = totalTranslateY * scaledRatio + centerPointY
-                    * (1 - scaledRatio);
-            // 进行边界检查，保证图片缩放后在垂直方向上不会偏移出屏幕
-            if (translateY &gt; 0) {
-                translateY = 0;
-            } else if (height - translateY &gt; scaledHeight) {
-                translateY = height - scaledHeight;
-            }
-        }
-        // 缩放后对图片进行偏移，以保证缩放后中心点位置不变
-        matrix.postTranslate(translateX, translateY);
-        totalTranslateX = translateX;
-        totalTranslateY = translateY;
-        currentBitmapWidth = scaledWidth;
-        currentBitmapHeight = scaledHeight;
-        canvas.drawBitmap(sourceBitmap, matrix, null);
-    }
-
-    /**
-     * 对图片进行平移处理
-     * 
-     * @param canvas
-     */
-    private void move(Canvas canvas) {
-        matrix.reset();
-        // 根据手指移动的距离计算出总偏移值
-        float translateX = totalTranslateX + movedDistanceX;
-        float translateY = totalTranslateY + movedDistanceY;
-        // 先按照已有的缩放比例对图片进行缩放
-        matrix.postScale(totalRatio, totalRatio);
-        // 再根据移动距离进行偏移
-        matrix.postTranslate(translateX, translateY);
-        totalTranslateX = translateX;
-        totalTranslateY = translateY;
-        canvas.drawBitmap(sourceBitmap, matrix, null);
-    }
-
-    /**
-     * 对图片进行初始化操作，包括让图片居中，以及当图片大于屏幕宽高时对图片进行压缩。
-     * 
-     * @param canvas
-     */
-    private void initBitmap(Canvas canvas) {
-        if (sourceBitmap != null) {
-            matrix.reset();
-            int bitmapWidth = sourceBitmap.getWidth();
-            int bitmapHeight = sourceBitmap.getHeight();
-            if (bitmapWidth &gt; width || bitmapHeight &gt; height) {
-                if (bitmapWidth - width &gt; bitmapHeight - height) {
-                    // 当图片宽度大于屏幕宽度时，将图片等比例压缩，使它可以完全显示出来
-                    float ratio = width / (bitmapWidth * 1.0f);
-                    matrix.postScale(ratio, ratio);
-                    float translateY = (height - (bitmapHeight * ratio)) / 2f;
-                    // 在纵坐标方向上进行偏移，以保证图片居中显示
-                    matrix.postTranslate(0, translateY);
-                    totalTranslateY = translateY;
-                    totalRatio = initRatio = ratio;
-                } else {
-                    // 当图片高度大于屏幕高度时，将图片等比例压缩，使它可以完全显示出来
-                    float ratio = height / (bitmapHeight * 1.0f);
-                    matrix.postScale(ratio, ratio);
-                    float translateX = (width - (bitmapWidth * ratio)) / 2f;
-                    // 在横坐标方向上进行偏移，以保证图片居中显示
-                    matrix.postTranslate(translateX, 0);
-                    totalTranslateX = translateX;
-                    totalRatio = initRatio = ratio;
-                }
-                currentBitmapWidth = bitmapWidth * initRatio;
-                currentBitmapHeight = bitmapHeight * initRatio;
-            } else {
-                // 当图片的宽高都小于屏幕宽高时，直接让图片居中显示
-                float translateX = (width - sourceBitmap.getWidth()) / 2f;
-                float translateY = (height - sourceBitmap.getHeight()) / 2f;
-                matrix.postTranslate(translateX, translateY);
-                totalTranslateX = translateX;
-                totalTranslateY = translateY;
-                totalRatio = initRatio = 1f;
-                currentBitmapWidth = bitmapWidth;
-                currentBitmapHeight = bitmapHeight;
-            }
-            canvas.drawBitmap(sourceBitmap, matrix, null);
-        }
-    }
-
-    /**
-     * 计算两个手指之间的距离。
-     * 
-     * @param event
-     * @return 两个手指之间的距离
-     */
-    private double distanceBetweenFingers(MotionEvent event) {
-        float disX = Math.abs(event.getX(0) - event.getX(1));
-        float disY = Math.abs(event.getY(0) - event.getY(1));
-        return Math.sqrt(disX * disX + disY * disY);
-    }
-
-    /**
-     * 计算两个手指之间中心点的坐标。
-     * 
-     * @param event
-     */
-    private void centerPointBetweenFingers(MotionEvent event) {
-        float xPoint0 = event.getX(0);
-        float yPoint0 = event.getY(0);
-        float xPoint1 = event.getX(1);
-        float yPoint1 = event.getY(1);
-        centerPointX = (xPoint0 + xPoint1) / 2;
-        centerPointY = (yPoint0 + yPoint1) / 2;
-    }
-
-}
-</code></pre><ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div><div class="line">272</div><div class="line">273</div><div class="line">274</div><div class="line">275</div><div class="line">276</div><div class="line">277</div><div class="line">278</div><div class="line">279</div><div class="line">280</div><div class="line">281</div><div class="line">282</div><div class="line">283</div><div class="line">284</div><div class="line">285</div><div class="line">286</div><div class="line">287</div><div class="line">288</div><div class="line">289</div><div class="line">290</div><div class="line">291</div><div class="line">292</div><div class="line">293</div><div class="line">294</div><div class="line">295</div><div class="line">296</div><div class="line">297</div><div class="line">298</div><div class="line">299</div><div class="line">300</div><div class="line">301</div><div class="line">302</div><div class="line">303</div><div class="line">304</div><div class="line">305</div><div class="line">306</div><div class="line">307</div><div class="line">308</div><div class="line">309</div><div class="line">310</div><div class="line">311</div><div class="line">312</div><div class="line">313</div><div class="line">314</div><div class="line">315</div><div class="line">316</div><div class="line">317</div><div class="line">318</div><div class="line">319</div><div class="line">320</div><div class="line">321</div><div class="line">322</div><div class="line">323</div><div class="line">324</div><div class="line">325</div><div class="line">326</div><div class="line">327</div><div class="line">328</div><div class="line">329</div><div class="line">330</div><div class="line">331</div><div class="line">332</div><div class="line">333</div><div class="line">334</div><div class="line">335</div><div class="line">336</div><div class="line">337</div><div class="line">338</div><div class="line">339</div><div class="line">340</div><div class="line">341</div><div class="line">342</div><div class="line">343</div><div class="line">344</div><div class="line">345</div><div class="line">346</div><div class="line">347</div><div class="line">348</div><div class="line">349</div><div class="line">350</div><div class="line">351</div><div class="line">352</div><div class="line">353</div><div class="line">354</div><div class="line">355</div><div class="line">356</div><div class="line">357</div><div class="line">358</div><div class="line">359</div><div class="line">360</div><div class="line">361</div><div class="line">362</div><div class="line">363</div><div class="line">364</div><div class="line">365</div><div class="line">366</div><div class="line">367</div><div class="line">368</div><div class="line">369</div><div class="line">370</div><div class="line">371</div><div class="line">372</div><div class="line">373</div><div class="line">374</div><div class="line">375</div><div class="line">376</div><div class="line">377</div><div class="line">378</div><div class="line">379</div><div class="line">380</div><div class="line">381</div><div class="line">382</div><div class="line">383</div><div class="line">384</div><div class="line">385</div><div class="line">386</div><div class="line">387</div><div class="line">388</div><div class="line">389</div><div class="line">390</div><div class="line">391</div><div class="line">392</div><div class="line">393</div><div class="line">394</div><div class="line">395</div><div class="line">396</div><div class="line">397</div><div class="line">398</div><div class="line">399</div><div class="line">400</div><div class="line">401</div><div class="line">402</div><div class="line">403</div><div class="line">404</div><div class="line">405</div><div class="line">406</div><div class="line">407</div><div class="line">408</div><div class="line">409</div><div class="line">410</div><div class="line">411</div><div class="line">412</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> android.content.Context;</div><div class="line"><span class="keyword">import</span> android.graphics.Bitmap;</div><div class="line"><span class="keyword">import</span> android.graphics.Canvas;</div><div class="line"><span class="keyword">import</span> android.graphics.Matrix;</div><div class="line"><span class="keyword">import</span> android.util.AttributeSet;</div><div class="line"><span class="keyword">import</span> android.view.MotionEvent;</div><div class="line"><span class="keyword">import</span> android.view.View;</div><div class="line"><span class="keyword">import</span> android.widget.ImageView;</div><div class="line"> </div><div class="line"><span class="comment">/**</span></div><div class="line"> * 自定义的ImageView控制，可对图片进行多点触控缩放和拖动</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ZoomImageView</span> <span class="keyword">extends</span> <span class="title">ImageView</span> </span>&#123;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 初始化状态常量</div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STATUS_INIT = <span class="number">1</span>;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 图片放大状态常量</div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STATUS_ZOOM_OUT = <span class="number">2</span>;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 图片缩小状态常量</div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STATUS_ZOOM_IN = <span class="number">3</span>;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 图片拖动状态常量</div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STATUS_MOVE = <span class="number">4</span>;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 用于对图片进行移动和缩放变换的矩阵</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> Matrix matrix = <span class="keyword">new</span> Matrix();</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 待展示的Bitmap对象</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> Bitmap sourceBitmap;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 记录当前操作的状态，可选值为STATUS_INIT、STATUS_ZOOM_OUT、STATUS_ZOOM_IN和STATUS_MOVE</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> currentStatus;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * ZoomImageView控件的宽度</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> width;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * ZoomImageView控件的高度</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> height;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 记录两指同时放在屏幕上时，中心点的横坐标值</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> centerPointX;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 记录两指同时放在屏幕上时，中心点的纵坐标值</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> centerPointY;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 记录当前图片的宽度，图片被缩放时，这个值会一起变动</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> currentBitmapWidth;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 记录当前图片的高度，图片被缩放时，这个值会一起变动</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> currentBitmapHeight;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 记录上次手指移动时的横坐标</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> lastXMove = -<span class="number">1</span>;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 记录上次手指移动时的纵坐标</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> lastYMove = -<span class="number">1</span>;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 记录手指在横坐标方向上的移动距离</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> movedDistanceX;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 记录手指在纵坐标方向上的移动距离</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> movedDistanceY;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 记录图片在矩阵上的横向偏移值</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> totalTranslateX;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 记录图片在矩阵上的纵向偏移值</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> totalTranslateY;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 记录图片在矩阵上的总缩放比例</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> totalRatio;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 记录手指移动的距离所造成的缩放比例</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> scaledRatio;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 记录图片初始化时的缩放比例</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> initRatio;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 记录上次两指之间的距离</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">double</span> lastFingerDis;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * ZoomImageView构造函数，将当前操作状态设为STATUS_INIT。</div><div class="line">     * </div><div class="line">     * <span class="doctag">@param</span> context</div><div class="line">     * <span class="doctag">@param</span> attrs</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ZoomImageView</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context, attrs);</div><div class="line">        currentStatus = STATUS_INIT;</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 将待展示的图片设置进来。</div><div class="line">     * </div><div class="line">     * <span class="doctag">@param</span> bitmap</div><div class="line">     *            待展示的Bitmap对象</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setImageBitmap</span><span class="params">(Bitmap bitmap)</span> </span>&#123;</div><div class="line">        sourceBitmap = bitmap;</div><div class="line">        invalidate();</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onLayout</span><span class="params">(<span class="keyword">boolean</span> changed, <span class="keyword">int</span> left, <span class="keyword">int</span> top, <span class="keyword">int</span> right,</span></span></div><div class="line">            <span class="keyword">int</span> bottom) &#123;</div><div class="line">        <span class="keyword">super</span>.onLayout(changed, left, top, right, bottom);</div><div class="line">        <span class="keyword">if</span> (changed) &#123;</div><div class="line">            <span class="comment">// 分别获取到ZoomImageView的宽度和高度</span></div><div class="line">            width = getWidth();</div><div class="line">            height = getHeight();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent event)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (initRatio == totalRatio) &#123;</div><div class="line">            getParent().requestDisallowInterceptTouchEvent(<span class="keyword">false</span>);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            getParent().requestDisallowInterceptTouchEvent(<span class="keyword">true</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">switch</span> (event.getActionMasked()) &#123;</div><div class="line">        <span class="keyword">case</span> MotionEvent.ACTION_POINTER_DOWN:</div><div class="line">            <span class="keyword">if</span> (event.getPointerCount() == <span class="number">2</span>) &#123;</div><div class="line">                <span class="comment">// 当有两个手指按在屏幕上时，计算两指之间的距离</span></div><div class="line">                lastFingerDis = distanceBetweenFingers(event);</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">case</span> MotionEvent.ACTION_CANCEL:</div><div class="line">        <span class="keyword">case</span> MotionEvent.ACTION_MOVE:</div><div class="line">            <span class="keyword">if</span> (event.getPointerCount() == <span class="number">1</span>) &#123;</div><div class="line">                <span class="comment">// 只有单指按在屏幕上移动时，为拖动状态</span></div><div class="line">                <span class="keyword">float</span> xMove = event.getX();</div><div class="line">                <span class="keyword">float</span> yMove = event.getY();</div><div class="line">                <span class="keyword">if</span> (lastXMove == -<span class="number">1</span> &amp;&amp; lastYMove == -<span class="number">1</span>) &#123;</div><div class="line">                    lastXMove = xMove;</div><div class="line">                    lastYMove = yMove;</div><div class="line">                &#125;</div><div class="line">                currentStatus = STATUS_MOVE;</div><div class="line">                movedDistanceX = xMove - lastXMove;</div><div class="line">                movedDistanceY = yMove - lastYMove;</div><div class="line">                <span class="comment">// 进行边界检查，不允许将图片拖出边界</span></div><div class="line">                <span class="keyword">if</span> (totalTranslateX + movedDistanceX &gt; <span class="number">0</span>) &#123;</div><div class="line">                    movedDistanceX = <span class="number">0</span>;</div><div class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (width - (totalTranslateX + movedDistanceX) &gt; currentBitmapWidth) &#123;</div><div class="line">                    movedDistanceX = <span class="number">0</span>;</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">if</span> (totalTranslateY + movedDistanceY &gt; <span class="number">0</span>) &#123;</div><div class="line">                    movedDistanceY = <span class="number">0</span>;</div><div class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (height - (totalTranslateY + movedDistanceY) &gt; currentBitmapHeight) &#123;</div><div class="line">                    movedDistanceY = <span class="number">0</span>;</div><div class="line">                &#125;</div><div class="line">                <span class="comment">// 调用onDraw()方法绘制图片</span></div><div class="line">                invalidate();</div><div class="line">                lastXMove = xMove;</div><div class="line">                lastYMove = yMove;</div><div class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (event.getPointerCount() == <span class="number">2</span>) &#123;</div><div class="line">                <span class="comment">// 有两个手指按在屏幕上移动时，为缩放状态</span></div><div class="line">                centerPointBetweenFingers(event);</div><div class="line">                <span class="keyword">double</span> fingerDis = distanceBetweenFingers(event);</div><div class="line">                <span class="keyword">if</span> (fingerDis &gt; lastFingerDis) &#123;</div><div class="line">                    currentStatus = STATUS_ZOOM_OUT;</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    currentStatus = STATUS_ZOOM_IN;</div><div class="line">                &#125;</div><div class="line">                <span class="comment">// 进行缩放倍数检查，最大只允许将图片放大4倍，最小可以缩小到初始化比例</span></div><div class="line">                <span class="keyword">if</span> ((currentStatus == STATUS_ZOOM_OUT &amp;&amp; totalRatio &lt; <span class="number">4</span> * initRatio)</div><div class="line">                        || (currentStatus == STATUS_ZOOM_IN &amp;&amp; totalRatio &gt; initRatio)) &#123;</div><div class="line">                    scaledRatio = (<span class="keyword">float</span>) (fingerDis / lastFingerDis);</div><div class="line">                    totalRatio = totalRatio * scaledRatio;</div><div class="line">                    <span class="keyword">if</span> (totalRatio &gt; <span class="number">4</span> * initRatio) &#123;</div><div class="line">                        totalRatio = <span class="number">4</span> * initRatio;</div><div class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (totalRatio &lt; initRatio) &#123;</div><div class="line">                        totalRatio = initRatio;</div><div class="line">                    &#125;</div><div class="line">                    <span class="comment">// 调用onDraw()方法绘制图片</span></div><div class="line">                    invalidate();</div><div class="line">                    lastFingerDis = fingerDis;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">case</span> MotionEvent.ACTION_POINTER_UP:</div><div class="line">            <span class="keyword">if</span> (event.getPointerCount() == <span class="number">2</span>) &#123;</div><div class="line">                <span class="comment">// 手指离开屏幕时将临时值还原</span></div><div class="line">                lastXMove = -<span class="number">1</span>;</div><div class="line">                lastYMove = -<span class="number">1</span>;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">case</span> MotionEvent.ACTION_UP:</div><div class="line">            <span class="comment">// 手指离开屏幕时将临时值还原</span></div><div class="line">            lastXMove = -<span class="number">1</span>;</div><div class="line">            lastYMove = -<span class="number">1</span>;</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">default</span>:</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 根据currentStatus的值来决定对图片进行什么样的绘制操作。</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDraw</span><span class="params">(Canvas canvas)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onDraw(canvas);</div><div class="line">        <span class="keyword">switch</span> (currentStatus) &#123;</div><div class="line">        <span class="keyword">case</span> STATUS_ZOOM_OUT:</div><div class="line">        <span class="keyword">case</span> STATUS_ZOOM_IN:</div><div class="line">            zoom(canvas);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">case</span> STATUS_MOVE:</div><div class="line">            move(canvas);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">case</span> STATUS_INIT:</div><div class="line">            initBitmap(canvas);</div><div class="line">        <span class="keyword">default</span>:</div><div class="line">            <span class="keyword">if</span> (sourceBitmap != <span class="keyword">null</span>) &#123;</div><div class="line">                canvas.drawBitmap(sourceBitmap, matrix, <span class="keyword">null</span>);</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 对图片进行缩放处理。</div><div class="line">     * </div><div class="line">     * <span class="doctag">@param</span> canvas</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">zoom</span><span class="params">(Canvas canvas)</span> </span>&#123;</div><div class="line">        matrix.reset();</div><div class="line">        <span class="comment">// 将图片按总缩放比例进行缩放</span></div><div class="line">        matrix.postScale(totalRatio, totalRatio);</div><div class="line">        <span class="keyword">float</span> scaledWidth = sourceBitmap.getWidth() * totalRatio;</div><div class="line">        <span class="keyword">float</span> scaledHeight = sourceBitmap.getHeight() * totalRatio;</div><div class="line">        <span class="keyword">float</span> translateX = <span class="number">0f</span>;</div><div class="line">        <span class="keyword">float</span> translateY = <span class="number">0f</span>;</div><div class="line">        <span class="comment">// 如果当前图片宽度小于屏幕宽度，则按屏幕中心的横坐标进行水平缩放。否则按两指的中心点的横坐标进行水平缩放</span></div><div class="line">        <span class="keyword">if</span> (currentBitmapWidth &lt; width) &#123;</div><div class="line">            translateX = (width - scaledWidth) / <span class="number">2f</span>;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            translateX = totalTranslateX * scaledRatio + centerPointX</div><div class="line">                    * (<span class="number">1</span> - scaledRatio);</div><div class="line">            <span class="comment">// 进行边界检查，保证图片缩放后在水平方向上不会偏移出屏幕</span></div><div class="line">            <span class="keyword">if</span> (translateX &gt; <span class="number">0</span>) &#123;</div><div class="line">                translateX = <span class="number">0</span>;</div><div class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (width - translateX &gt; scaledWidth) &#123;</div><div class="line">                translateX = width - scaledWidth;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// 如果当前图片高度小于屏幕高度，则按屏幕中心的纵坐标进行垂直缩放。否则按两指的中心点的纵坐标进行垂直缩放</span></div><div class="line">        <span class="keyword">if</span> (currentBitmapHeight &lt; height) &#123;</div><div class="line">            translateY = (height - scaledHeight) / <span class="number">2f</span>;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            translateY = totalTranslateY * scaledRatio + centerPointY</div><div class="line">                    * (<span class="number">1</span> - scaledRatio);</div><div class="line">            <span class="comment">// 进行边界检查，保证图片缩放后在垂直方向上不会偏移出屏幕</span></div><div class="line">            <span class="keyword">if</span> (translateY &gt; <span class="number">0</span>) &#123;</div><div class="line">                translateY = <span class="number">0</span>;</div><div class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (height - translateY &gt; scaledHeight) &#123;</div><div class="line">                translateY = height - scaledHeight;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// 缩放后对图片进行偏移，以保证缩放后中心点位置不变</span></div><div class="line">        matrix.postTranslate(translateX, translateY);</div><div class="line">        totalTranslateX = translateX;</div><div class="line">        totalTranslateY = translateY;</div><div class="line">        currentBitmapWidth = scaledWidth;</div><div class="line">        currentBitmapHeight = scaledHeight;</div><div class="line">        canvas.drawBitmap(sourceBitmap, matrix, <span class="keyword">null</span>);</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 对图片进行平移处理</div><div class="line">     * </div><div class="line">     * <span class="doctag">@param</span> canvas</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">move</span><span class="params">(Canvas canvas)</span> </span>&#123;</div><div class="line">        matrix.reset();</div><div class="line">        <span class="comment">// 根据手指移动的距离计算出总偏移值</span></div><div class="line">        <span class="keyword">float</span> translateX = totalTranslateX + movedDistanceX;</div><div class="line">        <span class="keyword">float</span> translateY = totalTranslateY + movedDistanceY;</div><div class="line">        <span class="comment">// 先按照已有的缩放比例对图片进行缩放</span></div><div class="line">        matrix.postScale(totalRatio, totalRatio);</div><div class="line">        <span class="comment">// 再根据移动距离进行偏移</span></div><div class="line">        matrix.postTranslate(translateX, translateY);</div><div class="line">        totalTranslateX = translateX;</div><div class="line">        totalTranslateY = translateY;</div><div class="line">        canvas.drawBitmap(sourceBitmap, matrix, <span class="keyword">null</span>);</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 对图片进行初始化操作，包括让图片居中，以及当图片大于屏幕宽高时对图片进行压缩。</div><div class="line">     * </div><div class="line">     * <span class="doctag">@param</span> canvas</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initBitmap</span><span class="params">(Canvas canvas)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (sourceBitmap != <span class="keyword">null</span>) &#123;</div><div class="line">            matrix.reset();</div><div class="line">            <span class="keyword">int</span> bitmapWidth = sourceBitmap.getWidth();</div><div class="line">            <span class="keyword">int</span> bitmapHeight = sourceBitmap.getHeight();</div><div class="line">            <span class="keyword">if</span> (bitmapWidth &gt; width || bitmapHeight &gt; height) &#123;</div><div class="line">                <span class="keyword">if</span> (bitmapWidth - width &gt; bitmapHeight - height) &#123;</div><div class="line">                    <span class="comment">// 当图片宽度大于屏幕宽度时，将图片等比例压缩，使它可以完全显示出来</span></div><div class="line">                    <span class="keyword">float</span> ratio = width / (bitmapWidth * <span class="number">1.0f</span>);</div><div class="line">                    matrix.postScale(ratio, ratio);</div><div class="line">                    <span class="keyword">float</span> translateY = (height - (bitmapHeight * ratio)) / <span class="number">2f</span>;</div><div class="line">                    <span class="comment">// 在纵坐标方向上进行偏移，以保证图片居中显示</span></div><div class="line">                    matrix.postTranslate(<span class="number">0</span>, translateY);</div><div class="line">                    totalTranslateY = translateY;</div><div class="line">                    totalRatio = initRatio = ratio;</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    <span class="comment">// 当图片高度大于屏幕高度时，将图片等比例压缩，使它可以完全显示出来</span></div><div class="line">                    <span class="keyword">float</span> ratio = height / (bitmapHeight * <span class="number">1.0f</span>);</div><div class="line">                    matrix.postScale(ratio, ratio);</div><div class="line">                    <span class="keyword">float</span> translateX = (width - (bitmapWidth * ratio)) / <span class="number">2f</span>;</div><div class="line">                    <span class="comment">// 在横坐标方向上进行偏移，以保证图片居中显示</span></div><div class="line">                    matrix.postTranslate(translateX, <span class="number">0</span>);</div><div class="line">                    totalTranslateX = translateX;</div><div class="line">                    totalRatio = initRatio = ratio;</div><div class="line">                &#125;</div><div class="line">                currentBitmapWidth = bitmapWidth * initRatio;</div><div class="line">                currentBitmapHeight = bitmapHeight * initRatio;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                <span class="comment">// 当图片的宽高都小于屏幕宽高时，直接让图片居中显示</span></div><div class="line">                <span class="keyword">float</span> translateX = (width - sourceBitmap.getWidth()) / <span class="number">2f</span>;</div><div class="line">                <span class="keyword">float</span> translateY = (height - sourceBitmap.getHeight()) / <span class="number">2f</span>;</div><div class="line">                matrix.postTranslate(translateX, translateY);</div><div class="line">                totalTranslateX = translateX;</div><div class="line">                totalTranslateY = translateY;</div><div class="line">                totalRatio = initRatio = <span class="number">1f</span>;</div><div class="line">                currentBitmapWidth = bitmapWidth;</div><div class="line">                currentBitmapHeight = bitmapHeight;</div><div class="line">            &#125;</div><div class="line">            canvas.drawBitmap(sourceBitmap, matrix, <span class="keyword">null</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 计算两个手指之间的距离。</div><div class="line">     * </div><div class="line">     * <span class="doctag">@param</span> event</div><div class="line">     * <span class="doctag">@return</span> 两个手指之间的距离</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">double</span> <span class="title">distanceBetweenFingers</span><span class="params">(MotionEvent event)</span> </span>&#123;</div><div class="line">        <span class="keyword">float</span> disX = Math.abs(event.getX(<span class="number">0</span>) - event.getX(<span class="number">1</span>));</div><div class="line">        <span class="keyword">float</span> disY = Math.abs(event.getY(<span class="number">0</span>) - event.getY(<span class="number">1</span>));</div><div class="line">        <span class="keyword">return</span> Math.sqrt(disX * disX + disY * disY);</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 计算两个手指之间中心点的坐标。</div><div class="line">     * </div><div class="line">     * <span class="doctag">@param</span> event</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">centerPointBetweenFingers</span><span class="params">(MotionEvent event)</span> </span>&#123;</div><div class="line">        <span class="keyword">float</span> xPoint0 = event.getX(<span class="number">0</span>);</div><div class="line">        <span class="keyword">float</span> yPoint0 = event.getY(<span class="number">0</span>);</div><div class="line">        <span class="keyword">float</span> xPoint1 = event.getX(<span class="number">1</span>);</div><div class="line">        <span class="keyword">float</span> yPoint1 = event.getY(<span class="number">1</span>);</div><div class="line">        centerPointX = (xPoint0 + xPoint1) / <span class="number">2</span>;</div><div class="line">        centerPointY = (yPoint0 + yPoint1) / <span class="number">2</span>;</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
 <li>方法3： 自定义OnTouchListener</li>
 </ul>
 <p>使用用法：</p>
@@ -854,125 +210,126 @@ public class ZoomImageView extends ImageView {
 <p>xml文件中：android:scaleType=”matrix”</p>
 </blockquote>
 <p>下面是自定义监听代码：MulitPointTouchListener.java</p>
-<pre><code>public class MulitPointTouchListener implements OnTouchListener {   
-    private static final String TAG = &quot;MulitPointTouchListener&quot;;   
-    // These matrices will be used to move and zoom image   
-    Matrix matrix = new Matrix();   
-    Matrix savedMatrix = new Matrix();   
+<pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MulitPointTouchListener</span> <span class="keyword">implements</span> <span class="title">OnTouchListener</span> </span>{   
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"MulitPointTouchListener"</span>;   
+    <span class="comment">// These matrices will be used to move and zoom image   </span>
+    Matrix matrix = <span class="keyword">new</span> Matrix();   
+    Matrix savedMatrix = <span class="keyword">new</span> Matrix();   
 
-    // We can be in one of these 3 states   
-    static final int NONE = 0;   
-    static final int DRAG = 1;   
-    static final int ZOOM = 2;   
-    int mode = NONE;   
+    <span class="comment">// We can be in one of these 3 states   </span>
+    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> NONE = <span class="number">0</span>;   
+    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DRAG = <span class="number">1</span>;   
+    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ZOOM = <span class="number">2</span>;   
+    <span class="keyword">int</span> mode = NONE;   
 
-    // Remember some things for zooming   
-    PointF start = new PointF();   
-    PointF mid = new PointF();   
-    float oldDist = 1f;   
+    <span class="comment">// Remember some things for zooming   </span>
+    PointF start = <span class="keyword">new</span> PointF();   
+    PointF mid = <span class="keyword">new</span> PointF();   
+    <span class="keyword">float</span> oldDist = <span class="number">1f</span>;   
 
-    @Override  
-    public boolean onTouch(View v, MotionEvent event) {   
+    <span class="meta">@Override</span>  
+    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouch</span><span class="params">(View v, MotionEvent event)</span> </span>{   
 
             ImageView view = (ImageView) v;   
-            // Log.e(&quot;view_width&quot;,   
-            // view.getImageMatrix()..toString()+&quot;*&quot;+v.getWidth());   
-            // Dump touch event to log   
+            <span class="comment">// Log.e("view_width",   </span>
+            <span class="comment">// view.getImageMatrix()..toString()+"*"+v.getWidth());   </span>
+            <span class="comment">// Dump touch event to log   </span>
             dumpEvent(event);   
 
-            // Handle touch events here...   
-            switch (event.getAction() &amp; MotionEvent.ACTION_MASK) {   
-            case MotionEvent.ACTION_DOWN:   
+            <span class="comment">// Handle touch events here...   </span>
+            <span class="keyword">switch</span> (event.getAction() &amp; MotionEvent.ACTION_MASK) {   
+            <span class="keyword">case</span> MotionEvent.ACTION_DOWN:   
 
                     matrix.set(view.getImageMatrix());   
                     savedMatrix.set(matrix);   
                     start.set(event.getX(), event.getY());   
-                    //Log.d(TAG, &quot;mode=DRAG&quot;);   
+                    <span class="comment">//Log.d(TAG, "mode=DRAG");   </span>
                     mode = DRAG;   
 
 
-                    //Log.d(TAG, &quot;mode=NONE&quot;);   
-                    break;   
-            case MotionEvent.ACTION_POINTER_DOWN:   
+                    <span class="comment">//Log.d(TAG, "mode=NONE");   </span>
+                    <span class="keyword">break</span>;   
+            <span class="keyword">case</span> MotionEvent.ACTION_POINTER_DOWN:   
                     oldDist = spacing(event);   
-                    //Log.d(TAG, &quot;oldDist=&quot; + oldDist);   
-                    if (oldDist &gt; 10f) {   
+                    <span class="comment">//Log.d(TAG, "oldDist=" + oldDist);   </span>
+                    <span class="keyword">if</span> (oldDist &gt; <span class="number">10f</span>) {   
                             savedMatrix.set(matrix);   
                             midPoint(mid, event);   
                             mode = ZOOM;   
-                            //Log.d(TAG, &quot;mode=ZOOM&quot;);   
+                            <span class="comment">//Log.d(TAG, "mode=ZOOM");   </span>
                     }   
-                    break;   
-            case MotionEvent.ACTION_UP:   
-            case MotionEvent.ACTION_POINTER_UP:   
+                    <span class="keyword">break</span>;   
+            <span class="keyword">case</span> MotionEvent.ACTION_UP:   
+            <span class="keyword">case</span> MotionEvent.ACTION_POINTER_UP:   
                     mode = NONE;   
-                    //Log.e(&quot;view.getWidth&quot;, view.getWidth() + &quot;&quot;);   
-                    //Log.e(&quot;view.getHeight&quot;, view.getHeight() + &quot;&quot;);   
+                    <span class="comment">//Log.e("view.getWidth", view.getWidth() + "");   </span>
+                    <span class="comment">//Log.e("view.getHeight", view.getHeight() + "");   </span>
 
-                    break;   
-            case MotionEvent.ACTION_MOVE:   
-                    if (mode == DRAG) {   
-                            // ...   
+                    <span class="keyword">break</span>;   
+            <span class="keyword">case</span> MotionEvent.ACTION_MOVE:   
+                    <span class="keyword">if</span> (mode == DRAG) {   
+                            <span class="comment">// ...   </span>
                             matrix.set(savedMatrix);   
                             matrix.postTranslate(event.getX() - start.x, event.getY()   
                                             - start.y);   
-                    } else if (mode == ZOOM) {   
-                            float newDist = spacing(event);   
-                            //Log.d(TAG, &quot;newDist=&quot; + newDist);   
-                            if (newDist &gt; 10f) {   
+                    } <span class="keyword">else</span> <span class="keyword">if</span> (mode == ZOOM) {   
+                            <span class="keyword">float</span> newDist = spacing(event);   
+                            <span class="comment">//Log.d(TAG, "newDist=" + newDist);   </span>
+                            <span class="keyword">if</span> (newDist &gt; <span class="number">10f</span>) {   
                                     matrix.set(savedMatrix);   
-                                    float scale = newDist / oldDist;   
+                                    <span class="keyword">float</span> scale = newDist / oldDist;   
                                     matrix.postScale(scale, scale, mid.x, mid.y);   
                             }   
                     }   
-                    break;   
+                    <span class="keyword">break</span>;   
             }   
 
             view.setImageMatrix(matrix);   
-            return true; // indicate event was handled   
+            <span class="keyword">return</span> <span class="keyword">true</span>; <span class="comment">// indicate event was handled   </span>
     }   
 
-    private void dumpEvent(MotionEvent event) {   
-            String names[] = { &quot;DOWN&quot;, &quot;UP&quot;, &quot;MOVE&quot;, &quot;CANCEL&quot;, &quot;OUTSIDE&quot;,   
-                            &quot;POINTER_DOWN&quot;, &quot;POINTER_UP&quot;, &quot;7?&quot;, &quot;8?&quot;, &quot;9?&quot; };   
-            StringBuilder sb = new StringBuilder();   
-            int action = event.getAction();   
-            int actionCode = action &amp; MotionEvent.ACTION_MASK;   
-            sb.append(&quot;event ACTION_&quot;).append(names[actionCode]);   
-            if (actionCode == MotionEvent.ACTION_POINTER_DOWN   
+    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dumpEvent</span><span class="params">(MotionEvent event)</span> </span>{   
+            String names[] = { <span class="string">"DOWN"</span>, <span class="string">"UP"</span>, <span class="string">"MOVE"</span>, <span class="string">"CANCEL"</span>, <span class="string">"OUTSIDE"</span>,   
+                            <span class="string">"POINTER_DOWN"</span>, <span class="string">"POINTER_UP"</span>, <span class="string">"7?"</span>, <span class="string">"8?"</span>, <span class="string">"9?"</span> };   
+            StringBuilder sb = <span class="keyword">new</span> StringBuilder();   
+            <span class="keyword">int</span> action = event.getAction();   
+            <span class="keyword">int</span> actionCode = action &amp; MotionEvent.ACTION_MASK;   
+            sb.append(<span class="string">"event ACTION_"</span>).append(names[actionCode]);   
+            <span class="keyword">if</span> (actionCode == MotionEvent.ACTION_POINTER_DOWN   
                             || actionCode == MotionEvent.ACTION_POINTER_UP) {   
-                    sb.append(&quot;(pid &quot;).append(   
+                    sb.append(<span class="string">"(pid "</span>).append(   
                                     action &gt;&gt; MotionEvent.ACTION_POINTER_ID_SHIFT);   
-                    sb.append(&quot;)&quot;);   
+                    sb.append(<span class="string">")"</span>);   
             }   
-            sb.append(&quot;[&quot;);   
-            for (int i = 0; i &lt; event.getPointerCount(); i++) {   
-                    sb.append(&quot;#&quot;).append(i);   
-                    sb.append(&quot;(pid &quot;).append(event.getPointerId(i));   
-                    sb.append(&quot;)=&quot;).append((int) event.getX(i));   
-                    sb.append(&quot;,&quot;).append((int) event.getY(i));   
-                    if (i + 1 &lt; event.getPointerCount())   
-                            sb.append(&quot;;&quot;);   
+            sb.append(<span class="string">"["</span>);   
+            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; event.getPointerCount(); i++) {   
+                    sb.append(<span class="string">"#"</span>).append(i);   
+                    sb.append(<span class="string">"(pid "</span>).append(event.getPointerId(i));   
+                    sb.append(<span class="string">")="</span>).append((<span class="keyword">int</span>) event.getX(i));   
+                    sb.append(<span class="string">","</span>).append((<span class="keyword">int</span>) event.getY(i));   
+                    <span class="keyword">if</span> (i + <span class="number">1</span> &lt; event.getPointerCount())   
+                            sb.append(<span class="string">";"</span>);   
             }   
-            sb.append(&quot;]&quot;);   
-            //Log.d(TAG, sb.toString());   
+            sb.append(<span class="string">"]"</span>);   
+            <span class="comment">//Log.d(TAG, sb.toString());   </span>
     }   
 
 
-    private float spacing(MotionEvent event) {   
-            float x = event.getX(0) - event.getX(1);   
-            float y = event.getY(0) - event.getY(1);   
-            return FloatMath.sqrt(x * x + y * y);   
+    <span class="function"><span class="keyword">private</span> <span class="keyword">float</span> <span class="title">spacing</span><span class="params">(MotionEvent event)</span> </span>{   
+            <span class="keyword">float</span> x = event.getX(<span class="number">0</span>) - event.getX(<span class="number">1</span>);   
+            <span class="keyword">float</span> y = event.getY(<span class="number">0</span>) - event.getY(<span class="number">1</span>);   
+            <span class="keyword">return</span> FloatMath.sqrt(x * x + y * y);   
     }   
 
 
-    private void midPoint(PointF point, MotionEvent event) {   
-            float x = event.getX(0) + event.getX(1);   
-            float y = event.getY(0) + event.getY(1);   
-            point.set(x / 2, y / 2);   
+    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">midPoint</span><span class="params">(PointF point, MotionEvent event)</span> </span>{   
+            <span class="keyword">float</span> x = event.getX(<span class="number">0</span>) + event.getX(<span class="number">1</span>);   
+            <span class="keyword">float</span> y = event.getY(<span class="number">0</span>) + event.getY(<span class="number">1</span>);   
+            point.set(x / <span class="number">2</span>, y / <span class="number">2</span>);   
     }   
-}  
+}
 </code></pre>
+
       
 
       
@@ -1205,11 +562,11 @@ public class ZoomImageView extends ImageView {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1217,11 +574,11 @@ public class ZoomImageView extends ImageView {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1237,15 +594,11 @@ public class ZoomImageView extends ImageView {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1253,15 +606,15 @@ public class ZoomImageView extends ImageView {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1270,6 +623,10 @@ public class ZoomImageView extends ImageView {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

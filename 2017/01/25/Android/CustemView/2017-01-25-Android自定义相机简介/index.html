@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://blog.hsujee.io/2017/01/25/Android/CustemView/2017-01-25-Android自定义相机简介/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="Android自定义相机简介">
-<meta property="og:updated_time" content="2017-04-12T02:23:04.507Z">
+<meta property="og:updated_time" content="2017-06-13T11:17:40.636Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android自定义相机简介">
 <meta name="twitter:description" content="Android自定义相机简介">
@@ -187,304 +187,9 @@
 <p>下面直接上代码：</p>
 <p>主文件 CameraActivity.java</p>
 <a id="more"></a>
-<pre><code>public class CameraActivity extends Activity {
-    private Camera camera;
-    private Camera.Parameters parameters = null;
-
-    Bundle bundle = null; // 声明一个Bundle对象，用来存储数据
-    private String mUserId;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // 显示界面
-        setContentView(R.layout.activity_camera);
-        mUserId = getIntent().getStringExtra(&quot;userId&quot;);
-        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.camera_surfaceView);
-        surfaceView.getHolder()
-                .setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        surfaceView.getHolder().setFixedSize(176, 144); //设置Surface分辨率
-        surfaceView.getHolder().setKeepScreenOn(true);// 屏幕常亮
-        surfaceView.getHolder().addCallback(new SurfaceCallback());//为SurfaceView的句柄添加一个回调函数
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            int result = data.getIntExtra(&quot;result&quot;, 0);
-            if (result == 0) {//确定
-                setResult(RESULT_OK, data);
-                finish();
-            }
-        }
-    }
-
-    /**
-     * 按钮被点击触发的事件
-     *
-     * @param v
-     */
-    public void btnOnclick(View v) {
-        if (camera != null) {
-            switch (v.getId()) {
-                case R.id.camera_takepicture:
-                    // 拍照
-                    camera.takePicture(null, null, new MyPictureCallback());
-                    break;
-            }
-        }
-    }
-
-    /** 拍照回调 */
-    private final class MyPictureCallback implements Camera.PictureCallback {
-
-        @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
-
-            if (data != null) {
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 4;  //这里表示原来图片的1/4
-                Bitmap bitmap2 = BitmapFactory.decodeByteArray(data, 0,
-                        data.length, options);
-                try {
-                    String image = saveFile(bitmap2);//保存图片
-
-                    Toast.makeText(getApplicationContext(), &quot;保存成功&quot;,
-                            Toast.LENGTH_SHORT).show();
-                    camera.startPreview(); // 拍完照后，重新开始预览
-                    if (image != null) {
-                        Intent intent = new Intent(CameraActivity.this, PictureSureActivity.class);
-                        intent.putExtra(&quot;userId&quot;, mUserId);
-                        intent.putExtra(&quot;image&quot;, image);
-                        CameraActivity.this.startActivityForResult(intent, 123);
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                bitmap2.recycle();
-            }
-        }
-/*********************************直接保存二进制图片数据************************************/
-//            try {
-//                bundle = new Bundle();
-//                bundle.putByteArray(&quot;bytes&quot;, data); //将图片字节数据保存在bundle当中，实现数据交换
-//                String image = saveToSDCard(data);// 保存图片到sd卡中
-//                Toast.makeText(getApplicationContext(), &quot;保存成功&quot;,
-//                        Toast.LENGTH_SHORT).show();
-//                camera.startPreview(); // 拍完照后，重新开始预览
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-
-    }
-
-    /**
-     * 将拍下来的照片存放在SD卡中
-     * bitmap格式图片保存
-     * @param bm
-     * @return
-     * @throws IOException
-     */
-    public String saveFile(Bitmap bm) throws IOException {
-        Date date = new Date();
-        SimpleDateFormat format = new SimpleDateFormat(&quot;yyyyMMddHHmmss&quot;); // 格式化时间
-        String filename = format.format(date) + &quot;.jpg&quot;;
-        File fileFolder = new File(Environment.getExternalStorageDirectory()
-                + &quot;/com.simple.images/&quot;);
-        if (!fileFolder.exists()) { // 如果目录不存在，则创建一个名为&quot;finger&quot;的目录
-            fileFolder.mkdir();
-        }
-        File jpgFile = new File(fileFolder, filename);
-        String imageUrl = jpgFile.getPath();
-        BufferedOutputStream bos = new BufferedOutputStream(
-                new FileOutputStream(jpgFile));
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-        bos.flush();
-        bos.close();
-        return imageUrl;
-    }
-
-    /**
-     * 将拍下来的照片存放在SD卡中
-     *
-     * @param data 二进制图片数据
-     * @throws IOException
-     */
-    public static String saveToSDCard(byte[] data) throws IOException {
-        Date date = new Date();
-        SimpleDateFormat format = new SimpleDateFormat(&quot;yyyyMMddHHmmss&quot;); // 格式化时间
-        String filename = format.format(date) + &quot;.jpg&quot;;
-        File fileFolder = new File(Environment.getExternalStorageDirectory()
-                + &quot;/com.simple.images/&quot;);
-        if (!fileFolder.exists()) { // 如果目录不存在，则创建一个名为&quot;finger&quot;的目录
-            fileFolder.mkdir();
-        }
-        File jpgFile = new File(fileFolder, filename);
-        String imageUrl = jpgFile.getPath();
-        FileOutputStream outputStream = new FileOutputStream(jpgFile); // 文件输出流
-        outputStream.write(data); // 写入sd卡中
-        outputStream.close(); // 关闭输出流
-
-        return imageUrl;
-    }
-
-    private final class SurfaceCallback implements SurfaceHolder.Callback {
-
-        // 拍照状态变化时调用该方法
-        @Override
-        public void surfaceChanged(SurfaceHolder holder, int format, int width,
-                                   int height) {
-            parameters = camera.getParameters(); // 获取各项参数
-            parameters.setPictureFormat(PixelFormat.JPEG); // 设置图片格式
-            parameters.setPreviewSize(width, height); // 设置预览大小
-            parameters.setPreviewFrameRate(5);  //设置每秒显示4帧
-            parameters.setPictureSize(width, height); // 设置保存的图片尺寸
-            parameters.setJpegQuality(100); // 设置照片质量
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-        }
-
-        // 开始拍照时调用该方法
-        @Override
-        public void surfaceCreated(SurfaceHolder holder) {
-            try {
-                camera = Camera.open(); // 打开摄像头
-                camera.setPreviewDisplay(holder); // 设置用于显示拍照影像的SurfaceHolder对象
-                camera.setDisplayOrientation(getPreviewDegree(CameraActivity.this));
-                camera.startPreview(); // 开始预览
-                camera.setAutoFocusMoveCallback(new Camera.AutoFocusMoveCallback() {
-                    @Override
-                    public void onAutoFocusMoving(boolean b, Camera camera) {
-
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        // 停止拍照时调用该方法
-        @Override
-        public void surfaceDestroyed(SurfaceHolder holder) {
-            if (camera != null) {
-                camera.release(); // 释放照相机
-                camera = null;
-            }
-        }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_CAMERA: // 按下拍照按钮
-                if (camera != null &amp;&amp; event.getRepeatCount() == 0) {
-                    // 拍照
-                    //注：调用takePicture()方法进行拍照是传入了一个PictureCallback对象——当程序获取了拍照所得的图片数据之后
-                    //，PictureCallback对象将会被回调，该对象可以负责对相片进行保存或传入网络
-                    camera.takePicture(null, null, new MyPictureCallback());
-                }
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    // 提供一个静态方法，用于根据手机方向获得相机预览画面旋转的角度
-    public static int getPreviewDegree(Activity activity) {
-        // 获得手机的方向
-        int rotation = activity.getWindowManager().getDefaultDisplay()
-                .getRotation();
-        int degree = 0;
-        // 根据手机的方向计算相机预览画面应该选择的角度
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                degree = 90;
-                break;
-            case Surface.ROTATION_90:
-                degree = 0;
-                break;
-            case Surface.ROTATION_180:
-                degree = 270;
-                break;
-            case Surface.ROTATION_270:
-                degree = 180;
-                break;
-        }
-        return degree;
-    }
-
-    public void goBack(View v) {
-        finish();
-    }
-}
-</code></pre><p>布局文件 activity_camera.xml</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-&lt;FrameLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
-    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;
-    xmlns:tools=&quot;http://schemas.android.com/tools&quot;
-    android:layout_width=&quot;match_parent&quot;
-    android:layout_height=&quot;match_parent&quot;&gt;
-    &lt;!-- 显示预览图形 --&gt;
-    &lt;SurfaceView
-        android:id=&quot;@+id/camera_surfaceView&quot;
-        android:layout_width=&quot;match_parent&quot;
-        android:layout_height=&quot;match_parent&quot; /&gt;
-
-    &lt;RelativeLayout
-        android:layout_width=&quot;match_parent&quot;
-        android:layout_height=&quot;wrap_content&quot;
-        android:background=&quot;@color/smoke_oranger&quot;&gt;
-
-        &lt;com.irobotcity.smokeverify.widget.TitleBar
-            android:layout_width=&quot;match_parent&quot;
-            android:layout_height=&quot;?attr/actionBarSize&quot;
-            android:layout_centerVertical=&quot;true&quot;
-            app:addEvelation=&quot;false&quot;&gt;
-
-        &lt;/com.irobotcity.smokeverify.widget.TitleBar&gt;
-
-        &lt;TextView
-            android:layout_width=&quot;wrap_content&quot;
-            android:layout_height=&quot;wrap_content&quot;
-            android:layout_alignParentLeft=&quot;true&quot;
-            android:layout_centerVertical=&quot;true&quot;
-            android:layout_marginLeft=&quot;10dp&quot;
-            android:text=&quot;取消&quot;
-            android:textColor=&quot;@color/whitesmoke&quot;
-            android:onClick=&quot;goBack&quot;
-            android:textSize=&quot;16dp&quot; /&gt;
-
-        &lt;TextView
-            android:layout_width=&quot;wrap_content&quot;
-            android:layout_height=&quot;wrap_content&quot;
-            android:layout_centerHorizontal=&quot;true&quot;
-            android:layout_centerVertical=&quot;true&quot;
-            android:layout_gravity=&quot;center&quot;
-            android:paddingBottom=&quot;15dp&quot;
-            android:paddingTop=&quot;15dp&quot;
-            android:text=&quot;拍照&quot;
-            android:textColor=&quot;@color/white&quot;
-            android:textSize=&quot;20sp&quot; /&gt;
-
-    &lt;/RelativeLayout&gt;
-
-    &lt;!-- 相对布局，放置两个按钮 --&gt;
-    &lt;RelativeLayout
-        android:layout_width=&quot;match_parent&quot;
-        android:layout_height=&quot;wrap_content&quot;
-        android:layout_marginBottom=&quot;10dp&quot;&gt;
-        &lt;!-- 拍照按钮 --&gt;
-        &lt;Button
-            android:id=&quot;@+id/camera_takepicture&quot;
-            android:layout_width=&quot;60dp&quot;
-            android:layout_height=&quot;60dp&quot;
-            android:layout_alignParentBottom=&quot;true&quot;
-            android:layout_centerHorizontal=&quot;true&quot;
-            android:background=&quot;@drawable/main_take&quot;
-            android:onClick=&quot;btnOnclick&quot; /&gt;
-    &lt;/RelativeLayout&gt;
-&lt;/FrameLayout&gt;
-</code></pre>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CameraActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> Camera camera;</div><div class="line">    <span class="keyword">private</span> Camera.Parameters parameters = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">    Bundle bundle = <span class="keyword">null</span>; <span class="comment">// 声明一个Bundle对象，用来存储数据</span></div><div class="line">    <span class="keyword">private</span> String mUserId;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">        <span class="comment">// 显示界面</span></div><div class="line">        setContentView(R.layout.activity_camera);</div><div class="line">        mUserId = getIntent().getStringExtra(<span class="string">"userId"</span>);</div><div class="line">        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.camera_surfaceView);</div><div class="line">        surfaceView.getHolder()</div><div class="line">                .setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);</div><div class="line">        surfaceView.getHolder().setFixedSize(<span class="number">176</span>, <span class="number">144</span>); <span class="comment">//设置Surface分辨率</span></div><div class="line">        surfaceView.getHolder().setKeepScreenOn(<span class="keyword">true</span>);<span class="comment">// 屏幕常亮</span></div><div class="line">        surfaceView.getHolder().addCallback(<span class="keyword">new</span> SurfaceCallback());<span class="comment">//为SurfaceView的句柄添加一个回调函数</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onActivityResult</span><span class="params">(<span class="keyword">int</span> requestCode, <span class="keyword">int</span> resultCode, Intent data)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onActivityResult(requestCode, resultCode, data);</div><div class="line">        <span class="keyword">if</span> (resultCode == RESULT_OK) &#123;</div><div class="line">            <span class="keyword">int</span> result = data.getIntExtra(<span class="string">"result"</span>, <span class="number">0</span>);</div><div class="line">            <span class="keyword">if</span> (result == <span class="number">0</span>) &#123;<span class="comment">//确定</span></div><div class="line">                setResult(RESULT_OK, data);</div><div class="line">                finish();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 按钮被点击触发的事件</div><div class="line">     *</div><div class="line">     * <span class="doctag">@param</span> v</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">btnOnclick</span><span class="params">(View v)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (camera != <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">switch</span> (v.getId()) &#123;</div><div class="line">                <span class="keyword">case</span> R.id.camera_takepicture:</div><div class="line">                    <span class="comment">// 拍照</span></div><div class="line">                    camera.takePicture(<span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">new</span> MyPictureCallback());</div><div class="line">                    <span class="keyword">break</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/** 拍照回调 */</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">MyPictureCallback</span> <span class="keyword">implements</span> <span class="title">Camera</span>.<span class="title">PictureCallback</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPictureTaken</span><span class="params">(<span class="keyword">byte</span>[] data, Camera camera)</span> </span>&#123;</div><div class="line"></div><div class="line">            <span class="keyword">if</span> (data != <span class="keyword">null</span>) &#123;</div><div class="line">                BitmapFactory.Options options = <span class="keyword">new</span> BitmapFactory.Options();</div><div class="line">                options.inSampleSize = <span class="number">4</span>;  <span class="comment">//这里表示原来图片的1/4</span></div><div class="line">                Bitmap bitmap2 = BitmapFactory.decodeByteArray(data, <span class="number">0</span>,</div><div class="line">                        data.length, options);</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    String image = saveFile(bitmap2);<span class="comment">//保存图片</span></div><div class="line"></div><div class="line">                    Toast.makeText(getApplicationContext(), <span class="string">"保存成功"</span>,</div><div class="line">                            Toast.LENGTH_SHORT).show();</div><div class="line">                    camera.startPreview(); <span class="comment">// 拍完照后，重新开始预览</span></div><div class="line">                    <span class="keyword">if</span> (image != <span class="keyword">null</span>) &#123;</div><div class="line">                        Intent intent = <span class="keyword">new</span> Intent(CameraActivity.<span class="keyword">this</span>, PictureSureActivity.class);</div><div class="line">                        intent.putExtra(<span class="string">"userId"</span>, mUserId);</div><div class="line">                        intent.putExtra(<span class="string">"image"</span>, image);</div><div class="line">                        CameraActivity.<span class="keyword">this</span>.startActivityForResult(intent, <span class="number">123</span>);</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">                bitmap2.recycle();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"><span class="comment">/*********************************直接保存二进制图片数据************************************/</span></div><div class="line"><span class="comment">//            try &#123;</span></div><div class="line"><span class="comment">//                bundle = new Bundle();</span></div><div class="line"><span class="comment">//                bundle.putByteArray("bytes", data); //将图片字节数据保存在bundle当中，实现数据交换</span></div><div class="line"><span class="comment">//                String image = saveToSDCard(data);// 保存图片到sd卡中</span></div><div class="line"><span class="comment">//                Toast.makeText(getApplicationContext(), "保存成功",</span></div><div class="line"><span class="comment">//                        Toast.LENGTH_SHORT).show();</span></div><div class="line"><span class="comment">//                camera.startPreview(); // 拍完照后，重新开始预览</span></div><div class="line"><span class="comment">//            &#125; catch (Exception e) &#123;</span></div><div class="line"><span class="comment">//                e.printStackTrace();</span></div><div class="line"><span class="comment">//            &#125;</span></div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 将拍下来的照片存放在SD卡中</div><div class="line">     * bitmap格式图片保存</div><div class="line">     * <span class="doctag">@param</span> bm</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     * <span class="doctag">@throws</span> IOException</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">saveFile</span><span class="params">(Bitmap bm)</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">        Date date = <span class="keyword">new</span> Date();</div><div class="line">        SimpleDateFormat format = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyyMMddHHmmss"</span>); <span class="comment">// 格式化时间</span></div><div class="line">        String filename = format.format(date) + <span class="string">".jpg"</span>;</div><div class="line">        File fileFolder = <span class="keyword">new</span> File(Environment.getExternalStorageDirectory()</div><div class="line">                + <span class="string">"/com.simple.images/"</span>);</div><div class="line">        <span class="keyword">if</span> (!fileFolder.exists()) &#123; <span class="comment">// 如果目录不存在，则创建一个名为"finger"的目录</span></div><div class="line">            fileFolder.mkdir();</div><div class="line">        &#125;</div><div class="line">        File jpgFile = <span class="keyword">new</span> File(fileFolder, filename);</div><div class="line">        String imageUrl = jpgFile.getPath();</div><div class="line">        BufferedOutputStream bos = <span class="keyword">new</span> BufferedOutputStream(</div><div class="line">                <span class="keyword">new</span> FileOutputStream(jpgFile));</div><div class="line">        bm.compress(Bitmap.CompressFormat.JPEG, <span class="number">100</span>, bos);</div><div class="line">        bos.flush();</div><div class="line">        bos.close();</div><div class="line">        <span class="keyword">return</span> imageUrl;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 将拍下来的照片存放在SD卡中</div><div class="line">     *</div><div class="line">     * <span class="doctag">@param</span> data 二进制图片数据</div><div class="line">     * <span class="doctag">@throws</span> IOException</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">saveToSDCard</span><span class="params">(<span class="keyword">byte</span>[] data)</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">        Date date = <span class="keyword">new</span> Date();</div><div class="line">        SimpleDateFormat format = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyyMMddHHmmss"</span>); <span class="comment">// 格式化时间</span></div><div class="line">        String filename = format.format(date) + <span class="string">".jpg"</span>;</div><div class="line">        File fileFolder = <span class="keyword">new</span> File(Environment.getExternalStorageDirectory()</div><div class="line">                + <span class="string">"/com.simple.images/"</span>);</div><div class="line">        <span class="keyword">if</span> (!fileFolder.exists()) &#123; <span class="comment">// 如果目录不存在，则创建一个名为"finger"的目录</span></div><div class="line">            fileFolder.mkdir();</div><div class="line">        &#125;</div><div class="line">        File jpgFile = <span class="keyword">new</span> File(fileFolder, filename);</div><div class="line">        String imageUrl = jpgFile.getPath();</div><div class="line">        FileOutputStream outputStream = <span class="keyword">new</span> FileOutputStream(jpgFile); <span class="comment">// 文件输出流</span></div><div class="line">        outputStream.write(data); <span class="comment">// 写入sd卡中</span></div><div class="line">        outputStream.close(); <span class="comment">// 关闭输出流</span></div><div class="line"></div><div class="line">        <span class="keyword">return</span> imageUrl;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">SurfaceCallback</span> <span class="keyword">implements</span> <span class="title">SurfaceHolder</span>.<span class="title">Callback</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="comment">// 拍照状态变化时调用该方法</span></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">surfaceChanged</span><span class="params">(SurfaceHolder holder, <span class="keyword">int</span> format, <span class="keyword">int</span> width,</span></span></div><div class="line">                                   <span class="keyword">int</span> height) &#123;</div><div class="line">            parameters = camera.getParameters(); <span class="comment">// 获取各项参数</span></div><div class="line">            parameters.setPictureFormat(PixelFormat.JPEG); <span class="comment">// 设置图片格式</span></div><div class="line">            parameters.setPreviewSize(width, height); <span class="comment">// 设置预览大小</span></div><div class="line">            parameters.setPreviewFrameRate(<span class="number">5</span>);  <span class="comment">//设置每秒显示4帧</span></div><div class="line">            parameters.setPictureSize(width, height); <span class="comment">// 设置保存的图片尺寸</span></div><div class="line">            parameters.setJpegQuality(<span class="number">100</span>); <span class="comment">// 设置照片质量</span></div><div class="line">            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">// 开始拍照时调用该方法</span></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">surfaceCreated</span><span class="params">(SurfaceHolder holder)</span> </span>&#123;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                camera = Camera.open(); <span class="comment">// 打开摄像头</span></div><div class="line">                camera.setPreviewDisplay(holder); <span class="comment">// 设置用于显示拍照影像的SurfaceHolder对象</span></div><div class="line">                camera.setDisplayOrientation(getPreviewDegree(CameraActivity.<span class="keyword">this</span>));</div><div class="line">                camera.startPreview(); <span class="comment">// 开始预览</span></div><div class="line">                camera.setAutoFocusMoveCallback(<span class="keyword">new</span> Camera.AutoFocusMoveCallback() &#123;</div><div class="line">                    <span class="meta">@Override</span></div><div class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAutoFocusMoving</span><span class="params">(<span class="keyword">boolean</span> b, Camera camera)</span> </span>&#123;</div><div class="line"></div><div class="line">                    &#125;</div><div class="line">                &#125;);</div><div class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">// 停止拍照时调用该方法</span></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">surfaceDestroyed</span><span class="params">(SurfaceHolder holder)</span> </span>&#123;</div><div class="line">            <span class="keyword">if</span> (camera != <span class="keyword">null</span>) &#123;</div><div class="line">                camera.release(); <span class="comment">// 释放照相机</span></div><div class="line">                camera = <span class="keyword">null</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onKeyDown</span><span class="params">(<span class="keyword">int</span> keyCode, KeyEvent event)</span> </span>&#123;</div><div class="line">        <span class="keyword">switch</span> (keyCode) &#123;</div><div class="line">            <span class="keyword">case</span> KeyEvent.KEYCODE_CAMERA: <span class="comment">// 按下拍照按钮</span></div><div class="line">                <span class="keyword">if</span> (camera != <span class="keyword">null</span> &amp;&amp; event.getRepeatCount() == <span class="number">0</span>) &#123;</div><div class="line">                    <span class="comment">// 拍照</span></div><div class="line">                    <span class="comment">//注：调用takePicture()方法进行拍照是传入了一个PictureCallback对象——当程序获取了拍照所得的图片数据之后</span></div><div class="line">                    <span class="comment">//，PictureCallback对象将会被回调，该对象可以负责对相片进行保存或传入网络</span></div><div class="line">                    camera.takePicture(<span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">new</span> MyPictureCallback());</div><div class="line">                &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onKeyDown(keyCode, event);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 提供一个静态方法，用于根据手机方向获得相机预览画面旋转的角度</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getPreviewDegree</span><span class="params">(Activity activity)</span> </span>&#123;</div><div class="line">        <span class="comment">// 获得手机的方向</span></div><div class="line">        <span class="keyword">int</span> rotation = activity.getWindowManager().getDefaultDisplay()</div><div class="line">                .getRotation();</div><div class="line">        <span class="keyword">int</span> degree = <span class="number">0</span>;</div><div class="line">        <span class="comment">// 根据手机的方向计算相机预览画面应该选择的角度</span></div><div class="line">        <span class="keyword">switch</span> (rotation) &#123;</div><div class="line">            <span class="keyword">case</span> Surface.ROTATION_0:</div><div class="line">                degree = <span class="number">90</span>;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> Surface.ROTATION_90:</div><div class="line">                degree = <span class="number">0</span>;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> Surface.ROTATION_180:</div><div class="line">                degree = <span class="number">270</span>;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> Surface.ROTATION_270:</div><div class="line">                degree = <span class="number">180</span>;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> degree;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">goBack</span><span class="params">(View v)</span> </span>&#123;</div><div class="line">        finish();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>布局文件 activity_camera.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="utf-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">FrameLayout</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></div><div class="line">    <span class="attr">xmlns:app</span>=<span class="string">"http://schemas.android.com/apk/res-auto"</span></div><div class="line">    <span class="attr">xmlns:tools</span>=<span class="string">"http://schemas.android.com/tools"</span></div><div class="line">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></div><div class="line">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span>&gt;</div><div class="line">    <span class="comment">&lt;!-- 显示预览图形 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">SurfaceView</span></span></div><div class="line">        <span class="attr">android:id</span>=<span class="string">"@+id/camera_surfaceView"</span></div><div class="line">        <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></div><div class="line">        <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span> /&gt;</div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">RelativeLayout</span></span></div><div class="line">        <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></div><div class="line">        <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></div><div class="line">        <span class="attr">android:background</span>=<span class="string">"@color/smoke_oranger"</span>&gt;</div><div class="line"></div><div class="line">        <span class="tag">&lt;<span class="name">com.irobotcity.smokeverify.widget.TitleBar</span></span></div><div class="line">            <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></div><div class="line">            <span class="attr">android:layout_height</span>=<span class="string">"?attr/actionBarSize"</span></div><div class="line">            <span class="attr">android:layout_centerVertical</span>=<span class="string">"true"</span></div><div class="line">            <span class="attr">app:addEvelation</span>=<span class="string">"false"</span>&gt;</div><div class="line"></div><div class="line">        <span class="tag">&lt;/<span class="name">com.irobotcity.smokeverify.widget.TitleBar</span>&gt;</span></div><div class="line"></div><div class="line">        <span class="tag">&lt;<span class="name">TextView</span></span></div><div class="line">            <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></div><div class="line">            <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></div><div class="line">            <span class="attr">android:layout_alignParentLeft</span>=<span class="string">"true"</span></div><div class="line">            <span class="attr">android:layout_centerVertical</span>=<span class="string">"true"</span></div><div class="line">            <span class="attr">android:layout_marginLeft</span>=<span class="string">"10dp"</span></div><div class="line">            <span class="attr">android:text</span>=<span class="string">"取消"</span></div><div class="line">            <span class="attr">android:textColor</span>=<span class="string">"@color/whitesmoke"</span></div><div class="line">            <span class="attr">android:onClick</span>=<span class="string">"goBack"</span></div><div class="line">            <span class="attr">android:textSize</span>=<span class="string">"16dp"</span> /&gt;</div><div class="line"></div><div class="line">        <span class="tag">&lt;<span class="name">TextView</span></span></div><div class="line">            <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></div><div class="line">            <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></div><div class="line">            <span class="attr">android:layout_centerHorizontal</span>=<span class="string">"true"</span></div><div class="line">            <span class="attr">android:layout_centerVertical</span>=<span class="string">"true"</span></div><div class="line">            <span class="attr">android:layout_gravity</span>=<span class="string">"center"</span></div><div class="line">            <span class="attr">android:paddingBottom</span>=<span class="string">"15dp"</span></div><div class="line">            <span class="attr">android:paddingTop</span>=<span class="string">"15dp"</span></div><div class="line">            <span class="attr">android:text</span>=<span class="string">"拍照"</span></div><div class="line">            <span class="attr">android:textColor</span>=<span class="string">"@color/white"</span></div><div class="line">            <span class="attr">android:textSize</span>=<span class="string">"20sp"</span> /&gt;</div><div class="line"></div><div class="line">    <span class="tag">&lt;/<span class="name">RelativeLayout</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="comment">&lt;!-- 相对布局，放置两个按钮 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">RelativeLayout</span></span></div><div class="line">        <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></div><div class="line">        <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></div><div class="line">        <span class="attr">android:layout_marginBottom</span>=<span class="string">"10dp"</span>&gt;</div><div class="line">        <span class="comment">&lt;!-- 拍照按钮 --&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">Button</span></span></div><div class="line">            <span class="attr">android:id</span>=<span class="string">"@+id/camera_takepicture"</span></div><div class="line">            <span class="attr">android:layout_width</span>=<span class="string">"60dp"</span></div><div class="line">            <span class="attr">android:layout_height</span>=<span class="string">"60dp"</span></div><div class="line">            <span class="attr">android:layout_alignParentBottom</span>=<span class="string">"true"</span></div><div class="line">            <span class="attr">android:layout_centerHorizontal</span>=<span class="string">"true"</span></div><div class="line">            <span class="attr">android:background</span>=<span class="string">"@drawable/main_take"</span></div><div class="line">            <span class="attr">android:onClick</span>=<span class="string">"btnOnclick"</span> /&gt;</div><div class="line">    <span class="tag">&lt;/<span class="name">RelativeLayout</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">FrameLayout</span>&gt;</span></div></pre></td></tr></table></figure>
       
 
       
@@ -592,8 +297,8 @@
     </a>
   
   
-    <a href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总-Media-FaceDetector/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Android人脸检测汇总Media-FaceDetection</div>
+    <a href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总PlaySvervice/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Android人脸检测汇总PlaySvervice</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -717,11 +422,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -729,11 +434,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -749,15 +454,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -765,15 +466,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -782,6 +483,10 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

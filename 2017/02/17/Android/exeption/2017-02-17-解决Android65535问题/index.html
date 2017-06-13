@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://blog.hsujee.io/2017/02/17/Android/exeption/2017-02-17-解决Android65535问题/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="解决Android65535问题">
-<meta property="og:updated_time" content="2017-04-12T02:23:37.482Z">
+<meta property="og:updated_time" content="2017-06-13T11:22:09.882Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="解决Android65535问题">
 <meta name="twitter:description" content="解决Android65535问题">
@@ -190,26 +190,14 @@
 <p>multidex support library</p>
 <p>简单翻译下，原理就是编译的时候不再是单纯编译到一个 Dex 文件中去，而是切分成多个 Dex 文件。这样每个文件都允许 65536 个函数，肯定是够用了的。下面说下具体的操作。</p>
 <p>首先就是导入这个库，这个 Eclipse 和 Android Studio 不太一样，但是具体就不说了，因为太常见了。不过如果用的是新版本的 Android Studio 似乎已经无需导入这个库，貌似 IDE 直接支持了。只需要把配置文件中的 multiDexEnabled 设置成 true 就可以了，大概就是下面这个样子：</p>
-<pre><code>android {
-   ...
-   shitAppConfig {
-     ...
-     multiDexEnabled true
-   }
-}
-</code></pre><p>然后就是让你的 Application 类继承自 MultiDexApplication 这个类 ，例如:</p>
-<pre><code>public class ShitApplication extends MultiDexApplication {
-   ...
-}
-</code></pre><p>假如不方便修改继承（比如已经继承了其他的封装了的 Application）那么久稍微复杂一点，重载一下attachBaseContext，代码如下：</p>
-<pre><code>@Override
-protected void attachBaseContext(Context base) {
-   super.attachBaseContext(context);
-   Multidex.install(this);
-}
-</code></pre><p>还有一种情况就是没有继承过 Application 类怎么办？这种最方便，打开你的 AndroidMainfest 文件，在 application tag 中加入这个：</p>
-<pre><code>android:name=&quot;android.support.multidex.MultiDexApplication&quot;
-</code></pre><p>到此，问题算是解决了。但是这并不完美，在 Android 5.0之前，你还需要保证你的 Activity , Service等等基本上 Dalvik需要直接找你的东西都放在第一个 dex 中，否则你的 App 就会挂掉。这部分内容说起来比较复杂，我建议直接去看 Google 官方的说明，Building Apps with Over 65K Methods 。 当然，如果你的程序只支持 Android 5.0 以后的机器，那就不用担心了，因为 ART 会把多个 dex 合并成一个 oat 文件，就不存在找不到的问题了。</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">   ...</div><div class="line">   shitAppConfig &#123;</div><div class="line">     ...</div><div class="line">     multiDexEnabled <span class="keyword">true</span></div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后就是让你的 Application 类继承自 MultiDexApplication 这个类 ，例如:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShitApplication</span> <span class="keyword">extends</span> <span class="title">MultiDexApplication</span> </span>&#123;</div><div class="line">   ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>假如不方便修改继承（比如已经继承了其他的封装了的 Application）那么久稍微复杂一点，重载一下attachBaseContext，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">attachBaseContext</span><span class="params">(Context base)</span> </span>&#123;</div><div class="line">   <span class="keyword">super</span>.attachBaseContext(context);</div><div class="line">   Multidex.install(<span class="keyword">this</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>还有一种情况就是没有继承过 Application 类怎么办？这种最方便，打开你的 AndroidMainfest 文件，在 application tag 中加入这个：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">android:name="android.support.multidex.MultiDexApplication"</div></pre></td></tr></table></figure>
+<p>到此，问题算是解决了。但是这并不完美，在 Android 5.0之前，你还需要保证你的 Activity , Service等等基本上 Dalvik需要直接找你的东西都放在第一个 dex 中，否则你的 App 就会挂掉。这部分内容说起来比较复杂，我建议直接去看 Google 官方的说明，Building Apps with Over 65K Methods 。 当然，如果你的程序只支持 Android 5.0 以后的机器，那就不用担心了，因为 ART 会把多个 dex 合并成一个 oat 文件，就不存在找不到的问题了。</p>
 <p>当然，真遇到这个问题的时候，还是建议看看架构上面有没有可以改良的地方。实在不行把一个 App 拆两个也行啊，别总想搞个大新闻，你说是吧。</p>
 
       
@@ -309,11 +297,11 @@ protected void attachBaseContext(Context base) {
   
 <nav id="article-nav">
   
-    <a href="/2017/02/15/Android/CustemView/2017-02-16-Android自定义View扫描界面/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总-Media-FaceDetector/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Android自定义View扫描界面
+          Android人脸检测汇总Media-FaceDetection
         
       </div>
     </a>
@@ -444,11 +432,11 @@ protected void attachBaseContext(Context base) {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -456,11 +444,11 @@ protected void attachBaseContext(Context base) {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -476,15 +464,11 @@ protected void attachBaseContext(Context base) {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -492,15 +476,15 @@ protected void attachBaseContext(Context base) {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -509,6 +493,10 @@ protected void attachBaseContext(Context base) {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

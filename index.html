@@ -900,19 +900,19 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
 
 
   
-    <article id="post-Android/Framework/2017-03-25-VoiceCall解析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Android/Framework/2017-06-15-Android快捷键启动解析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/25/Android/Framework/2017-03-25-VoiceCall解析/">VoiceCall解析</a>
+      <a class="article-title" href="/2017/03/25/Android/Framework/2017-06-15-Android快捷键启动解析/">Android快捷键启动解析</a>
     </h1>
   
 
         
-        <a href="/2017/03/25/Android/Framework/2017-03-25-VoiceCall解析/" class="archive-article-date">
+        <a href="/2017/03/25/Android/Framework/2017-06-15-Android快捷键启动解析/" class="archive-article-date">
   	<time datetime="2017-03-24T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-25</time>
 </a>
         
@@ -920,97 +920,10 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
     
     <div class="article-entry" itemprop="articleBody">
       
-        <a id="more"></a>
-<p>1 引言</p>
-<p>Voice call就是我们通常所说的打电话，在Android中原生支持本功能。本文的目的是对Android中的voice call的框架逻辑进行介绍。</p>
-<p>1.1 目标</p>
-<p>本文旨在介绍Voice call在Android中的框架以及其是如何运行的。在本文中，会对Voice Call本身的功能以及其周边的功能进行介绍。各位在阅读本文档之后会对Voice call有一个初步的了解</p>
-<p>1.2 范围</p>
-<p>本文会以Android7.0的代码为base，从TELE APP，TELE FRAMEWORK 对voice call以及其周边功能进行系统的介绍。同时本文会对一些关键的流程以及比较复杂的逻辑进行初步的介绍。</p>
-<p>1.3 Reference</p>
-<table>
-<thead>
-<tr>
-<th>Ref*</th>
-<th>Document</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>S1</td>
-<td>Android source code: <a href="http://source.android.com/" target="_blank" rel="external">http://source.android.com/</a></td>
-</tr>
-<tr>
-<td>S2</td>
-<td>Android SDK reference: <a href="http://developer.android.com/index.html" target="_blank" rel="external">http://developer.android.com/index.html</a></td>
-</tr>
-<tr>
-<td>S3</td>
-<td>3GPP official site: <a href="http://www.3gpp.org" target="_blank" rel="external">http://www.3gpp.org</a></td>
-</tr>
-</tbody>
-</table>
-<p>2 Voice Call 介绍</p>
-<p>Voice Call是主叫方输入被叫方的电话号码，然后双方进入通话的一个过程。主叫方是其中拨打/发起电话的一方，被叫方是接听电话的一方。其实就是我们通常所说的电话功能。</p>
-<p>MO即Mobile Origination Call主叫，也就是去电。主要包括：拨号，启动UI界面，更新通话状态；</p>
-<p>MT即Mobile Termination Call被叫，也就是来电。主要包括：响铃，启动UI界面，更新通话状态。</p>
-<p>2.1 Voice Call在Android中的框架：</p>
-<p>Voice Call 在android中的框架如下图：</p>
-<p><img src="/assets/images/android/framework/voicecall01-01.png" alt="01"></p>
-<p>上图中各模块代码的路径：</p>
-<p>Dialpad/CallLog: packages/apps/Dialer/</p>
-<p>InCallUI: packages/apps/InCallUI/</p>
-<p>TeleService/CallSettings: packages/services/Telephony</p>
-<p>TeleCom: packages/services/Telecomm</p>
-<p>TeleService: Framework: frameworks/opt/telephony</p>
-<p>Telecom: Framework: frameworks/base/telecom</p>
-<p>各模块的功能如下：</p>
-<p>DialPad: 拨号盘</p>
-<p>InCallUI: 通话中的画面显示，在Android原生设计中，该模块只处理界面相关的内容。</p>
-<p>CallLog: 通话记录。其中显示的信息是从数据库中读出来的。在通话结束时，会将Call的信息存储到CallLog数据库中。 </p>
-<p>CallSetting: 里面多数是增值服务（SS）的设置，设置的过程中，会向MODEM侧发请求。比如：呼叫转移（CF）。</p>
-<p>TeleService: TeleService Framework 和 TeleCom Framework沟通的介质。</p>
-<p>TeleCom: App侧维护Call，call的相关处理都在TeleCom中进行。</p>
-<p>Telecom Framework: 确保TeleCom的独立性，减少TeleCom和其他模块的直接交互。（后面在介绍调用关系时，会介绍该模块。）</p>
-<p>Teleservice Framework: 和RIL通信，完成Call的基本通话功能以及其他相关业务。</p>
-<p>2.2 Voice Call中的基本概念：</p>
-<p>要了解Voice Call，需要熟悉其中的基本概念。Voice Call的几个基本概念包括：</p>
-<p>Phone：Phone是一个最基本的概念，用来控制Telephony相关模块的处理</p>
-<p>Call：此处是TeleService中的Call，是用来管理Connection的，有且仅有三种Call存在：foregroundcall, backgroundcall, ringingcall</p>
-<p>CallList：App侧会维护Call的CallList，如果CallList变更，界面会做出对应的响应操作</p>
-<p>Connection： 一个通路。</p>
-<p>Call和Connection并不是一一对应的，一个Connection必须要依附于一个Call, 一个Call可以有多个Connection。在多方通话中，一个Call会对应多个Connection。最多可以同时有7个Connection存在，对于一个Call中最多有5个Connection。</p>
-<p>Example 2-2 最多允许的connection数</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_CONNECTIONS = <span class="number">7</span>;   <span class="comment">// only 7 connections allowed in GSM</span></div><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_CONNECTIONS_PER_CALL = <span class="number">5</span>; <span class="comment">// only 5 connections allowed per call</span></div></pre></td></tr></table></figure>
-<p>Call的基本状态如下：</p>
-<p>DIALING，CONNECTING，ACTIVE，ON_HOLD，DISCONNECTING，DISCONNECTED，RINGING</p>
-<p>2.3 各模块之间的调用关系</p>
-<p>Voice Call中有很多模块，这里我们会介绍各模块之间的调用关系：</p>
-<p><img src="/assets/images/android/framework/voicecall01-02.png" alt="02"></p>
-<p>在上图中，TeleCom Service接受到应用发来的Intent之外，通过TeleCom Framework进行通信。</p>
-<p>其中TeleCom Service 以及 TeleCom Framewokr，我们统称为Telecom，其主要负责所有Call的业务逻辑。上层APP(InCallUI)接触到的Phone、Call以及Connection对象，实际上是Telecom Framework的Phone、Call和Connection对象，并不是Telephony Framework中的GSMPhone、GsmCall和GsmConnection。</p>
-<p>其中，Telecom Framework，负责通话数据的传递以及控制指令的下发。而Telecom Service中的CallsManager则负责所有通话数据以及指令的处理，并将结果传递给TelecomFramework。</p>
-<p>对于CallSetting，需要发消息到网络。TeleCom模块仅用于处理Call相关的操作，所以把CallSetting放在TeleService中，和MODEM通信比较方便。</p>
-<p>2.4 Android侧Call中的关键机制介绍：</p>
-<p>消息注册机制：</p>
-<p>在TeleService和TeleService Framework中采用的是消息注册机制。</p>
-<p>消息注册机制更加丰富了MessageHandle的流程，它把过程严格阶段化了，分成消息注册和通知消息处理两个部分，让人一目了然。</p>
-<p>消息注册机制的总体思想是：一个对象中开辟一个空间用于存放Message，当调用regist方法时将Message存放进去，当其调用notify方法时将所有Message取出并发送到MessageQueue中等待处理。</p>
-<p>这里用到了观察者模式，下面是TeleService里面的消息注册机制的对比。</p>
-<p><img src="/assets/images/android/framework/voicecall01-03.png" alt="03"></p>
-<p>注：观察者模式定义了一种一对多的依赖关系，让多个观察者对象同时监听某一个主题对象。这个主题对象在状态发生变化时，会通知所有观察者对象，使它们能够自动更新自己。</p>
-<p>模式中的角色</p>
-<p>　　抽象主题（Subject）：它把所有观察者对象的引用保存到一个聚集里，每个主题都可以有任何数量的观察者。抽象主题提供一个接口，可以增加和删除观察者对象。</p>
-<p>　　具体主题（ConcreteSubject）：将有关状态存入具体观察者对象；在具体主题内部状态改变时，给所有登记过的观察者发出通知。</p>
-<p>　　抽象观察者（Observer）：为所有的具体观察者定义一个接口，在得到主题通知时更新自己。</p>
-<p>　　具体观察者（ConcreteObserver）：实现抽象观察者角色所要求的更新接口，以便使本身的状态与主题状态协调。</p>
-<p>3 Voice Call主要流程</p>
-<p>这里会介绍Voice Call的主要流程，包括：MO，MT</p>
-<p>3.1 MO Call时序图：</p>
-<p><img src="/assets/images/android/framework/voicecall01-04.png" alt="04"></p>
-<p>3.2 MT Call时序图：</p>
-<p><img src="/assets/images/android/framework/voicecall01-05.png" alt="05"></p>
-
+        <p>Android快捷方式作为Android设备的杀手锏技能，一直都是非常重要的一个功能，也正是如此，各种流氓App也不断通过快捷方式霸占着这样一个用户入口,下面咱们就来说道说道，关于Android快捷方式的那些事。</p>
+        
+          <a class="article-more-a" href="/2017/03/25/Android/Framework/2017-06-15-Android快捷键启动解析/#more">more >></a>
+        
       
 
       
@@ -1028,10 +941,6 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
       		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Tele</a>
         		</li>
       		
 		</ul>
@@ -1052,7 +961,7 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/03/25/Android/Framework/2017-03-25-VoiceCall解析/">展开全文 >></a>
+          <a class="article-more-a" href="/2017/03/25/Android/Framework/2017-06-15-Android快捷键启动解析/">展开全文 >></a>
         </p>
       
 
@@ -1171,15 +1080,7 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1188,6 +1089,14 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">应用</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1215,14 +1124,6 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
@@ -1235,11 +1136,11 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AS</a>
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
+                <a href="javascript:void(0)" class="js-tag color3">AS</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1247,11 +1148,19 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">博客收藏</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">博客收藏</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
               </li>
             
             <div class="clearfix"></div>

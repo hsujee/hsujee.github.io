@@ -6,23 +6,25 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://blog.hsujee.io">
-  <title>ContactsProvider 数据库操作 | 徐彦杰的博客</title>
+  <title>VoiceCall解析 | 徐彦杰的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="通过之前的文章对联系人以及联系人数据做了大概的了解和梳理，这里继续深入到联系人的数据存储做出相应总结 数据结构一条Contact数据是由此账户下的所有raw contacts组合起来生成的，方便手机某一用户的所有信息，用户不允许增加Contact（只能增加raw contacts）。通常联系人应用中看到的联系人用的就是 contacts 表中的一条记录。一个 contact 可以拥有多个 raw">
-<meta name="keywords" content="Android,Contact,Provider">
+  <meta name="description" content="VoiceCall解析">
+<meta name="keywords" content="Android,FrameWork,Tele">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ContactsProvider 数据库操作">
-<meta property="og:url" content="https://blog.hsujee.io/2017/06/10/Android/Provider/2017-06-10-Android联系人代码分析/index.html">
+<meta property="og:title" content="VoiceCall解析">
+<meta property="og:url" content="https://blog.hsujee.io/2017/03/25/Android/Framework/2017-03-25-VoiceCall解析/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
-<meta property="og:description" content="通过之前的文章对联系人以及联系人数据做了大概的了解和梳理，这里继续深入到联系人的数据存储做出相应总结 数据结构一条Contact数据是由此账户下的所有raw contacts组合起来生成的，方便手机某一用户的所有信息，用户不允许增加Contact（只能增加raw contacts）。通常联系人应用中看到的联系人用的就是 contacts 表中的一条记录。一个 contact 可以拥有多个 raw">
-<meta property="og:image" content="https://blog.hsujee.io/assets/images/android/provider/contact01-01.jpg">
-<meta property="og:image" content="https://blog.hsujee.io/assets/images/android/provider/contact01-02.jpg">
-<meta property="og:image" content="https://blog.hsujee.io/assets/images/android/provider/contact01-03.jpg">
-<meta property="og:updated_time" content="2017-06-13T08:51:29.685Z">
+<meta property="og:description" content="VoiceCall解析">
+<meta property="og:image" content="https://blog.hsujee.io/assets/images/android/framework/voicecall01-01.png">
+<meta property="og:image" content="https://blog.hsujee.io/assets/images/android/framework/voicecall01-02.png">
+<meta property="og:image" content="https://blog.hsujee.io/assets/images/android/framework/voicecall01-03.png">
+<meta property="og:image" content="https://blog.hsujee.io/assets/images/android/framework/voicecall01-04.png">
+<meta property="og:image" content="https://blog.hsujee.io/assets/images/android/framework/voicecall01-05.png">
+<meta property="og:updated_time" content="2017-06-20T09:39:33.909Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ContactsProvider 数据库操作">
-<meta name="twitter:description" content="通过之前的文章对联系人以及联系人数据做了大概的了解和梳理，这里继续深入到联系人的数据存储做出相应总结 数据结构一条Contact数据是由此账户下的所有raw contacts组合起来生成的，方便手机某一用户的所有信息，用户不允许增加Contact（只能增加raw contacts）。通常联系人应用中看到的联系人用的就是 contacts 表中的一条记录。一个 contact 可以拥有多个 raw">
-<meta name="twitter:image" content="https://blog.hsujee.io/assets/images/android/provider/contact01-01.jpg">
+<meta name="twitter:title" content="VoiceCall解析">
+<meta name="twitter:description" content="VoiceCall解析">
+<meta name="twitter:image" content="https://blog.hsujee.io/assets/images/android/framework/voicecall01-01.png">
   
     <link rel="alternative" href="/atom.xml" title="徐彦杰的博客" type="application/atom+xml">
   
@@ -167,79 +169,116 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Android/Provider/2017-06-10-Android联系人代码分析" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Android/Framework/2017-03-25-VoiceCall解析" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      ContactsProvider 数据库操作
+      VoiceCall解析
     </h1>
   
 
         
-        <a href="/2017/06/10/Android/Provider/2017-06-10-Android联系人代码分析/" class="archive-article-date">
-  	<time datetime="2017-06-09T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-10</time>
+        <a href="/2017/03/25/Android/Framework/2017-03-25-VoiceCall解析/" class="archive-article-date">
+  	<time datetime="2017-03-24T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-25</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>通过之前的文章对联系人以及联系人数据做了大概的了解和梳理，这里继续深入到联系人的数据存储做出相应总结</p>
-<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>一条Contact数据是由此账户下的所有raw contacts组合起来生成的，方便手机某一用户的所有信息，用户不允许增加Contact（只能增加raw contacts）。<br>通常联系人应用中看到的联系人用的就是 contacts 表中的一条记录。<br>一个 contact 可以拥有多个 raw contacts，这时候点击这个联系人的编辑界面，就会发现可以同时编辑多个 raw contacts.这边所谓的组合，也就是 raw contacts 的 contact_id，只是让这几个 raw contacts 在界面上组合起来显示，本身的数据还是完全独立的。<br>Contacts Provider 通过 ContactsContract.RawContacts 表中的 _ID 列将 contacts 表中的数据和 raw contacts 表中的数据链接起来。</p>
-<a id="more"></a>
-<p>ContactsContract.RawContacts 表中 CONTACT_ID 的值就是 contacts 表中的 _ID，说明这条 raw contact 记录属于_ID所在的这个联系人。<br>下面是Contact数据组成关系图</p>
-<p><img src="/assets/images/android/provider/contact01-01.jpg" alt="01-01"></p>
-<h2 id="访问权限、用户私密信息访问"><a href="#访问权限、用户私密信息访问" class="headerlink" title="访问权限、用户私密信息访问"></a>访问权限、用户私密信息访问</h2><p>读取权限：android.permission.READ_CONTACTS<br>修改权限：android.permission.WRITE_CONTACTS<br>ContactsContract.Profile定义私密信息<br>ProfileProvider继承自AbstractContactsProvider，负责对用户私密信息数据的操作<br>想要访问用户私密信息除了以上两个权限还需要添加READ_PROFILE和WRITE_PROFILE两个权限</p>
-<h2 id="同步适配器"><a href="#同步适配器" class="headerlink" title="同步适配器"></a>同步适配器</h2><p>主要用来同步Web服务器上的用户数据<br>Contacts Provider 为了处理设备和服务器之间的同步做了特别的设计。允许用户从服务器下载数据，并且也可以上传数据。同步使得设备端总能有最新的数据，不管数据源发生什么变化。同步的另一个好处是即使没有联网，设备还是能够使用服务器上存在的数据(当然是同步号的数据)。</p>
-<p>尽管你可以有很多办法来实现同步，Android 提供了一个插件式的同步框架，它可以自动完成下面的工作：</p>
-<p>检查网络是否可用<br>按照用户偏好，周期性地执行同步<br>重新启动停止的同步操作<br>想要使用这个框架，应该实现一个同步适配器插件。每一个同步适配器都对应一个服务器和一个 provider，但是每一个服务器下可以有多个账户名。这个框架下也允许有一个服务器和 provider 对应多个同步适配器。</p>
-<h2 id="数据库改变记录"><a href="#数据库改变记录" class="headerlink" title="数据库改变记录"></a>数据库改变记录</h2><p>Contacts Provider 对数据库中数据的状态改变都有记录。</p>
-<h2 id="数据库操作"><a href="#数据库操作" class="headerlink" title="数据库操作"></a>数据库操作</h2><ul>
-<li>Entity查询</li>
-</ul>
-<p>联系人的结构是由层次组织的，因此想要查找一个联系人的信息，就要先查找其下面所有RawContacts，还要查出所有RawContacts下关联的所有ContactsContract.CommonDataKinds.Email等，因此为了方便查询，Contacts Provider提供了Entity结构，它可将各个表连接起来。</p>
-<p><img src="/assets/images/android/provider/contact01-02.jpg" alt="01-02"></p>
-<p>Entity就像是一张从父表和子表中选出一些列重新组合的一张表。当查询 entity 时，只能根据entity中的列来定制查询结果和查询条件。查询结果的 Cursor 里包含了子表中被查询到的记录。<br>Entity的机构可参考上图，在源码中进行查看。<br>Entity的使用非常方便，通过查询它我们可以一次就得到一个联系人的所有数据。不许要先去查询父表，得到 ID 后，再用这个 ID 去子表中查询。<br>Entity通常不会包含父表和子表中所有的列，如果使用的列并不在 entity 中时，程序就会抛出Exception<br>通过下面查询示例可以帮助理解加载流程：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//将Entity路径追加到URI。 在联系人提供者中</span></div><div class="line"><span class="comment">//预期的URI是content：//com.google.contacts/#/entity（＃是ID值）。</span></div><div class="line">mContactUri = Uri.withAppendedPath(</div><div class="line">            mContactUri,</div><div class="line">            ContactsContract.Contacts.Entity.CONTENT_DIRECTORY);</div><div class="line">.....................</div><div class="line"><span class="comment">//初始化由LOADER_CONTACT_ID标识的加载器，并添加加载回调</span></div><div class="line">mContactLoader = (ContactLoader) getLoaderManager().initLoader( </div><div class="line">        LOADER_CONTACT_ID,  <span class="comment">// The identifier of the loader to initialize</span></div><div class="line">        <span class="keyword">null</span>,       <span class="comment">// Arguments for the loader (in this case, none)</span></div><div class="line">        mLoaderContactCallbacks);</div><div class="line">.....................</div><div class="line"><span class="comment">//给联系人加载器设置Uri</span></div><div class="line">mContactLoader.setLookupUri(mContactUri);</div><div class="line">.....................</div><div class="line"><span class="comment">//联系人加载回调</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> LoaderCallbacks&lt;Contact&gt; mLoaderContactCallbacks =</div><div class="line">            <span class="keyword">new</span> LoaderCallbacks&lt;Contact&gt;() &#123;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLoadFinished</span><span class="params">(Loader&lt;Contact&gt; loader, Contact data)</span> </span>&#123;</div><div class="line">		<span class="comment">//此方法中的data就是查询之后返回的结果</span></div><div class="line">.....................</div><div class="line">	<span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> Loader&lt;Contact&gt; <span class="title">onCreateLoader</span><span class="params">(<span class="keyword">int</span> id, Bundle args)</span> </span>&#123;</div><div class="line">            <span class="keyword">if</span> (mLookupUri == <span class="keyword">null</span>) &#123;</div><div class="line">                Log.wtf(TAG, <span class="string">"Lookup uri wasn't initialized. Loader was started too early"</span>);</div><div class="line">            &#125;</div><div class="line">            <span class="comment">//加载所有联系人数据。 我们需要loadGroupMetaData = true来确定是否</span></div><div class="line">            <span class="comment">//联系是看不见的。 如果是，我们需要显示一个“添加到联系人”菜单项。</span></div><div class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ContactLoader(getApplicationContext(), mLookupUri,</div><div class="line">                    <span class="keyword">true</span> <span class="comment">/*loadGroupMetaData*/</span>, <span class="keyword">false</span> <span class="comment">/*loadInvitableAccountTypes*/</span>,</div><div class="line">                    <span class="keyword">true</span> <span class="comment">/*postViewNotification*/</span>, <span class="keyword">true</span> <span class="comment">/*computeFormattedPhoneNumber*/</span>);</div></pre></td></tr></table></figure>
-<p>当 load 完成数据加载后，LoaderManager 会调用 onLoadFinished() 方法。到此就可以根据监听器中onLoadFinished()方法返回的data使用了<br>监听器中的onCreateLoader()返回具体的加载器，在这里我们创建了联系人加载器ContactLoader()</p>
-<ul>
-<li>批量修改</li>
-</ul>
-<p>Contacts Provider 中执行新增、修改、删除操作时，应该尽可能地使用“批处理”，通过创建一个 ContentProviderOperation 对象的 ArrayList 集合然后调用 applyBatch() 方法。因为 Contacts Provider 会把一个 applyBatch() 中的所有操作当成一个事务来处理，你的修改将不会让数据库处于一个不一致的状态中。批处理还方便同时插入 raw contact 和它对应的 data 数据。</p>
-<p>Yield points(挂起点)<br>批量处理中有很多的操作，这又可能会阻塞其他进程的运行，这是很差的用户体验。为了改善这种情况，应该尽可能地将所要做的操作分散到多个集合中，同时也为了避免阻塞系统运行，应该为 ContentProviderOperation 设置一个或多个yield points. 通过让 ContentProviderOperation的 isYieldAllowed() 的返回值置为 true. 当Contacts Provider 遇到一个挂起点时，它会停止工作来让其他进程得以运行，并且会关闭当前事务。当Contacts Provider 再次工作时，它将会开启一个新的事务来进行 ArrayList 集合中的下一个操作。</p>
-<p>挂起点会导致调用一次 applyBatch() 时开启多个事务。因此，我们应该为某一行记录所有操作的最后一个操作设置一个挂起点。比如说，在我们插入 raw contact 和它相关的 data 数据时，我们应该为最后一步操作设置一个挂起点。</p>
-<p>挂起点是原子操作，也就是说两个挂起点之间的所有操作要么成功要么失败。如果没有设置挂起点，原子操作将会是每一步具体的操作。使用挂起点，可以阻止系统性能的下降，还可以确保一些列的操作集合具有原子性。</p>
-<p>Modification back references修改反回参考<br>当我们使用 ContentProviderOperation 来插入新的 raw contacts 和与它相关的 data 数据时，必须要将 data 数据的 raw contact’s _ID 这一列关联到 raw contact 的RAW_CONTACT_ID 列上。然而，这个值在创建 ContentProviderOperation 对象时还没有，因为插入 raw contact 的操作还没有完成。为了解决这个问题，ContentProviderOperation.Builder 类提供了withValueBackReference()这个方法，它允许基于上一条操作的结果来插入或者修改数据。</p>
-<p>withValueBackReference() 方法有两个参数:</p>
-<p>key<br>键值对的键。这个值应该是表中的列名。<br>previousResult<br>applyBatch() 的结果存储在一个索引从0开始的 ContentProviderResult 对象数组中。执行批处理操作时，指向结果存储在一个中间数组中。previousResult 的值就是数组中的一个索引，它以key值来进行存取。这允许我们在插入一个 raw contact 记录时得到插入的 _ID 值，接下来在插入 data 记录时使用。<br>结果数组在调用 applyBatch() 时就被创建完成，它的大小等于 ContentProviderOperation 的 ArrayList 数组的大小。数组初始值都是null，当我们想要获取一个还没有被执行操作的向后引用时，withValueBackReference() 方法将会抛出 异常。<br>下面是Contact新建联系人的示例图：</p>
-<p><img src="/assets/images/android/provider/contact01-03.jpg" alt="01-03"></p>
-<p>下面为批量修改示例，代码出自com.android.contacts.ContactSaveService类，其中主要方法为applyBatch()请求批量插入</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createRawContact</span><span class="params">(Intent intent)</span> </span>&#123;</div><div class="line">		<span class="comment">//获取用户输入的所有信息</span></div><div class="line">        String accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME);</div><div class="line">        String accountType = intent.getStringExtra(EXTRA_ACCOUNT_TYPE);</div><div class="line">        String dataSet = intent.getStringExtra(EXTRA_DATA_SET);</div><div class="line">        List&lt;ContentValues&gt; valueList = intent.getParcelableArrayListExtra(EXTRA_CONTENT_VALUES);</div><div class="line">        Intent callbackIntent = intent.getParcelableExtra(EXTRA_CALLBACK_INTENT);</div><div class="line">		</div><div class="line">		<span class="comment">//创建一个插入到ContactsContract.RawContacts表中 raw contact 记录的操作</span></div><div class="line">        ArrayList&lt;ContentProviderOperation&gt; operations = <span class="keyword">new</span> ArrayList&lt;ContentProviderOperation&gt;();</div><div class="line">        operations.add(ContentProviderOperation.newInsert(RawContacts.CONTENT_URI)</div><div class="line">                .withValue(RawContacts.ACCOUNT_NAME, accountName)</div><div class="line">                .withValue(RawContacts.ACCOUNT_TYPE, accountType)</div><div class="line">                .withValue(RawContacts.DATA_SET, dataSet)</div><div class="line">                .build());</div><div class="line"></div><div class="line">        <span class="keyword">int</span> size = valueList.size();</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++) &#123;</div><div class="line">            ContentValues values = valueList.get(i);</div><div class="line">            values.keySet().retainAll(ALLOWED_DATA_COLUMNS);</div><div class="line">            operations.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)</div><div class="line">                    .withValueBackReference(Data.RAW_CONTACT_ID, <span class="number">0</span>)</div><div class="line">                    .withValues(values)</div><div class="line">                    .build());</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        ContentResolver resolver = getContentResolver();</div><div class="line">        ContentProviderResult[] results;</div><div class="line">		<span class="comment">//调用 applyBatch() 来新增一个 raw contact 和与它相关的 data 记录。</span></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            results = resolver.applyBatch(ContactsContract.AUTHORITY, operations);</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Failed to store new contact"</span>, e);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        Uri rawContactUri = results[<span class="number">0</span>].uri;</div><div class="line">        callbackIntent.setData(RawContacts.getContactLookupUri(resolver, rawContactUri));</div><div class="line"></div><div class="line">        deliverCallback(callbackIntent);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> ContentProviderResult[] applyBatch(ArrayList&lt;ContentProviderOperation&gt; operations)</div><div class="line">            <span class="keyword">throws</span> OperationApplicationException &#123;</div><div class="line">        incrementStats(mBatchStats);</div><div class="line">        <span class="keyword">if</span> (VERBOSE_LOGGING) &#123;</div><div class="line">            Log.v(TAG, <span class="string">"applyBatch: "</span> + operations.size() + <span class="string">" ops"</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">int</span> ypCount = <span class="number">0</span>;</div><div class="line">        <span class="keyword">int</span> opCount = <span class="number">0</span>;</div><div class="line">		<span class="comment">//开启数据操作事务，循环operations处理每一个ops，最大挂起点为500个，如果超过将抛出				//OperationApplicationException异常</span></div><div class="line">        ContactsTransaction transaction = startTransaction(<span class="keyword">true</span>);</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="keyword">final</span> <span class="keyword">int</span> numOperations = operations.size();</div><div class="line">            <span class="keyword">final</span> ContentProviderResult[] results = <span class="keyword">new</span> ContentProviderResult[numOperations];</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numOperations; i++) &#123;</div><div class="line">                <span class="keyword">if</span> (++opCount &gt;= MAX_OPERATIONS_PER_YIELD_POINT) &#123;</div><div class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> OperationApplicationException(</div><div class="line">                            <span class="string">"Too many content provider operations between yield points. "</span></div><div class="line">                                    + <span class="string">"The maximum number of operations per yield point is "</span></div><div class="line">                                    + MAX_OPERATIONS_PER_YIELD_POINT, ypCount);</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">final</span> ContentProviderOperation operation = operations.get(i);</div><div class="line">                <span class="keyword">if</span> (i &gt; <span class="number">0</span> &amp;&amp; operation.isYieldAllowed()) &#123;</div><div class="line">                    <span class="keyword">if</span> (VERBOSE_LOGGING) &#123;</div><div class="line">                        Log.v(TAG, <span class="string">"applyBatch: "</span> + opCount + <span class="string">" ops finished; about to yield..."</span>);</div><div class="line">                    &#125;</div><div class="line">                    opCount = <span class="number">0</span>;</div><div class="line">                    <span class="keyword">try</span> &#123;</div><div class="line">                        <span class="keyword">if</span> (yield(transaction)) &#123;</div><div class="line">                            ypCount++;</div><div class="line">                        &#125;</div><div class="line">                    &#125; <span class="keyword">catch</span> (RuntimeException re) &#123;</div><div class="line">                        transaction.markYieldFailed();</div><div class="line">                        <span class="keyword">throw</span> re;</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">				<span class="comment">//调用ContentProviderOperation.apply(),开始具体的对数据库的操作，并返回结果</span></div><div class="line">                results[i] = operation.apply(<span class="keyword">this</span>, results, i);</div><div class="line">            &#125;</div><div class="line">            transaction.markSuccessful(<span class="keyword">true</span>);</div><div class="line">            <span class="keyword">return</span> results;</div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">            endTransaction(<span class="keyword">true</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<p>联系人批量处理过程中使用了事务，和乐观并发控制概念<br>批处理允许我们实现乐观并发控制，它可以让我们在执行修改事务时不去锁定数据库。要是用这个方法，我们先执行事务然后检查是否有其他修改发生。如果检测到不一致的变化，应该回滚事务在重新执行。</p>
-<p>乐观并发控制在手机上非常有用，因为只有一个用户，极少发生对一个数据库的同时访问。因为锁没有被使用，所以没有时间浪费在加锁和等待锁的操作上。</p>
-<p>为了使用乐观并发控制，我们在更新 ContactsContract.RawContacts 表中的数据时，要遵循以下步骤:</p>
-<p>①在获取其他数据时，一并将 VERSION 获取出来<br>②通过 newAssertQuery(Uri) 方法来创建一个 ContentProviderOperation.Builder 对象。将 raw contact’s _ID 附在 RawContacts.CONTENT_URI 后面来形成 URI参数。<br>③调用 ContentProviderOperation.Builder 对象的 withValue() 方法，将得到的 VERSION 的值添加进来。<br>④调用 ContentProviderOperation.Builder 的 withExpectedCount() 方法来保证这个断言只检测一条数据记录。<br>⑤调用 build() 创建 ContentProviderOperation 对象，并将这个对象加入到需要通过 applyBatch() 执行的 ArrayList 数组中去。<br>⑥执行批处理。<br>如果在读取和修改某条记录的过程中，这条记录被其他程序修改了，那么这个断言 ContentProviderOperation 将会失败，事务将会回滚。此时你可以尝试重新执行或者采取其他措施。</p>
-<ul>
-<li>使用intents进行检索和修改</li>
-</ul>
-<p>要去修改单个 raw contact 记录，最好是通过发送 intent 来让联系人应用去修改，而不是直接用代码进行修改。<br>发送特定的 intent 可以通过设备的联系人应用间接接触 Contacts Provider.这些 intent 会启动联系人应用界面，用户可以在这些界面中完成联系人相关的工作。</p>
-<ul>
-<li>数据的完整性（数据协议）</li>
-</ul>
-<p>由于联系人数据是非常重要并且敏感的数据，所以用户期望这些数据是正确的，Contacts Provider 为了保证数据的完整性定义了一些规则。当用户修改联系人数据时，你要确保所做的操作都能够满足这些规则。下面是几个比较重要的规则:</p>
-<p>要给每一个 ContactsContract.RawContacts 记录都添加 ContactsContract.CommonDataKinds.StructuredName 数据。<br>一个没有 ContactsContract.CommonDataKinds.StructuredName 数据的 ContactsContract.RawContacts 记录在与其他 raw contact 进行组合时可能会遇到问题。<br>每一条 ContactsContract.Data 记录都必须要链接到一条 ContactsContract.RawContacts 记录上去。一个没有链接到 ContactsContract.RawContacts 记录上的 ContactsContract.Data 记录将永远不会显示在联系人应用中，并且可能会影响同步适配器的工作。<br>仅修改属于你自己 raw contact 的数据<br>Contacts Provider 通常管理着几个账户类型的数据。你需要确保你的应用值修改属于你自己的数据，只向自己的账户下新增数据。<br>开发时总是使用 ContactsContract 类中定义的常量来表示authorities、content URIs、URI paths、MIME、以及 TYPE 值。<br>使用这些常量可以帮助你避免一些错误的发生。编译器将会对那些废除的常量给出警告。</p>
-<ul>
-<li>自定义数据行</li>
-</ul>
-<p>通过定义自己的 MIME 类型，我们可以向 ContactsContract.Data 表中添加自己的数据类型。尽管你可以为你的数据类型定义一些特别的列名（比如phone、Email）,但是还是只能使用定义在 ContactsContract.DataColumns 中的列。在联系人应用中，用户只能显示出你定义的数据类型，但是无法编辑、删除、增加它，所以需要在你自己的应用中实现这样一个界面来完成这些操作。</p>
-<p>为了显示自定义的数据类型，需要提供一个 contacts.xml 文件，这个文件中得有一个 <contactsaccounttype> 元素和它的子元素 <contactsdatakind>.这将在 <contactsdatakind> element 中详细描述。</contactsdatakind></contactsdatakind></contactsaccounttype></p>
-<ul>
-<li>其他</li>
-</ul>
-<p>ContactsContract.StreamItems 表和 ContactsContract.StreamItemPhotos 表管理着来自与社交网络的数据。可以编写同步适配器来将网络上的数据添加到这两张表中，也可以将表中的数据显示在自己的应用中。这个功能可以将社交网络服务和应用集成到Android的社交网络体验中来。</p>
+        <a id="more"></a>
+<p>1 引言</p>
+<p>Voice call就是我们通常所说的打电话，在Android中原生支持本功能。本文的目的是对Android中的voice call的框架逻辑进行介绍。</p>
+<p>1.1 目标</p>
+<p>本文旨在介绍Voice call在Android中的框架以及其是如何运行的。在本文中，会对Voice Call本身的功能以及其周边的功能进行介绍。各位在阅读本文档之后会对Voice call有一个初步的了解</p>
+<p>1.2 范围</p>
+<p>本文会以Android7.0的代码为base，从TELE APP，TELE FRAMEWORK 对voice call以及其周边功能进行系统的介绍。同时本文会对一些关键的流程以及比较复杂的逻辑进行初步的介绍。</p>
+<p>1.3 Reference</p>
+<table>
+<thead>
+<tr>
+<th>Ref*</th>
+<th>Document</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>Android source code: <a href="http://source.android.com/" target="_blank" rel="external">http://source.android.com/</a></td>
+</tr>
+<tr>
+<td>S2</td>
+<td>Android SDK reference: <a href="http://developer.android.com/index.html" target="_blank" rel="external">http://developer.android.com/index.html</a></td>
+</tr>
+<tr>
+<td>S3</td>
+<td>3GPP official site: <a href="http://www.3gpp.org" target="_blank" rel="external">http://www.3gpp.org</a></td>
+</tr>
+</tbody>
+</table>
+<p>2 Voice Call 介绍</p>
+<p>Voice Call是主叫方输入被叫方的电话号码，然后双方进入通话的一个过程。主叫方是其中拨打/发起电话的一方，被叫方是接听电话的一方。其实就是我们通常所说的电话功能。</p>
+<p>MO即Mobile Origination Call主叫，也就是去电。主要包括：拨号，启动UI界面，更新通话状态；</p>
+<p>MT即Mobile Termination Call被叫，也就是来电。主要包括：响铃，启动UI界面，更新通话状态。</p>
+<p>2.1 Voice Call在Android中的框架：</p>
+<p>Voice Call 在android中的框架如下图：</p>
+<p><img src="/assets/images/android/framework/voicecall01-01.png" alt="01"></p>
+<p>上图中各模块代码的路径：</p>
+<p>Dialpad/CallLog: packages/apps/Dialer/</p>
+<p>InCallUI: packages/apps/InCallUI/</p>
+<p>TeleService/CallSettings: packages/services/Telephony</p>
+<p>TeleCom: packages/services/Telecomm</p>
+<p>TeleService: Framework: frameworks/opt/telephony</p>
+<p>Telecom: Framework: frameworks/base/telecom</p>
+<p>各模块的功能如下：</p>
+<p>DialPad: 拨号盘</p>
+<p>InCallUI: 通话中的画面显示，在Android原生设计中，该模块只处理界面相关的内容。</p>
+<p>CallLog: 通话记录。其中显示的信息是从数据库中读出来的。在通话结束时，会将Call的信息存储到CallLog数据库中。 </p>
+<p>CallSetting: 里面多数是增值服务（SS）的设置，设置的过程中，会向MODEM侧发请求。比如：呼叫转移（CF）。</p>
+<p>TeleService: TeleService Framework 和 TeleCom Framework沟通的介质。</p>
+<p>TeleCom: App侧维护Call，call的相关处理都在TeleCom中进行。</p>
+<p>Telecom Framework: 确保TeleCom的独立性，减少TeleCom和其他模块的直接交互。（后面在介绍调用关系时，会介绍该模块。）</p>
+<p>Teleservice Framework: 和RIL通信，完成Call的基本通话功能以及其他相关业务。</p>
+<p>2.2 Voice Call中的基本概念：</p>
+<p>要了解Voice Call，需要熟悉其中的基本概念。Voice Call的几个基本概念包括：</p>
+<p>Phone：Phone是一个最基本的概念，用来控制Telephony相关模块的处理</p>
+<p>Call：此处是TeleService中的Call，是用来管理Connection的，有且仅有三种Call存在：foregroundcall, backgroundcall, ringingcall</p>
+<p>CallList：App侧会维护Call的CallList，如果CallList变更，界面会做出对应的响应操作</p>
+<p>Connection： 一个通路。</p>
+<p>Call和Connection并不是一一对应的，一个Connection必须要依附于一个Call, 一个Call可以有多个Connection。在多方通话中，一个Call会对应多个Connection。最多可以同时有7个Connection存在，对于一个Call中最多有5个Connection。</p>
+<p>Example 2-2 最多允许的connection数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_CONNECTIONS = <span class="number">7</span>;   <span class="comment">// only 7 connections allowed in GSM</span></div><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_CONNECTIONS_PER_CALL = <span class="number">5</span>; <span class="comment">// only 5 connections allowed per call</span></div></pre></td></tr></table></figure>
+<p>Call的基本状态如下：</p>
+<p>DIALING，CONNECTING，ACTIVE，ON_HOLD，DISCONNECTING，DISCONNECTED，RINGING</p>
+<p>2.3 各模块之间的调用关系</p>
+<p>Voice Call中有很多模块，这里我们会介绍各模块之间的调用关系：</p>
+<p><img src="/assets/images/android/framework/voicecall01-02.png" alt="02"></p>
+<p>在上图中，TeleCom Service接受到应用发来的Intent之外，通过TeleCom Framework进行通信。</p>
+<p>其中TeleCom Service 以及 TeleCom Framewokr，我们统称为Telecom，其主要负责所有Call的业务逻辑。上层APP(InCallUI)接触到的Phone、Call以及Connection对象，实际上是Telecom Framework的Phone、Call和Connection对象，并不是Telephony Framework中的GSMPhone、GsmCall和GsmConnection。</p>
+<p>其中，Telecom Framework，负责通话数据的传递以及控制指令的下发。而Telecom Service中的CallsManager则负责所有通话数据以及指令的处理，并将结果传递给TelecomFramework。</p>
+<p>对于CallSetting，需要发消息到网络。TeleCom模块仅用于处理Call相关的操作，所以把CallSetting放在TeleService中，和MODEM通信比较方便。</p>
+<p>2.4 Android侧Call中的关键机制介绍：</p>
+<p>消息注册机制：</p>
+<p>在TeleService和TeleService Framework中采用的是消息注册机制。</p>
+<p>消息注册机制更加丰富了MessageHandle的流程，它把过程严格阶段化了，分成消息注册和通知消息处理两个部分，让人一目了然。</p>
+<p>消息注册机制的总体思想是：一个对象中开辟一个空间用于存放Message，当调用regist方法时将Message存放进去，当其调用notify方法时将所有Message取出并发送到MessageQueue中等待处理。</p>
+<p>这里用到了观察者模式，下面是TeleService里面的消息注册机制的对比。</p>
+<p><img src="/assets/images/android/framework/voicecall01-03.png" alt="03"></p>
+<p>注：观察者模式定义了一种一对多的依赖关系，让多个观察者对象同时监听某一个主题对象。这个主题对象在状态发生变化时，会通知所有观察者对象，使它们能够自动更新自己。</p>
+<p>模式中的角色</p>
+<p>　　抽象主题（Subject）：它把所有观察者对象的引用保存到一个聚集里，每个主题都可以有任何数量的观察者。抽象主题提供一个接口，可以增加和删除观察者对象。</p>
+<p>　　具体主题（ConcreteSubject）：将有关状态存入具体观察者对象；在具体主题内部状态改变时，给所有登记过的观察者发出通知。</p>
+<p>　　抽象观察者（Observer）：为所有的具体观察者定义一个接口，在得到主题通知时更新自己。</p>
+<p>　　具体观察者（ConcreteObserver）：实现抽象观察者角色所要求的更新接口，以便使本身的状态与主题状态协调。</p>
+<p>3 Voice Call主要流程</p>
+<p>这里会介绍Voice Call的主要流程，包括：MO，MT</p>
+<p>3.1 MO Call时序图：</p>
+<p><img src="/assets/images/android/framework/voicecall01-04.png" alt="04"></p>
+<p>3.2 MT Call时序图：</p>
+<p><img src="/assets/images/android/framework/voicecall01-05.png" alt="05"></p>
 
       
 
@@ -257,11 +296,11 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Contact</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Provider</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Tele</a>
         		</li>
       		
 		</ul>
@@ -328,7 +367,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=https://blog.hsujee.io/2017/06/10/Android/Provider/2017-06-10-Android联系人代码分析/" alt="微信分享二维码">
+      <img src="http://s.jiathis.com/qrcode.php?url=https://blog.hsujee.io/2017/03/25/Android/Framework/2017-03-25-VoiceCall解析/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -342,15 +381,20 @@
   
 <nav id="article-nav">
   
-    <a href="/2017/06/06/DesignPatterns/2017-06-06-并发控制的乐观和悲观策略/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2017/03/25/Android/Framework/2017-06-15-Android快捷键启动解析/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          并发控制的乐观和悲观策略
+          Android快捷键启动解析
         
       </div>
     </a>
   
+  
+    <a href="/2017/04/05/Windows/2017-04-05-Xshell挂载VM中的Ubuntu解决方案/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Xshell挂载VM中的Ubuntu解决方案</div>
+      <i class="icon-circle-right"></i>
+    </a>
   
 </nav>
 
@@ -460,14 +504,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">应用</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
@@ -480,15 +516,23 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">应用</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Windows</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -504,11 +548,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
+                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -528,7 +576,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">博客收藏</a>
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -536,7 +584,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color5">博客收藏</a>
               </li>
             
             <div class="clearfix"></div>

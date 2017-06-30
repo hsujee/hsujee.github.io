@@ -163,6 +163,140 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Android/Mtk/2017-06-30-MtkLog解析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/30/Android/Mtk/2017-06-30-MtkLog解析/">MtkLog分析</a>
+    </h1>
+  
+
+        
+        <a href="/2017/06/30/Android/Mtk/2017-06-30-MtkLog解析/" class="archive-article-date">
+  	<time datetime="2017-06-29T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-30</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="mtklog简介"><a href="#mtklog简介" class="headerlink" title="mtklog简介"></a>mtklog简介</h2><p>mtklog是由log生成工具MTKLogger生成的一系列问题追踪文件，其主要作用就是对系统或者应用产生的异常进行快速定位，从而解决问题。</p>
+<p>mtklog 的分类：MDLog、Mobile Log、Network Log，可能出现的aee_exp log</p>
+<p>MD log：medom 相关底层的log</p>
+<p>Mobile Log：主要是Android log 和kernel log</p>
+<p>Network log：网络相关log</p>
+<p>aee_exp log ：crash ANR 重启相关的log输出</p>
+<h2 id="mtklog-的开启和关闭"><a href="#mtklog-的开启和关闭" class="headerlink" title="mtklog 的开启和关闭"></a>mtklog 的开启和关闭</h2><p>（1）在拨号盘界面输入*#9646633# ：</p>
+<p>（2）进入EngineerMode的第一个Telephony界面：</p>
+<p>（3）向左滑动进入Log and Debugging界面：</p>
+<p>（4）点击MTKLogger 菜单：</p>
+<p>点击log设置图标可进入log设置界面，如果我只要打印MobileLog可将ModemLog，NetworkLog，GPSlog关闭，点击蓝底色1 即可：</p>
+<p>（5）点击开始（红色播放按键）按键：</p>
+<p>（6）log 开启：</p>
+<p>（7）当我们已经发现异常时，当关闭log，并截图记录时间点，下拉进入下拉栏界面，点击MTKLogger is running：</p>
+<p>（8）点击停止按键：</p>
+<p>如图关闭成功：</p>
+<h2 id="mtklog的导出和分析"><a href="#mtklog的导出和分析" class="headerlink" title="mtklog的导出和分析"></a>mtklog的导出和分析</h2><p>（1）MTKLogger停止后，手机USB，下拉下拉栏，点击USB for charging，切换至MTP模式：</p>
+<p> Transfer files(MTP);</p>
+<p>（2）双击：便携设备：</p>
+<p>（3）在内部存储中找到mtklog文件夹复制粘贴到本地：</p>
+<p>（4）打开mtklog文件夹：</p>
+<p>（4）关于分析log，我们主要分析mobilelog 文件夹中的对应android log 和 kernel log：</p>
+<p>对应log文件名称为：</p>
+<p>crash_log ：崩溃日志，主要输出 程序崩溃造成的crash log</p>
+<p>events_log：事件日志，主要输出记录各个activity周期及事件</p>
+<p>kernel_log：底层驱动，按键，低内存相关log</p>
+<p>sys_log：系统日志，Exception定位点</p>
+<p>radio_log：输出通话，网络状态变化</p>
+<p>main_log：详尽输出每一步的log</p>
+<p>分析kernel log安装可查看对应kernal_log的时间点：</p>
+<p>安装成功之后，如下操作打开kernal_log.localtime文件可查看带时间点的kernal log：</p>
+<h2 id="常见异常分析"><a href="#常见异常分析" class="headerlink" title="常见异常分析"></a>常见异常分析</h2><p>1.编译报错：</p>
+<p>在build.log 中搜索unfinished 关键字，查找上文能够很快定位报错原因，或者搜索 error: 关键字能够直接定位相关报错文件（注意是搜索error和冒号）</p>
+<p>2.程序崩溃（系统提示<em>*</em>已停止运行）：</p>
+<p>（1）启动崩溃：一般情况为第三方预置缺少库文件，或者兼容性问题</p>
+<p>（2）应用间交互崩溃：startActivity找不多对应包名或者类名，或者无对应启动Activity的权限</p>
+<p>（3）APP内部逻辑空指针异常导致程序崩溃（NullPointerException）</p>
+<p>以上三种情况都可在mtklog\mobilelog\APLog_2016_0505_115433\events_log 文件中搜索 crash 关键字快速定位问题点，crash_log中可查看对应问题产生原因：</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Line 4201: 03-29 11:25:32.894092 939 949 I am_crash:[9337,0,com.bbm,954744388,Java.lang.UnsatisfiedLinkError,dalvik.system.PathClassLoader[DexPathList[[zip file"/system/framework/com.google.android.maps.jar", zip file"/data/app/com.bbm-1/base.apk"],nativeLibraryDirectories=[/data/app-lib/com.bbm-1,/data/app/com.bbm-1/base.apk!/lib/armeabi-v7a, /vendor/lib, /system/lib]]]couldn't find "libgnustl_shared.so",Runtime.java,367]</div><div class="line">Line 4202: 03-29 11:25:32.910190 939 949 Iam_finish_activity: [0,198242511,14,com.bbm/.ui.activities.StartupActivity,force-crash]</div></pre></td></tr></table></figure>
+<p>3.程序闪退：</p>
+<p>（1）外部原因：物理内存不足，被kill，events_log中搜索 low_memory 关键字，以确定低内存杀死程序，kernal_log 中有存在对应时间点被 low memory kill如下：</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">05-10 11:36:22.588540 923 1439 Iam_low_memory: 19</div><div class="line">05-10 11:36:22.594222 923 938 I am_destroy_activity:[0,205784777,125,com.mediatek.filemanager/.MainFilemanagerActivity,finish-idle]</div><div class="line">05-10 11:36:22.599262 923 923 I notification_cancel_all:[1000,923,com.mediatek.filemanager,0,0,0,5,NULL]</div><div class="line">05-10 11:36:22.601661 923 923 I notification_cancel_all:[1000,923,com.android.providers.downloads,0,0,0,5,NULL]</div><div class="line">05-10 11:36:22.650000 2036 2036 I auditd : type=1400 audit(0.0:347): avc:denied</div><div class="line"></div><div class="line">&#123; read &#125; for comm="GpuAppSpectator" name="cmdline"dev="proc" ino=10905 scontext=u:r:gas_srv:s0tcontext=u:r:system_app:s0 tclass=file permissive=0</div><div class="line">05-10 11:36:22.869048 923 1910 Iam_proc_bound: [0,3769,com.cyin.himgr]</div><div class="line">05-10 11:36:23.403472 1532 1532 Iam_on_resume_called:[0,com.android.hios.launcher3.Launcher]</div><div class="line">05-10 11:36:23.650000 2036 2036 I auditd :type=1400 audit(0.0:348): avc: denied &#123; read &#125;</div><div class="line"></div><div class="line">forcomm="GpuAppSpectator" name="cmdline" dev="proc"ino=10905 scontext=u:r:gas_srv:s0 tcontext=u:r:system_app:s0 tclass=filepermissive=0</div><div class="line">05-10 11:36:23.965602 923 938 I am_destroy_activity:[0,102727749,125,com.android.packageinstaller/.InstallAppProgress,finish-imm]</div><div class="line">05-10 11:36:23.972491 241 241 I sf_frame_dur:[com.android.packageinstaller/com.android.packageinstaller.InstallAppProgress,2375,9,1,0,1,0,0]</div><div class="line">05-10 11:36:24.126262 923 1520 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,0,0,0,0,-1]</div><div class="line">05-10 11:36:24.126560 923 1520 I netstats_wifi_sample:[64660,844,36398,408,33328,147,33388,197,32228,126,33388,197,-1]</div><div class="line">05-10 11:36:24.244910 923 934 I am_proc_died: [0,3665,com.android.packageinstaller]</div><div class="line">05-10 11:36:24.245968 923 934 I wm_task_removed: [125,removeAppToken: last token]</div><div class="line">05-10 11:36:24.246168 923 934 I wm_task_removed: [125,removeTask]</div><div class="line"></div><div class="line">05-10 11:36:24.248168 923 934 I am_low_memory: 19</div><div class="line">05-10 11:36:24.255912 923 923 I notification_cancel_all:[1000,923,com.android.packageinstaller,0,0,0,5,NULL]</div><div class="line">05-10 11:36:24.318915 923 933 Inetstats_mobile_sample: [0,0,0,0,0,0,0,0,0,0,0,0,-1]</div></pre></td></tr></table></figure>
+<p>（2）内部原因：main_log/sys_log 搜索Exception 或者 died关键字定位对应包名，进而定位问题</p>
+<p>4.ANR问题：</p>
+<p>出现ANR应当提供traces.txt文件，直接在文件中搜索 cmd 关键字，定位问题点。锁定三个方向：memoryleak（是否为低内存），CPU block（CPU使用率过高）、iowait（IO流使用过于频繁）</p>
+<p>（1）memoryleak：首先根据Android log搜索低内存相关 low_memory 关键字，以确定是否存在低内存现象</p>
+<p>（2）CPU block：搜索对应包出现ANR前后 TOTAL 关键字前的百分比，若百分比接近100% 说明CPU饥饿导致了ANR：</p>
+<p>（3）iowait：搜索iowait 关键字查看出现ANR前的百分比，若百分比过高，说明I/O流使用过于频繁导致ANR，此项需修改相关数据库的加载流程，如下：</p>
+<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">4-0113:12:15.872 E/ActivityManager(  220):  5.5%21404/com.android.email: 1.3% user + 4.1% kernel / faults: 10 minor</div><div class="line"></div><div class="line">04-0113:12:15.872 E/ActivityManager(  220):  4.3%220/system_server: 2.7% user + 1.5% kernel / faults: 11 minor 2 major</div><div class="line"></div><div class="line">04-0113:12:15.872 E/ActivityManager(  220):  0.9%52/spi_qsd.0: 0% user + 0.9% kernel</div><div class="line"></div><div class="line">04-0113:12:15.872 E/ActivityManager(  220):  0.5%65/irq/170-cyttsp-: 0% user + 0.5% kernel</div><div class="line"></div><div class="line">04-0113:12:15.872 E/ActivityManager(  220):   0.5%296/com.android.systemui:0.5% user + 0% kernel</div><div class="line"></div><div class="line">04-0113:12:15.872 E/ActivityManager(  220): 100%TOTAL:4.8% user + 7.6% kernel + 87% iowait</div><div class="line"></div><div class="line">04-0113:12:15.872 E/ActivityManager(  220):CPUusagefrom 3697ms to 4223ms later:-- ANR后CPU的使用量</div><div class="line"></div><div class="line">04-0113:12:15.872 E/ActivityManager(  220):  25%21404/com.android.email: 25% user + 0% kernel / faults: 191 minor</div><div class="line"></div><div class="line">04-0113:12:15.872 E/ActivityManager( 220):    16% 21603/__eas(par.hakan: 16% user + 0% kernel</div><div class="line"></div><div class="line">04-0113:12:15.872 E/ActivityManager( 220):    7.2% 21406/GC: 7.2% user + 0% kernel</div><div class="line"></div><div class="line">04-0113:12:15.872 E/ActivityManager( 220):    1.8% 21409/Compiler: 1.8% user + 0% kernel</div><div class="line"></div><div class="line">04-0113:12:15.872 E/ActivityManager(  220):  5.5%220/system_server: 0% user + 5.5% kernel / faults: 1 minor</div><div class="line"></div><div class="line">04-0113:12:15.872 E/ActivityManager( 220):    5.5% 263/InputDispatcher: 0% user + 5.5% kernel</div><div class="line"></div><div class="line">04-0113:12:15.872 E/ActivityManager(  220): 32%TOTAL:28% user + 3.7% kernel</div></pre></td></tr></table></figure>
+<p>下面是一些相关文章链接：</p>
+<p><a href="http://www.cnblogs.com/lexuele/p/4831907.html" target="_blank" rel="external">MTK平台系统稳定性分析</a></p>
+<p><a href="http://blog.csdn.net/zqh2007/article/details/50923221" target="_blank" rel="external">如何用adb控制MTKLogger</a></p>
+<p><a href="http://www.jianshu.com/p/8964812972be" target="_blank" rel="external">如何分析ANR Log的总结</a></p>
+<p><a href="http://blog.csdn.net/qwiwuqo/article/details/40111721" target="_blank" rel="external">android anr traces日志分析方法</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Mtk</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Gat</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/06/30/Android/Mtk/2017-06-30-MtkLog解析/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-Android/Framework/2017-06-26-Android_Framework之Init" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -895,91 +1029,9 @@
 
 
   
-    <article id="post-Windows/2017-04-05-Xshell挂载VM中的Ubuntu解决方案" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/04/05/Windows/2017-04-05-Xshell挂载VM中的Ubuntu解决方案/">Xshell挂载VM中的Ubuntu解决方案</a>
-    </h1>
-  
-
-        
-        <a href="/2017/04/05/Windows/2017-04-05-Xshell挂载VM中的Ubuntu解决方案/" class="archive-article-date">
-  	<time datetime="2017-04-04T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-04-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>首先看下报错log</p>
-<pre><code>Connecting to 10.7.100.182:22...   
-Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.   
-</code></pre><p>这是因为你的ubuntu中没有openssh-server的原因 </p>
-        
-          <a class="article-more-a" href="/2017/04/05/Windows/2017-04-05-Xshell挂载VM中的Ubuntu解决方案/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Windows</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/04/05/Windows/2017-04-05-Xshell挂载VM中的Ubuntu解决方案/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
     </nav>
   
 
@@ -1070,14 +1122,6 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">应用</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">C/C++</a>
               </li>
              
@@ -1086,7 +1130,15 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Windows</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">应用</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1098,7 +1150,11 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">Windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1106,7 +1162,7 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1118,11 +1174,27 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
+                <a href="javascript:void(0)" class="js-tag color4">Mtk</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Gat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">转载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">博客收藏</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1134,10 +1206,6 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AS</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
@@ -1146,15 +1214,7 @@ Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">博客收藏</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">转载</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
+                <a href="javascript:void(0)" class="js-tag color3">AS</a>
               </li>
             
             <div class="clearfix"></div>

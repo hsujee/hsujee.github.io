@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://blog.hsujee.io/assets/images/android/framework/binder01_01.jpg">
 <meta property="og:image" content="https://blog.hsujee.io/assets/images/android/framework/binder01_02.jpg">
 <meta property="og:image" content="https://blog.hsujee.io/assets/images/android/framework/binder01_03.jpg">
-<meta property="og:updated_time" content="2017-06-20T09:02:48.262Z">
+<meta property="og:updated_time" content="2017-06-27T03:52:06.851Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android_FrameWork之Native_Binder">
 <meta name="twitter:description" content="Native_Binder">
@@ -188,6 +188,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>Binder是Android系统提供的一种IPC（进程间通信）机制，除Binder还有Pipe和socket等。</p>
+<p>这片文章主要分析Android系统中的Binder机制，Binder机制有4个组件构成，它们分别是：Client，Server，ServiceManager和驱动Binder。</p>
 <p>在Android基于Binder的C/S架构中，Binder就好比大世界中的网络，在这个体系中，除C/S(client/server)端外，还有一个全局的ServiceManager来管理系统中的各种Server。</p>
 <p> Client、Server和ServiceManager三者之间的交互关系:</p>
 <a id="more"></a>
@@ -207,7 +208,12 @@
 <p><img src="/assets/images/android/framework/binder01_02.jpg" alt="02"></p>
 <p>下图为binder通信层和业务层的关系图</p>
 <p><img src="/assets/images/android/framework/binder01_03.jpg" alt="03"></p>
-<h2 id="ServiceManager解析"><a href="#ServiceManager解析" class="headerlink" title="ServiceManager解析"></a>ServiceManager解析</h2>
+<h2 id="ServiceManager-之-Binder的守护进程"><a href="#ServiceManager-之-Binder的守护进程" class="headerlink" title="ServiceManager 之 Binder的守护进程"></a>ServiceManager 之 Binder的守护进程</h2><p>ServiceManager组件是用来管理Server并且向Client提供查询Server远程接口的功能。</p>
+<p>Android系统中的Service信息都是先添加到ServiceManager中，由ServiceManager来集中管理，这样就可以随时查询当前系统中启动的Service信息，想要和Service进行交互，必须先向ServiceManager来获取该Service的信息，然后使用获取的信息去和Service交互。</p>
+<p>下面以Android7.0版本源代码进行分析</p>
+<p>源码位置：\frameworks\native\cmds\servicemanager\</p>
+<p>主要代码：binder.c,binder.h,service_manager.c</p>
+
       
 
       
@@ -315,6 +321,11 @@
     </a>
   
   
+    <a href="/2017/06/26/Android/Framework/2017-06-26-Android_Framework之Init/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Android_Framework之Init</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
 </nav>
 
 
@@ -415,18 +426,6 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">C/C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">编程</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
@@ -435,7 +434,19 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color1">C/C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -443,7 +454,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Windows</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -455,10 +466,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">App</a>
               </li>
              
@@ -467,7 +474,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
+                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -479,11 +490,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
+                <a href="javascript:void(0)" class="js-tag color3">AS</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AS</a>
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -499,11 +510,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
+                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
             
             <div class="clearfix"></div>

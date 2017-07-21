@@ -163,93 +163,6 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-Android/blog/2016-9-25-Awesome-RxJava 学习资料" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/09/25/Android/blog/2016-9-25-Awesome-RxJava 学习资料/">Awesome-RxJava 学习资料</a>
-    </h1>
-  
-
-        
-        <a href="/2016/09/25/Android/blog/2016-9-25-Awesome-RxJava 学习资料/" class="archive-article-date">
-  	<time datetime="2016-09-24T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-09-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="Awesome-RxJava"><a href="#Awesome-RxJava" class="headerlink" title="Awesome-RxJava"></a>Awesome-RxJava</h1><p>本文摘自：<a href="https://github.com/lzyzsd/Awesome-RxJava">https://github.com/lzyzsd/Awesome-RxJava</a></p>
-<p>RxJava resources</p>
-<h2 id="RxJava-学习资料"><a href="#RxJava-学习资料" class="headerlink" title="RxJava 学习资料"></a>RxJava 学习资料</h2><ul>
-<li><a href="http://gank.io/post/560e15be2dca930e00da1083">给 Android 开发者的 RxJava 详解</a> -<strong>强烈推荐</strong> 扔物线的文章  讲解非常详细</li>
-</ul>
-        
-          <a class="article-more-a" href="/2016/09/25/Android/blog/2016-9-25-Awesome-RxJava 学习资料/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">编程</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">转载</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2016/09/25/Android/blog/2016-9-25-Awesome-RxJava 学习资料/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
     <article id="post-C_C++/2016-05-16-解决Detours编译报错（在Win10+vs2015开发环境下）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -976,9 +889,115 @@
 
 
   
+    <article id="post-Tools/2015-03-27- Git常用的命令" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/03/27/Tools/2015-03-27- Git常用的命令/">Git常用的命令</a>
+    </h1>
+  
+
+        
+        <a href="/2015/03/27/Tools/2015-03-27- Git常用的命令/" class="archive-article-date">
+  	<time datetime="2015-03-26T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2015-03-27</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在提交时解决冲突的方式</p>
+<p>使用git pull拉取文件时，如果本地和远程仓库的文件之间有冲突的时候，会出现如下提示：</p>
+<pre><code>error: Your local changes to the following files would be overwritten by merge:
+        protected/config/main.cpp
+Please, commit your changes or stash them before you can merge.
+</code></pre><p>上面提示中列出产生冲突的文件，那么我们就需要执行下面命令进行文件合并，解决冲突</p>
+<pre><code>git stash            //暂存本地的修改
+
+git pull             //拉取远程仓库文件到本地
+
+git stash pop        //弹出本地修改暂存
+</code></pre><p>这时候就会提示auto-merged 文件已经自动合并</p>
+<pre><code>git diff -w +文件名   //查看文件合并情况
+</code></pre><p>运行上面命令查看，就可以看到文件中增加了如下标记</p>
+<pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; Updated upstream  //远端仓库修改
+
+=======                   //分隔符
+
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; Stashed changes   //本地修改
+</code></pre><p>然后使用vi等编辑器对文件进行编辑，修改到你想要的结果，并且删除所有冲突标记</p>
+<p>然后再命令行正常流程进行提交即可</p>
+<p>如果希望用代码库中的文件完全覆盖本地工作版本</p>
+<pre><code>git reset --hard
+
+git pull
+</code></pre><p>单个文件覆盖</p>
+<pre><code>git checkout HEAD file/to/restore
+</code></pre><p>查看、添加、提交、删除、找回，重置修改文件</p>
+        
+          <a class="article-more-a" href="/2015/03/27/Tools/2015-03-27- Git常用的命令/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">版本控制</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2015/03/27/Tools/2015-03-27- Git常用的命令/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span>
     </nav>
   
 
@@ -1085,6 +1104,10 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
@@ -1105,10 +1128,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
@@ -1121,11 +1140,31 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">App</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Contact</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">打包</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1137,31 +1176,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">打包</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AS</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">

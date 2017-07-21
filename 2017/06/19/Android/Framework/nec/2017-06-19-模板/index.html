@@ -6,17 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://blog.hsujee.io">
-  <title>Tag: Linux | 徐彦杰的博客</title>
+  <title>Android FrameWork学习总纲 | 徐彦杰的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Yanjie.Xu World">
-<meta property="og:type" content="website">
-<meta property="og:title" content="徐彦杰的博客">
-<meta property="og:url" content="https://blog.hsujee.io/tags/Linux/index.html">
+  <meta name="description" content="Android FrameWork学习总纲">
+<meta name="keywords" content="Android,FrameWork">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android FrameWork学习总纲">
+<meta property="og:url" content="https://blog.hsujee.io/2017/06/19/Android/Framework/nec/2017-06-19-模板/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
-<meta property="og:description" content="Yanjie.Xu World">
+<meta property="og:description" content="Android FrameWork学习总纲">
+<meta property="og:updated_time" content="2017-06-19T10:07:27.500Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="徐彦杰的博客">
-<meta name="twitter:description" content="Yanjie.Xu World">
+<meta name="twitter:title" content="Android FrameWork学习总纲">
+<meta name="twitter:description" content="Android FrameWork学习总纲">
   
     <link rel="alternative" href="/atom.xml" title="徐彦杰的博客" type="application/atom+xml">
   
@@ -161,123 +163,64 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Android/Framework/nec/2017-06-19-模板" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/03/23/Android/Tool/2017-03-23-常用命令行操作记录/" class="archive-article-date">
-  	<time datetime="2017-03-22T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-23</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/03/23/Android/Tool/2017-03-23-常用命令行操作记录/">常用命令行操作记录</a>
+    <h1 class="article-title" itemprop="name">
+      Android FrameWork学习总纲
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2017/06/19/Android/Framework/nec/2017-06-19-模板/" class="archive-article-date">
+  	<time datetime="2017-06-18T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>必须谈谈学习思路</p>
+<p>从今年开始学习Android FrameWork开发，作为一个系统，Android有它相对应的成熟体系，工欲善其事必先利其器，要学习一个庞大的系统，不能一头扎进去就看代码，其实看代码的话，所有程序员都会看代码，问题是怎么看代码，看什么代码</p>
+<p>Android源码树异常庞大，如果想一行不漏地看，不可能；就算你这么干了，效果也不见得好————《只见树木，不见森林》。</p>
+<p>在万能网络的帮助下总结了一下学习方法：</p>
+<a id="more"></a>
+<p>1、先理解模块对应的要解决的“问题”是什么，再去给问题找解决方案的思路去理解源码。</p>
+<p>几乎所有代码or模块or系统的开发初衷，都是为了解决某一问题。如果光看源码，哦这个是干嘛的，那里调用了哪个API，这样看毫无意义。</p>
+<p>先有的问题，之后才有的代码，看一个重要模块之前，首先弄明白此模块有哪些功能？怎么使用？如果这个功能给你去做，你会用什么方式去实现，以此为向导，可以了解相关问题的解决方案，学习一些除了代码之外的知识，然后再去了解学习Android系统中的实现，细节都在代码中，掌握了宏观的框架，再去看代码，这样看到<em>*</em>代码，“哦，我明白这个方法这样写是为什么，他干了什么？”有种叫做直觉的东西会降临，这样的状态会让学习效率直线上升，并无—-枯燥感</p>
+<p>2、理解源码的功夫不止在Android本身，也要提高Android之外的姿势水平。</p>
+<p>3、学习程序最需要会的一点就是–抽象。不管是写还是看。写的抽象不必说。看的抽象是啥玩意儿？就是开始看的时候要忽略细节，跟着流程走。工作原理一般都可以文字描述，如何实现的，跟着函数调用一步一步套，流程通了，细节就不在话下了。如果一开始就纠结各种变量、各种函数名、各种模式，估计会迷路吧。</p>
+<p>4、终目的只有一个「学会看源码」，而不是「学会源码」</p>
+<p>5、高度抽象，构建框架，重要函数，深究细节，善用工具，及时总结</p>
+<p>最后，不要等到万事俱备的时候才去做某一件事，一旦决定去做，天亮就出发。</p>
+<p>推荐一个Framework里最简单的Service——LightService，一共就以下几个文件。<br><figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">/services/core/java/com/android/server/lights/LightsManager.java.</div><div class="line">/services/core/java/com/android/server/lights/Light.java.</div><div class="line">/services/core/java/com/android/server/lights/LightsService.java</div></pre></td></tr></table></figure></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Git</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-      
-        </div></section>
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2016" class="archive-year">2016</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/03/18/Android/Tool/2016-03-18- Linux下AS环境配置/" class="archive-article-date">
-  	<time datetime="2016-03-17T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-03-18</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/03/18/Android/Tool/2016-03-18- Linux下AS环境配置/">Linux下AS环境配置</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
-        		</li>
-      		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -290,17 +233,95 @@
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=https://blog.hsujee.io/2017/06/19/Android/Framework/nec/2017-06-19-模板/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/06/10/Android/Provider/2017-06-10-ContactsProvider数据库操作/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          ContactsProvider 数据库操作
+        
+      </div>
+    </a>
   
   
-    </div></section>
+    <a href="/2017/06/19/Android/Framework/2017-06-19-Android FrameWork学习总纲/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Android FrameWork学习总纲</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+
+  
+    <div class="duoshuo"></div>
   
 
-    
+
 
 
           </div>
@@ -323,9 +344,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		root: "/",

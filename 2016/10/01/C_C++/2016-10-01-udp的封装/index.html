@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://blog.hsujee.io/2016/10/01/C_C++/2016-10-01-udp的封装/index.html">
 <meta property="og:site_name" content="徐彦杰的博客">
 <meta property="og:description" content="使用C++对udp的封装和使用">
-<meta property="og:updated_time" content="2017-04-12T02:26:23.917Z">
+<meta property="og:updated_time" content="2017-07-11T11:29:38.173Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="udp的封装和使用">
 <meta name="twitter:description" content="使用C++对udp的封装和使用">
@@ -191,188 +191,12 @@
 LIBS += -lWs2_32
 </code></pre><p>测试方法：编译通过后，win+R 输入cmd 回车打开命令窗口<br>发送端：<br>输入.exe文件名后边加IP地址<br>接受端：<br>输入.exe文件名直接运行<br>退出：<br>输入exit回车退出</p>
 <p>代码如下：<br>udp.h</p>
-<pre><code>#ifndef UDP_H
-#define UDP_H
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> UDP_H</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> UDP_H</span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> MYLINUX</span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> SOCKET int</span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">else</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;winsock2.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"></div><div class="line"><span class="comment">//明确此函数是C语言函数，编译时候不要转换成C++格式了</span></div><div class="line"><span class="comment">//extern "C"</span></div><div class="line"><span class="comment">//&#123;</span></div><div class="line"></div><div class="line"><span class="comment">//&#125;</span></div><div class="line"></div><div class="line"><span class="keyword">class</span> myudp&#123;</div><div class="line"><span class="keyword">private</span>:</div><div class="line">    SOCKET st;</div><div class="line"></div><div class="line"><span class="keyword">public</span>:</div><div class="line">    myudp();</div><div class="line">    ~myudp();</div><div class="line">    <span class="function"><span class="keyword">int</span> <span class="title">socket_bind</span><span class="params">(<span class="keyword">short</span> <span class="keyword">int</span> port)</span></span>;</div><div class="line">    <span class="function"><span class="keyword">int</span> <span class="title">socket_send</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *IP, <span class="keyword">const</span> <span class="keyword">short</span> <span class="keyword">int</span> port, <span class="keyword">const</span> <span class="keyword">char</span> *buf, <span class="keyword">int</span> len)</span></span>;</div><div class="line">    <span class="function"><span class="keyword">int</span> <span class="title">socket_recv</span><span class="params">(<span class="keyword">char</span> *buf, <span class="keyword">int</span> len, <span class="keyword">char</span> *srcIP)</span></span>;</div><div class="line"></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">// UDP_H</span></span></div></pre></td></tr></table></figure>
+<p>udp.cpp</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"udp.h"</span></span></div><div class="line"></div><div class="line"><span class="keyword">int</span> myudp::socket_send(<span class="keyword">const</span> <span class="keyword">char</span> *IP, <span class="keyword">const</span> <span class="keyword">short</span> <span class="keyword">int</span> port, <span class="keyword">const</span> <span class="keyword">char</span> *buf, <span class="keyword">int</span> len)&#123;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 建立socket</div><div class="line">     * AF_INET 指定使用TCP/IP协议</div><div class="line">     * SOCK_DGRAM 指定使用UDP协议</div><div class="line">     */</div><div class="line">    st = socket(AF_INET, SOCK_DGRAM, <span class="number">0</span>);</div><div class="line">    <span class="keyword">struct</span> sockaddr_in addr;</div><div class="line">    <span class="built_in">memset</span>(&amp;addr, <span class="number">0</span>, <span class="keyword">sizeof</span>(addr));<span class="comment">//初始化结构</span></div><div class="line">    addr.sin_family = AF_INET;</div><div class="line">    addr.sin_port = htons(port);<span class="comment">//host to net short</span></div><div class="line">    addr.sin_addr.s_addr = inet_addr(IP);</div><div class="line"></div><div class="line">    <span class="comment">//IP 内存原理解析</span></div><div class="line"><span class="comment">//    unsigned long laddr = inet_addr("192.168.6.200");</span></div><div class="line"><span class="comment">//    unsigned char *p = &amp;laddr;</span></div><div class="line"><span class="comment">//    printf("IP_long:%x\n", laddr);</span></div><div class="line"><span class="comment">//    printf("IP_char:%u,%u,%u,%u\n", *(p),*(p+1),*(p+2),*(p+3));</span></div><div class="line">    <span class="keyword">size_t</span> rc = sendto(st, buf, len, <span class="number">0</span>, (<span class="keyword">struct</span> sockaddr *)&amp;addr, <span class="keyword">sizeof</span>(addr));</div><div class="line"></div><div class="line"></div><div class="line">    <span class="keyword">return</span> rc;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">int</span> myudp::socket_recv(<span class="keyword">char</span> *buf, <span class="keyword">int</span> len, <span class="keyword">char</span> *srcIP)&#123;</div><div class="line">    <span class="keyword">struct</span> sockaddr_in sendaddr;</div><div class="line">    <span class="built_in">memset</span>(&amp;sendaddr, <span class="number">0</span>, <span class="keyword">sizeof</span>(sendaddr));</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> MYLINUX</span></div><div class="line">    <span class="keyword">socklen_t</span> addrlen;</div><div class="line"><span class="meta">#<span class="meta-keyword">else</span></span></div><div class="line">    <span class="keyword">int</span> addrlen;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"></div><div class="line">    addrlen = <span class="keyword">sizeof</span>(sendaddr);</div><div class="line"></div><div class="line">    <span class="built_in">memset</span>(buf, <span class="number">0</span>, len);</div><div class="line">    <span class="comment">//接受UDP数据</span></div><div class="line">    <span class="keyword">size_t</span> rc = recvfrom(st, buf, len, <span class="number">0</span>, (<span class="keyword">struct</span> sockaddr *)&amp;sendaddr, &amp;addrlen);</div><div class="line"><span class="comment">//    printf("%s:%s\n", inet_ntoa(sendaddr.sin_addr), buf);</span></div><div class="line">    <span class="keyword">if</span>(srcIP)</div><div class="line">	<span class="built_in">strcpy</span>(srcIP, inet_ntoa(sendaddr.sin_addr));</div><div class="line">    <span class="keyword">return</span> rc;</div><div class="line">&#125;</div><div class="line"></div><div class="line">myudp::myudp()</div><div class="line">&#123;</div><div class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> MYLINUX</span></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 初始化socket</div><div class="line">     */</div><div class="line">    DWORD ver;</div><div class="line">    WSADATA wsaData;</div><div class="line"></div><div class="line">    ver = MAKEWORD(<span class="number">1</span>, <span class="number">1</span>);<span class="comment">//在WSAStartup之前，告诉windows使用Socket的版本号</span></div><div class="line">    WSAStartup(ver, &amp;wsaData);<span class="comment">//windows要求，使用socket必须调用这个函数</span></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 建立socket</div><div class="line">     * AF_INET 指定使用TCP/IP协议</div><div class="line">     * SOCK_DGRAM 指定使用UDP协议</div><div class="line">     */</div><div class="line">    st = socket(AF_INET, SOCK_DGRAM, <span class="number">0</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line">myudp::~myudp()</div><div class="line">&#123;</div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> MYLINUX</span></div><div class="line">    close(st);</div><div class="line"><span class="meta">#<span class="meta-keyword">else</span></span></div><div class="line">    closesocket(st);<span class="comment">//关闭socket</span></div><div class="line">    WSACleanup();<span class="comment">//释放win中 socket相关资源</span></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//将接收方和端口号绑定</span></div><div class="line"><span class="keyword">int</span> myudp::socket_bind(<span class="keyword">short</span> port)</div><div class="line">&#123;</div><div class="line"></div><div class="line">    <span class="keyword">struct</span> sockaddr_in addr;</div><div class="line">    <span class="built_in">memset</span>(&amp;addr, <span class="number">0</span>, <span class="keyword">sizeof</span>(addr));<span class="comment">//初始化结构</span></div><div class="line">    addr.sin_family = AF_INET;</div><div class="line">    addr.sin_port = htons(port);<span class="comment">//host to net short</span></div><div class="line">    addr.sin_addr.s_addr = htonl(INADDR_ANY);<span class="comment">//INADDR_ANY接收方的主机ip</span></div><div class="line"></div><div class="line">    <span class="keyword">int</span> localBind = bind(st, (<span class="keyword">struct</span> sockaddr *)&amp;addr, <span class="keyword">sizeof</span>(addr));</div><div class="line"></div><div class="line">    <span class="keyword">return</span> localBind;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>main.cpp</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"udp.h"</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> PORT 8080</span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *args[])</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">if</span>(argc &gt; <span class="number">1</span>)&#123;</div><div class="line">	myudp udp;</div><div class="line">	<span class="keyword">char</span> buf[<span class="number">1024</span>] = &#123;<span class="number">0</span>&#125;;</div><div class="line">	<span class="keyword">while</span>(<span class="number">1</span>)&#123;</div><div class="line">	    <span class="built_in">memset</span>(buf, <span class="number">0</span>, <span class="keyword">sizeof</span>(buf));</div><div class="line">	    gets(buf);</div><div class="line">	    udp.socket_send(args[<span class="number">1</span>], PORT, buf, <span class="built_in">strlen</span>(buf));</div><div class="line">	    <span class="keyword">if</span>(<span class="built_in">strncmp</span>(buf, <span class="string">"exit"</span>, <span class="number">4</span>) == <span class="number">0</span>)</div><div class="line">	        <span class="keyword">break</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">	myudp udp;</div><div class="line">	<span class="keyword">char</span> buf[<span class="number">1024</span>] = &#123;<span class="number">0</span>&#125;;</div><div class="line">	<span class="keyword">if</span>(udp.socket_bind(PORT) &gt; <span class="number">-1</span>)&#123;</div><div class="line">	    <span class="built_in">cout</span> &lt;&lt; <span class="string">"bind success !"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	    <span class="keyword">char</span> ip[<span class="number">100</span>] = &#123;<span class="number">0</span>&#125;;</div><div class="line">	    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</div><div class="line">	        <span class="built_in">memset</span>(buf, <span class="number">0</span>, <span class="keyword">sizeof</span>(buf));</div><div class="line">	        <span class="built_in">memset</span>(ip, <span class="number">0</span>, <span class="keyword">sizeof</span>(ip));</div><div class="line"></div><div class="line">	        udp.socket_recv(buf, <span class="keyword">sizeof</span>(buf), ip);</div><div class="line">	        <span class="keyword">if</span>(<span class="built_in">strncmp</span>(buf, <span class="string">"exit"</span>, <span class="number">4</span>) == <span class="number">0</span>)</div><div class="line">	            <span class="keyword">break</span>;</div><div class="line">	        <span class="built_in">cout</span> &lt;&lt; buf &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	        <span class="built_in">cout</span> &lt;&lt; ip &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	    &#125;</div><div class="line"></div><div class="line">	&#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"over"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
-#ifdef MYLINUX
-
-#include &lt;sys/types.h&gt;
-#include &lt;sys/socket.h&gt;
-#include &lt;arpa/inet.h&gt;
-#include &lt;unistd.h&gt;
-#define SOCKET int
-
-#else
-
-#include &lt;winsock2.h&gt;
-
-#endif
-
-//明确此函数是C语言函数，编译时候不要转换成C++格式了
-//extern &quot;C&quot;
-//{
-
-//}
-
-class myudp{
-private:
-    SOCKET st;
-
-public:
-    myudp();
-    ~myudp();
-    int socket_bind(short int port);
-    int socket_send(const char *IP, const short int port, const char *buf, int len);
-    int socket_recv(char *buf, int len, char *srcIP);
-
-};
-
-
-#endif // UDP_H
-</code></pre><p>udp.cpp</p>
-<pre><code>#include &lt;string.h&gt;
-#include &lt;stdio.h&gt;
-#include &quot;udp.h&quot;
-
-int myudp::socket_send(const char *IP, const short int port, const char *buf, int len){
-
-
-    /**
-     * 建立socket
-     * AF_INET 指定使用TCP/IP协议
-     * SOCK_DGRAM 指定使用UDP协议
-     */
-    st = socket(AF_INET, SOCK_DGRAM, 0);
-    struct sockaddr_in addr;
-    memset(&amp;addr, 0, sizeof(addr));//初始化结构
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(port);//host to net short
-    addr.sin_addr.s_addr = inet_addr(IP);
-
-    //IP 内存原理解析
-//    unsigned long laddr = inet_addr(&quot;192.168.6.200&quot;);
-//    unsigned char *p = &amp;laddr;
-//    printf(&quot;IP_long:%x\n&quot;, laddr);
-//    printf(&quot;IP_char:%u,%u,%u,%u\n&quot;, *(p),*(p+1),*(p+2),*(p+3));
-    size_t rc = sendto(st, buf, len, 0, (struct sockaddr *)&amp;addr, sizeof(addr));
-
-
-    return rc;
-}
-
-int myudp::socket_recv(char *buf, int len, char *srcIP){
-    struct sockaddr_in sendaddr;
-    memset(&amp;sendaddr, 0, sizeof(sendaddr));
-
-#ifdef MYLINUX
-    socklen_t addrlen;
-#else
-    int addrlen;
-#endif
-
-    addrlen = sizeof(sendaddr);
-
-    memset(buf, 0, len);
-    //接受UDP数据
-    size_t rc = recvfrom(st, buf, len, 0, (struct sockaddr *)&amp;sendaddr, &amp;addrlen);
-//    printf(&quot;%s:%s\n&quot;, inet_ntoa(sendaddr.sin_addr), buf);
-    if(srcIP)
-    strcpy(srcIP, inet_ntoa(sendaddr.sin_addr));
-    return rc;
-}
-
-myudp::myudp()
-{
-#ifndef MYLINUX
-
-    /**
-     * 初始化socket
-     */
-    DWORD ver;
-    WSADATA wsaData;
-
-    ver = MAKEWORD(1, 1);//在WSAStartup之前，告诉windows使用Socket的版本号
-    WSAStartup(ver, &amp;wsaData);//windows要求，使用socket必须调用这个函数
-#endif
-
-    /**
-     * 建立socket
-     * AF_INET 指定使用TCP/IP协议
-     * SOCK_DGRAM 指定使用UDP协议
-     */
-    st = socket(AF_INET, SOCK_DGRAM, 0);
-}
-
-myudp::~myudp()
-{
-#ifdef MYLINUX
-    close(st);
-#else
-    closesocket(st);//关闭socket
-    WSACleanup();//释放win中 socket相关资源
-#endif
-}
-
-//将接收方和端口号绑定
-int myudp::socket_bind(short port)
-{
-
-    struct sockaddr_in addr;
-    memset(&amp;addr, 0, sizeof(addr));//初始化结构
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(port);//host to net short
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);//INADDR_ANY接收方的主机ip
-
-    int localBind = bind(st, (struct sockaddr *)&amp;addr, sizeof(addr));
-
-    return localBind;
-}
-</code></pre><p>main.cpp</p>
-<pre><code>#include &lt;iostream&gt;
-#include &quot;udp.h&quot;
-
-#define PORT 8080
-
-using namespace std;
-
-int main(int argc, char *args[])
-{
-    if(argc &gt; 1){
-    myudp udp;
-    char buf[1024] = {0};
-    while(1){
-        memset(buf, 0, sizeof(buf));
-        gets(buf);
-        udp.socket_send(args[1], PORT, buf, strlen(buf));
-        if(strncmp(buf, &quot;exit&quot;, 4) == 0)
-            break;
-    }
-
-    }else{
-    myudp udp;
-    char buf[1024] = {0};
-    if(udp.socket_bind(PORT) &gt; -1){
-        cout &lt;&lt; &quot;bind success !&quot; &lt;&lt; endl;
-        char ip[100] = {0};
-        while(1){
-            memset(buf, 0, sizeof(buf));
-            memset(ip, 0, sizeof(ip));
-
-            udp.socket_recv(buf, sizeof(buf), ip);
-            if(strncmp(buf, &quot;exit&quot;, 4) == 0)
-                break;
-            cout &lt;&lt; buf &lt;&lt; endl;
-            cout &lt;&lt; ip &lt;&lt; endl;
-        }
-
-    }
-
-    }
-
-    cout &lt;&lt; &quot;over&quot; &lt;&lt; endl;
-    return 0;
-}
-</code></pre>
       
 
       
@@ -601,19 +425,15 @@ int main(int argc, char *args[])
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">应用</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -625,11 +445,19 @@ int main(int argc, char *args[])
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -641,18 +469,6 @@ int main(int argc, char *args[])
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Mtk</a>
               </li>
              
@@ -661,11 +477,15 @@ int main(int argc, char *args[])
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">打包</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -677,11 +497,11 @@ int main(int argc, char *args[])
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color3">AS</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AS</a>
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -896,19 +896,19 @@
 
 
   
-    <article id="post-Tools/2015-03-27- Git常用的命令" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Tools/2015-03-27- SVN常用的命令" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2015/03/27/Tools/2015-03-27- Git常用的命令/">Git常用的命令</a>
+      <a class="article-title" href="/2015/03/27/Tools/2015-03-27- SVN常用的命令/">Svn常用的命令</a>
     </h1>
   
 
         
-        <a href="/2015/03/27/Tools/2015-03-27- Git常用的命令/" class="archive-article-date">
+        <a href="/2015/03/27/Tools/2015-03-27- SVN常用的命令/" class="archive-article-date">
   	<time datetime="2015-03-26T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2015-03-27</time>
 </a>
         
@@ -916,36 +916,10 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>在提交时解决冲突的方式</p>
-<p>使用git pull拉取文件时，如果本地和远程仓库的文件之间有冲突的时候，会出现如下提示：</p>
-<pre><code>error: Your local changes to the following files would be overwritten by merge:
-        protected/config/main.cpp
-Please, commit your changes or stash them before you can merge.
-</code></pre><p>上面提示中列出产生冲突的文件，那么我们就需要执行下面命令进行文件合并，解决冲突</p>
-<pre><code>git stash            //暂存本地的修改
-
-git pull             //拉取远程仓库文件到本地
-
-git stash pop        //弹出本地修改暂存
-</code></pre><p>这时候就会提示auto-merged 文件已经自动合并</p>
-<pre><code>git diff -w +文件名   //查看文件合并情况
-</code></pre><p>运行上面命令查看，就可以看到文件中增加了如下标记</p>
-<pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; Updated upstream  //远端仓库修改
-
-=======                   //分隔符
-
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; Stashed changes   //本地修改
-</code></pre><p>然后使用vi等编辑器对文件进行编辑，修改到你想要的结果，并且删除所有冲突标记</p>
-<p>然后再命令行正常流程进行提交即可</p>
-<p>如果希望用代码库中的文件完全覆盖本地工作版本</p>
-<pre><code>git reset --hard
-
-git pull
-</code></pre><p>单个文件覆盖</p>
-<pre><code>git checkout HEAD file/to/restore
-</code></pre><p>查看、添加、提交、删除、找回，重置修改文件</p>
+        <p>1、将文件checkout到本地目录 </p>
+<p>  svn checkout path（path是服务器上的目录）<br>   例如：svn checkout svn://192.168.1.1/pro/domain<br>   简写：svn co </p>
         
-          <a class="article-more-a" href="/2015/03/27/Tools/2015-03-27- Git常用的命令/#more">more >></a>
+          <a class="article-more-a" href="/2015/03/27/Tools/2015-03-27- SVN常用的命令/#more">more >></a>
         
       
 
@@ -959,11 +933,11 @@ git pull
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">版本控制</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">版本控制</a>
         		</li>
       		
 		</ul>
@@ -984,7 +958,7 @@ git pull
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2015/03/27/Tools/2015-03-27- Git常用的命令/">展开全文 >></a>
+          <a class="article-more-a" href="/2015/03/27/Tools/2015-03-27- SVN常用的命令/">展开全文 >></a>
         </p>
       
 
@@ -1095,19 +1069,19 @@ git pull
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">吉他谱</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">指弹</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">C/C++</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">应用</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1123,15 +1097,15 @@ git pull
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">工具</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">应用</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">吉他谱</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">指弹</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1155,6 +1129,14 @@ git pull
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Mtk</a>
               </li>
              
@@ -1163,19 +1145,11 @@ git pull
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">打包</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1187,15 +1161,15 @@ git pull
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">博客收藏</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">转载</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
             
             <div class="clearfix"></div>

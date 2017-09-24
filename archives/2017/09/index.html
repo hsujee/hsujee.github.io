@@ -6,23 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://blog.hsujee.io">
-  <title>ContactsProvider 数据库操作 | HsuJee&#39;s Blog</title>
+  <title>Archives: 2017/9 | HsuJee&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="通过之前的文章对联系人以及联系人数据做了大概的了解和梳理，这里继续深入到联系人的数据存储做出相应总结 数据结构一条Contact数据是由此账户下的所有raw contacts组合起来生成的，方便手机某一用户的所有信息，用户不允许增加Contact（只能增加raw contacts）。通常联系人应用中看到的联系人用的就是 contacts 表中的一条记录。一个 contact 可以拥有多个 raw">
-<meta name="keywords" content="Android,Contact,Provider">
-<meta property="og:type" content="article">
-<meta property="og:title" content="ContactsProvider 数据库操作">
-<meta property="og:url" content="https://blog.hsujee.io/2017/06/10/Android/Provider/2017-06-10-ContactsProvider数据库操作/index.html">
+  <meta name="description" content="Yanjie.Xu World">
+<meta property="og:type" content="website">
+<meta property="og:title" content="HsuJee's Blog">
+<meta property="og:url" content="https://blog.hsujee.io/archives/2017/09/index.html">
 <meta property="og:site_name" content="HsuJee's Blog">
-<meta property="og:description" content="通过之前的文章对联系人以及联系人数据做了大概的了解和梳理，这里继续深入到联系人的数据存储做出相应总结 数据结构一条Contact数据是由此账户下的所有raw contacts组合起来生成的，方便手机某一用户的所有信息，用户不允许增加Contact（只能增加raw contacts）。通常联系人应用中看到的联系人用的就是 contacts 表中的一条记录。一个 contact 可以拥有多个 raw">
-<meta property="og:image" content="https://blog.hsujee.io/assets/images/android/provider/contact01-01.jpg">
-<meta property="og:image" content="https://blog.hsujee.io/assets/images/android/provider/contact01-02.jpg">
-<meta property="og:image" content="https://blog.hsujee.io/assets/images/android/provider/contact01-03.jpg">
-<meta property="og:updated_time" content="2017-06-14T08:20:46.887Z">
+<meta property="og:description" content="Yanjie.Xu World">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ContactsProvider 数据库操作">
-<meta name="twitter:description" content="通过之前的文章对联系人以及联系人数据做了大概的了解和梳理，这里继续深入到联系人的数据存储做出相应总结 数据结构一条Contact数据是由此账户下的所有raw contacts组合起来生成的，方便手机某一用户的所有信息，用户不允许增加Contact（只能增加raw contacts）。通常联系人应用中看到的联系人用的就是 contacts 表中的一条记录。一个 contact 可以拥有多个 raw">
-<meta name="twitter:image" content="https://blog.hsujee.io/assets/images/android/provider/contact01-01.jpg">
+<meta name="twitter:title" content="HsuJee's Blog">
+<meta name="twitter:description" content="Yanjie.Xu World">
   
     <link rel="alternative" href="/atom.xml" title="HsuJee&#39;s Blog" type="application/atom+xml">
   
@@ -167,87 +161,36 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Android/Provider/2017-06-10-ContactsProvider数据库操作" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      ContactsProvider 数据库操作
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2017" class="archive-year">2017</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2017/09/24/Android/Contacts/ContactsProvider/2017-09-24-Android获取联系人的所有信息/" class="archive-article-date">
+  	<time datetime="2017-09-23T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-24</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2017/09/24/Android/Contacts/ContactsProvider/2017-09-24-Android获取联系人的所有信息/">Android获取联系人的所有信息</a>
     </h1>
   
 
-        
-        <a href="/2017/06/10/Android/Provider/2017-06-10-ContactsProvider数据库操作/" class="archive-article-date">
-  	<time datetime="2017-06-09T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>通过之前的文章对联系人以及联系人数据做了大概的了解和梳理，这里继续深入到联系人的数据存储做出相应总结</p>
-<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>一条Contact数据是由此账户下的所有raw contacts组合起来生成的，方便手机某一用户的所有信息，用户不允许增加Contact（只能增加raw contacts）。<br>通常联系人应用中看到的联系人用的就是 contacts 表中的一条记录。<br>一个 contact 可以拥有多个 raw contacts，这时候点击这个联系人的编辑界面，就会发现可以同时编辑多个 raw contacts.这边所谓的组合，也就是 raw contacts 的 contact_id，只是让这几个 raw contacts 在界面上组合起来显示，本身的数据还是完全独立的。<br>Contacts Provider 通过 ContactsContract.RawContacts 表中的 _ID 列将 contacts 表中的数据和 raw contacts 表中的数据链接起来。</p>
-<a id="more"></a>
-<p>ContactsContract.RawContacts 表中 CONTACT_ID 的值就是 contacts 表中的 _ID，说明这条 raw contact 记录属于_ID所在的这个联系人。<br>下面是Contact数据组成关系图</p>
-<p><img src="/assets/images/android/provider/contact01-01.jpg" alt="01-01"></p>
-<h2 id="访问权限、用户私密信息访问"><a href="#访问权限、用户私密信息访问" class="headerlink" title="访问权限、用户私密信息访问"></a>访问权限、用户私密信息访问</h2><p>读取权限：android.permission.READ_CONTACTS<br>修改权限：android.permission.WRITE_CONTACTS<br>ContactsContract.Profile定义私密信息<br>ProfileProvider继承自AbstractContactsProvider，负责对用户私密信息数据的操作<br>想要访问用户私密信息除了以上两个权限还需要添加READ_PROFILE和WRITE_PROFILE两个权限</p>
-<h2 id="同步适配器"><a href="#同步适配器" class="headerlink" title="同步适配器"></a>同步适配器</h2><p>主要用来同步Web服务器上的用户数据<br>Contacts Provider 为了处理设备和服务器之间的同步做了特别的设计。允许用户从服务器下载数据，并且也可以上传数据。同步使得设备端总能有最新的数据，不管数据源发生什么变化。同步的另一个好处是即使没有联网，设备还是能够使用服务器上存在的数据(当然是同步号的数据)。</p>
-<p>尽管你可以有很多办法来实现同步，Android 提供了一个插件式的同步框架，它可以自动完成下面的工作：</p>
-<p>检查网络是否可用<br>按照用户偏好，周期性地执行同步<br>重新启动停止的同步操作<br>想要使用这个框架，应该实现一个同步适配器插件。每一个同步适配器都对应一个服务器和一个 provider，但是每一个服务器下可以有多个账户名。这个框架下也允许有一个服务器和 provider 对应多个同步适配器。</p>
-<h2 id="数据库改变记录"><a href="#数据库改变记录" class="headerlink" title="数据库改变记录"></a>数据库改变记录</h2><p>Contacts Provider 对数据库中数据的状态改变都有记录。</p>
-<h2 id="数据库操作"><a href="#数据库操作" class="headerlink" title="数据库操作"></a>数据库操作</h2><ul>
-<li>Entity查询</li>
-</ul>
-<p>联系人的结构是由层次组织的，因此想要查找一个联系人的信息，就要先查找其下面所有RawContacts，还要查出所有RawContacts下关联的所有ContactsContract.CommonDataKinds.Email等，因此为了方便查询，Contacts Provider提供了Entity结构，它可将各个表连接起来。</p>
-<p><img src="/assets/images/android/provider/contact01-02.jpg" alt="01-02"></p>
-<p>Entity就像是一张从父表和子表中选出一些列重新组合的一张表。当查询 entity 时，只能根据entity中的列来定制查询结果和查询条件。查询结果的 Cursor 里包含了子表中被查询到的记录。<br>Entity的机构可参考上图，在源码中进行查看。<br>Entity的使用非常方便，通过查询它我们可以一次就得到一个联系人的所有数据。不许要先去查询父表，得到 ID 后，再用这个 ID 去子表中查询。<br>Entity通常不会包含父表和子表中所有的列，如果使用的列并不在 entity 中时，程序就会抛出Exception<br>通过下面查询示例可以帮助理解加载流程：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//将Entity路径追加到URI。 在联系人提供者中</span></div><div class="line"><span class="comment">//预期的URI是content：//com.google.contacts/#/entity（＃是ID值）。</span></div><div class="line">mContactUri = Uri.withAppendedPath(</div><div class="line">            mContactUri,</div><div class="line">            ContactsContract.Contacts.Entity.CONTENT_DIRECTORY);</div><div class="line">.....................</div><div class="line"><span class="comment">//初始化由LOADER_CONTACT_ID标识的加载器，并添加加载回调</span></div><div class="line">mContactLoader = (ContactLoader) getLoaderManager().initLoader( </div><div class="line">        LOADER_CONTACT_ID,  <span class="comment">// The identifier of the loader to initialize</span></div><div class="line">        <span class="keyword">null</span>,       <span class="comment">// Arguments for the loader (in this case, none)</span></div><div class="line">        mLoaderContactCallbacks);</div><div class="line">.....................</div><div class="line"><span class="comment">//给联系人加载器设置Uri</span></div><div class="line">mContactLoader.setLookupUri(mContactUri);</div><div class="line">.....................</div><div class="line"><span class="comment">//联系人加载回调</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> LoaderCallbacks&lt;Contact&gt; mLoaderContactCallbacks =</div><div class="line">            <span class="keyword">new</span> LoaderCallbacks&lt;Contact&gt;() &#123;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLoadFinished</span><span class="params">(Loader&lt;Contact&gt; loader, Contact data)</span> </span>&#123;</div><div class="line">		<span class="comment">//此方法中的data就是查询之后返回的结果</span></div><div class="line">.....................</div><div class="line">	<span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> Loader&lt;Contact&gt; <span class="title">onCreateLoader</span><span class="params">(<span class="keyword">int</span> id, Bundle args)</span> </span>&#123;</div><div class="line">            <span class="keyword">if</span> (mLookupUri == <span class="keyword">null</span>) &#123;</div><div class="line">                Log.wtf(TAG, <span class="string">"Lookup uri wasn't initialized. Loader was started too early"</span>);</div><div class="line">            &#125;</div><div class="line">            <span class="comment">//加载所有联系人数据。 我们需要loadGroupMetaData = true来确定是否</span></div><div class="line">            <span class="comment">//联系是看不见的。 如果是，我们需要显示一个“添加到联系人”菜单项。</span></div><div class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ContactLoader(getApplicationContext(), mLookupUri,</div><div class="line">                    <span class="keyword">true</span> <span class="comment">/*loadGroupMetaData*/</span>, <span class="keyword">false</span> <span class="comment">/*loadInvitableAccountTypes*/</span>,</div><div class="line">                    <span class="keyword">true</span> <span class="comment">/*postViewNotification*/</span>, <span class="keyword">true</span> <span class="comment">/*computeFormattedPhoneNumber*/</span>);</div></pre></td></tr></table></figure>
-<p>当 load 完成数据加载后，LoaderManager 会调用 onLoadFinished() 方法。到此就可以根据监听器中onLoadFinished()方法返回的data使用了<br>监听器中的onCreateLoader()返回具体的加载器，在这里我们创建了联系人加载器ContactLoader()</p>
-<ul>
-<li>批量修改</li>
-</ul>
-<p>Contacts Provider 中执行新增、修改、删除操作时，应该尽可能地使用“批处理”，通过创建一个 ContentProviderOperation 对象的 ArrayList 集合然后调用 applyBatch() 方法。因为 Contacts Provider 会把一个 applyBatch() 中的所有操作当成一个事务来处理，你的修改将不会让数据库处于一个不一致的状态中。批处理还方便同时插入 raw contact 和它对应的 data 数据。</p>
-<p>Yield points(挂起点)<br>批量处理中有很多的操作，这又可能会阻塞其他进程的运行，这是很差的用户体验。为了改善这种情况，应该尽可能地将所要做的操作分散到多个集合中，同时也为了避免阻塞系统运行，应该为 ContentProviderOperation 设置一个或多个yield points. 通过让 ContentProviderOperation的 isYieldAllowed() 的返回值置为 true. 当Contacts Provider 遇到一个挂起点时，它会停止工作来让其他进程得以运行，并且会关闭当前事务。当Contacts Provider 再次工作时，它将会开启一个新的事务来进行 ArrayList 集合中的下一个操作。</p>
-<p>挂起点会导致调用一次 applyBatch() 时开启多个事务。因此，我们应该为某一行记录所有操作的最后一个操作设置一个挂起点。比如说，在我们插入 raw contact 和它相关的 data 数据时，我们应该为最后一步操作设置一个挂起点。</p>
-<p>挂起点是原子操作，也就是说两个挂起点之间的所有操作要么成功要么失败。如果没有设置挂起点，原子操作将会是每一步具体的操作。使用挂起点，可以阻止系统性能的下降，还可以确保一些列的操作集合具有原子性。</p>
-<p>Modification back references修改反回参考<br>当我们使用 ContentProviderOperation 来插入新的 raw contacts 和与它相关的 data 数据时，必须要将 data 数据的 raw contact’s _ID 这一列关联到 raw contact 的RAW_CONTACT_ID 列上。然而，这个值在创建 ContentProviderOperation 对象时还没有，因为插入 raw contact 的操作还没有完成。为了解决这个问题，ContentProviderOperation.Builder 类提供了withValueBackReference()这个方法，它允许基于上一条操作的结果来插入或者修改数据。</p>
-<p>withValueBackReference() 方法有两个参数:</p>
-<p>key<br>键值对的键。这个值应该是表中的列名。<br>previousResult<br>applyBatch() 的结果存储在一个索引从0开始的 ContentProviderResult 对象数组中。执行批处理操作时，指向结果存储在一个中间数组中。previousResult 的值就是数组中的一个索引，它以key值来进行存取。这允许我们在插入一个 raw contact 记录时得到插入的 _ID 值，接下来在插入 data 记录时使用。<br>结果数组在调用 applyBatch() 时就被创建完成，它的大小等于 ContentProviderOperation 的 ArrayList 数组的大小。数组初始值都是null，当我们想要获取一个还没有被执行操作的向后引用时，withValueBackReference() 方法将会抛出 异常。<br>下面是Contact新建联系人的示例图：</p>
-<p><img src="/assets/images/android/provider/contact01-03.jpg" alt="01-03"></p>
-<p>下面为批量修改示例，代码出自com.android.contacts.ContactSaveService类，其中主要方法为applyBatch()请求批量插入</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createRawContact</span><span class="params">(Intent intent)</span> </span>&#123;</div><div class="line">		<span class="comment">//获取用户输入的所有信息</span></div><div class="line">        String accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME);</div><div class="line">        String accountType = intent.getStringExtra(EXTRA_ACCOUNT_TYPE);</div><div class="line">        String dataSet = intent.getStringExtra(EXTRA_DATA_SET);</div><div class="line">        List&lt;ContentValues&gt; valueList = intent.getParcelableArrayListExtra(EXTRA_CONTENT_VALUES);</div><div class="line">        Intent callbackIntent = intent.getParcelableExtra(EXTRA_CALLBACK_INTENT);</div><div class="line">		</div><div class="line">		<span class="comment">//创建一个插入到ContactsContract.RawContacts表中 raw contact 记录的操作</span></div><div class="line">        ArrayList&lt;ContentProviderOperation&gt; operations = <span class="keyword">new</span> ArrayList&lt;ContentProviderOperation&gt;();</div><div class="line">        operations.add(ContentProviderOperation.newInsert(RawContacts.CONTENT_URI)</div><div class="line">                .withValue(RawContacts.ACCOUNT_NAME, accountName)</div><div class="line">                .withValue(RawContacts.ACCOUNT_TYPE, accountType)</div><div class="line">                .withValue(RawContacts.DATA_SET, dataSet)</div><div class="line">                .build());</div><div class="line"></div><div class="line">        <span class="keyword">int</span> size = valueList.size();</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++) &#123;</div><div class="line">            ContentValues values = valueList.get(i);</div><div class="line">            values.keySet().retainAll(ALLOWED_DATA_COLUMNS);</div><div class="line">            operations.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)</div><div class="line">                    .withValueBackReference(Data.RAW_CONTACT_ID, <span class="number">0</span>)</div><div class="line">                    .withValues(values)</div><div class="line">                    .build());</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        ContentResolver resolver = getContentResolver();</div><div class="line">        ContentProviderResult[] results;</div><div class="line">		<span class="comment">//调用 applyBatch() 来新增一个 raw contact 和与它相关的 data 记录。</span></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            results = resolver.applyBatch(ContactsContract.AUTHORITY, operations);</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Failed to store new contact"</span>, e);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        Uri rawContactUri = results[<span class="number">0</span>].uri;</div><div class="line">        callbackIntent.setData(RawContacts.getContactLookupUri(resolver, rawContactUri));</div><div class="line"></div><div class="line">        deliverCallback(callbackIntent);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> ContentProviderResult[] applyBatch(ArrayList&lt;ContentProviderOperation&gt; operations)</div><div class="line">            <span class="keyword">throws</span> OperationApplicationException &#123;</div><div class="line">        incrementStats(mBatchStats);</div><div class="line">        <span class="keyword">if</span> (VERBOSE_LOGGING) &#123;</div><div class="line">            Log.v(TAG, <span class="string">"applyBatch: "</span> + operations.size() + <span class="string">" ops"</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">int</span> ypCount = <span class="number">0</span>;</div><div class="line">        <span class="keyword">int</span> opCount = <span class="number">0</span>;</div><div class="line">		<span class="comment">//开启数据操作事务，循环operations处理每一个ops，最大挂起点为500个，如果超过将抛出				//OperationApplicationException异常</span></div><div class="line">        ContactsTransaction transaction = startTransaction(<span class="keyword">true</span>);</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="keyword">final</span> <span class="keyword">int</span> numOperations = operations.size();</div><div class="line">            <span class="keyword">final</span> ContentProviderResult[] results = <span class="keyword">new</span> ContentProviderResult[numOperations];</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numOperations; i++) &#123;</div><div class="line">                <span class="keyword">if</span> (++opCount &gt;= MAX_OPERATIONS_PER_YIELD_POINT) &#123;</div><div class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> OperationApplicationException(</div><div class="line">                            <span class="string">"Too many content provider operations between yield points. "</span></div><div class="line">                                    + <span class="string">"The maximum number of operations per yield point is "</span></div><div class="line">                                    + MAX_OPERATIONS_PER_YIELD_POINT, ypCount);</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">final</span> ContentProviderOperation operation = operations.get(i);</div><div class="line">                <span class="keyword">if</span> (i &gt; <span class="number">0</span> &amp;&amp; operation.isYieldAllowed()) &#123;</div><div class="line">                    <span class="keyword">if</span> (VERBOSE_LOGGING) &#123;</div><div class="line">                        Log.v(TAG, <span class="string">"applyBatch: "</span> + opCount + <span class="string">" ops finished; about to yield..."</span>);</div><div class="line">                    &#125;</div><div class="line">                    opCount = <span class="number">0</span>;</div><div class="line">                    <span class="keyword">try</span> &#123;</div><div class="line">                        <span class="keyword">if</span> (yield(transaction)) &#123;</div><div class="line">                            ypCount++;</div><div class="line">                        &#125;</div><div class="line">                    &#125; <span class="keyword">catch</span> (RuntimeException re) &#123;</div><div class="line">                        transaction.markYieldFailed();</div><div class="line">                        <span class="keyword">throw</span> re;</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">				<span class="comment">//调用ContentProviderOperation.apply(),开始具体的对数据库的操作，并返回结果</span></div><div class="line">                results[i] = operation.apply(<span class="keyword">this</span>, results, i);</div><div class="line">            &#125;</div><div class="line">            transaction.markSuccessful(<span class="keyword">true</span>);</div><div class="line">            <span class="keyword">return</span> results;</div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">            endTransaction(<span class="keyword">true</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<p>联系人批量处理过程中使用了事务，和乐观并发控制概念<br>批处理允许我们实现乐观并发控制，它可以让我们在执行修改事务时不去锁定数据库。要是用这个方法，我们先执行事务然后检查是否有其他修改发生。如果检测到不一致的变化，应该回滚事务在重新执行。</p>
-<p>乐观并发控制在手机上非常有用，因为只有一个用户，极少发生对一个数据库的同时访问。因为锁没有被使用，所以没有时间浪费在加锁和等待锁的操作上。</p>
-<p>为了使用乐观并发控制，我们在更新 ContactsContract.RawContacts 表中的数据时，要遵循以下步骤:</p>
-<p>①在获取其他数据时，一并将 VERSION 获取出来<br>②通过 newAssertQuery(Uri) 方法来创建一个 ContentProviderOperation.Builder 对象。将 raw contact’s _ID 附在 RawContacts.CONTENT_URI 后面来形成 URI参数。<br>③调用 ContentProviderOperation.Builder 对象的 withValue() 方法，将得到的 VERSION 的值添加进来。<br>④调用 ContentProviderOperation.Builder 的 withExpectedCount() 方法来保证这个断言只检测一条数据记录。<br>⑤调用 build() 创建 ContentProviderOperation 对象，并将这个对象加入到需要通过 applyBatch() 执行的 ArrayList 数组中去。<br>⑥执行批处理。<br>如果在读取和修改某条记录的过程中，这条记录被其他程序修改了，那么这个断言 ContentProviderOperation 将会失败，事务将会回滚。此时你可以尝试重新执行或者采取其他措施。</p>
-<ul>
-<li>使用intents进行检索和修改</li>
-</ul>
-<p>要去修改单个 raw contact 记录，最好是通过发送 intent 来让联系人应用去修改，而不是直接用代码进行修改。<br>发送特定的 intent 可以通过设备的联系人应用间接接触 Contacts Provider.这些 intent 会启动联系人应用界面，用户可以在这些界面中完成联系人相关的工作。</p>
-<ul>
-<li>数据的完整性（数据协议）</li>
-</ul>
-<p>由于联系人数据是非常重要并且敏感的数据，所以用户期望这些数据是正确的，Contacts Provider 为了保证数据的完整性定义了一些规则。当用户修改联系人数据时，你要确保所做的操作都能够满足这些规则。下面是几个比较重要的规则:</p>
-<p>要给每一个 ContactsContract.RawContacts 记录都添加 ContactsContract.CommonDataKinds.StructuredName 数据。<br>一个没有 ContactsContract.CommonDataKinds.StructuredName 数据的 ContactsContract.RawContacts 记录在与其他 raw contact 进行组合时可能会遇到问题。<br>每一条 ContactsContract.Data 记录都必须要链接到一条 ContactsContract.RawContacts 记录上去。一个没有链接到 ContactsContract.RawContacts 记录上的 ContactsContract.Data 记录将永远不会显示在联系人应用中，并且可能会影响同步适配器的工作。<br>仅修改属于你自己 raw contact 的数据<br>Contacts Provider 通常管理着几个账户类型的数据。你需要确保你的应用值修改属于你自己的数据，只向自己的账户下新增数据。<br>开发时总是使用 ContactsContract 类中定义的常量来表示authorities、content URIs、URI paths、MIME、以及 TYPE 值。<br>使用这些常量可以帮助你避免一些错误的发生。编译器将会对那些废除的常量给出警告。</p>
-<ul>
-<li>自定义数据行</li>
-</ul>
-<p>通过定义自己的 MIME 类型，我们可以向 ContactsContract.Data 表中添加自己的数据类型。尽管你可以为你的数据类型定义一些特别的列名（比如phone、Email）,但是还是只能使用定义在 ContactsContract.DataColumns 中的列。在联系人应用中，用户只能显示出你定义的数据类型，但是无法编辑、删除、增加它，所以需要在你自己的应用中实现这样一个界面来完成这些操作。</p>
-<p>为了显示自定义的数据类型，需要提供一个 contacts.xml 文件，这个文件中得有一个 <contactsaccounttype> 元素和它的子元素 <contactsdatakind>.这将在 <contactsdatakind> element 中详细描述。</contactsdatakind></contactsdatakind></contactsaccounttype></p>
-<ul>
-<li>其他</li>
-</ul>
-<p>ContactsContract.StreamItems 表和 ContactsContract.StreamItemPhotos 表管理着来自与社交网络的数据。可以编写同步适配器来将网络上的数据添加到这两张表中，也可以将表中的数据显示在自己的应用中。这个功能可以将社交网络服务和应用集成到Android的社交网络体验中来。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -267,7 +210,7 @@
 		</ul>
 	</div>
 
-      
+          
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -280,95 +223,514 @@
 	</div>
 
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=https://blog.hsujee.io/2017/06/10/Android/Provider/2017-06-10-ContactsProvider数据库操作/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
   
-<nav id="article-nav">
+    
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2017/09/24/Android/Contacts/2017-09-24-SwipeRefreshLayout+RecycleView实现下拉刷新上拉加载/" class="archive-article-date">
+  	<time datetime="2017-09-23T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-24</time>
+</a>
+        </div>
+    	 
   
-    <a href="/2017/06/06/DesignPatterns/2017-06-06-并发控制的乐观和悲观策略/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          并发控制的乐观和悲观策略
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2017/06/19/Android/Framework/2017-06-19-Android FrameWork学习总纲/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Android FrameWork学习总纲</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-
-
-
-
-  
-    <div class="duoshuo"></div>
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2017/09/24/Android/Contacts/2017-09-24-SwipeRefreshLayout+RecycleView实现下拉刷新上拉加载/">SwipeRefreshLayout+RecycleView实现下拉刷新上拉加载</a>
+    </h1>
   
 
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Contact</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Provider</a>
+        		</li>
+      		
+		</ul>
+	</div>
 
+          
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+        </div>
+        <div class="clearfix"></div>
+    </header>
+  </div>
+</article>
+  
+    
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2017/09/24/Android/Contacts/2017-09-24-Android联系人分批加载功能的实现/" class="archive-article-date">
+  	<time datetime="2017-09-23T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-24</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2017/09/24/Android/Contacts/2017-09-24-Android联系人分批加载功能的实现/">Android联系人分批加载功能的实现</a>
+    </h1>
+  
+
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Contact</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Provider</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+          
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+        </div>
+        <div class="clearfix"></div>
+    </header>
+  </div>
+</article>
+  
+    
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2017/09/24/Android/Contacts/2017-09-24-Android获取联系人头像/" class="archive-article-date">
+  	<time datetime="2017-09-23T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-24</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2017/09/24/Android/Contacts/2017-09-24-Android获取联系人头像/">Android获取联系人头像</a>
+    </h1>
+  
+
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Contact</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Provider</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+          
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+        </div>
+        <div class="clearfix"></div>
+    </header>
+  </div>
+</article>
+  
+    
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2017/09/20/Android/Framework/2017-09-20-Android_Zygote进程/" class="archive-article-date">
+  	<time datetime="2017-09-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-20</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2017/09/20/Android/Framework/2017-09-20-Android_Zygote进程/">Android_Zygote进程</a>
+    </h1>
+  
+
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+          
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+        </div>
+        <div class="clearfix"></div>
+    </header>
+  </div>
+</article>
+  
+    
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2017/09/20/Android/Framework/2017-09-20-Android_SystemServer进程/" class="archive-article-date">
+  	<time datetime="2017-09-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-20</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2017/09/20/Android/Framework/2017-09-20-Android_SystemServer进程/">Android_Init进程</a>
+    </h1>
+  
+
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+          
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+        </div>
+        <div class="clearfix"></div>
+    </header>
+  </div>
+</article>
+  
+    
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2017/09/20/Android/Framework/2017-09-20-Android_系统进程简介/" class="archive-article-date">
+  	<time datetime="2017-09-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-20</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2017/09/20/Android/Framework/2017-09-20-Android_系统进程简介/">Android_系统进程解析</a>
+    </h1>
+  
+
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Process</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+          
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+        </div>
+        <div class="clearfix"></div>
+    </header>
+  </div>
+</article>
+  
+    
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2017/09/20/Android/Framework/2017-09-20-Android_Init进程/" class="archive-article-date">
+  	<time datetime="2017-09-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-20</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2017/09/20/Android/Framework/2017-09-20-Android_Init进程/">Android_Init进程</a>
+    </h1>
+  
+
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+          
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+        </div>
+        <div class="clearfix"></div>
+    </header>
+  </div>
+</article>
+  
+    
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2017/09/20/Android/Framework/2017-09-20-Android_进程间通讯机制/" class="archive-article-date">
+  	<time datetime="2017-09-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-20</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2017/09/20/Android/Framework/2017-09-20-Android_进程间通讯机制/">Android_进程间通讯机制</a>
+    </h1>
+  
+
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+          
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+        </div>
+        <div class="clearfix"></div>
+    </header>
+  </div>
+</article>
+  
+    
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/" class="archive-article-date">
+  	<time datetime="2017-09-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-20</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/">Android_InputManagerService详解</a>
+    </h1>
+  
+
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+          
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+        </div>
+        <div class="clearfix"></div>
+    </header>
+  </div>
+</article>
+  
+  
+    </div></section>
+  
+
+    
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/archives/2017/09/page/2/">2</a><a class="extend next" rel="next" href="/archives/2017/09/page/2/">Next &raquo;</a>
+    </nav>
+  
 
 
           </div>
@@ -391,8 +753,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
@@ -457,11 +819,27 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">C/C++</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">C/C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">吉他谱</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">指弹</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">乐理基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -470,10 +848,6 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">应用</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -489,15 +863,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">吉他谱</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">指弹</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Android</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anr</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Trace</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -517,7 +891,19 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">utils</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Uri</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Process</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -533,11 +919,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">打包</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">

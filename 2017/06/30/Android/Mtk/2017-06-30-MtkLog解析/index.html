@@ -8,17 +8,17 @@
   <link rel="dns-prefetch" href="https://blog.hsujee.io">
   <title>MtkLog分析 | HsuJee&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="mtklog简介mtklog是由log生成工具MTKLogger生成的一系列问题追踪文件，其主要作用就是对系统或者应用产生的异常进行快速定位，从而解决问题。 mtklog 的分类：MDLog、Mobile Log、Network Log，可能出现的aee_exp log MD log：medom 相关底层的log Mobile Log：主要是Android log 和kernel log Netw">
+  <meta name="description" content="mtklog简介  mtklog是由log生成工具MTKLogger生成的一系列问题追踪文件，其主要作用就是对系统或者应用产生的异常进行快速定位，从而解决问题。 mtklog 的分类：MDLog、Mobile Log、Network Log，可能出现的aee_exp log MD log：medom 相关底层的log Mobile Log：主要是Android log 和kernel log N">
 <meta name="keywords" content="Android,Mtk,Gat">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MtkLog分析">
 <meta property="og:url" content="https://blog.hsujee.io/2017/06/30/Android/Mtk/2017-06-30-MtkLog解析/index.html">
 <meta property="og:site_name" content="HsuJee's Blog">
-<meta property="og:description" content="mtklog简介mtklog是由log生成工具MTKLogger生成的一系列问题追踪文件，其主要作用就是对系统或者应用产生的异常进行快速定位，从而解决问题。 mtklog 的分类：MDLog、Mobile Log、Network Log，可能出现的aee_exp log MD log：medom 相关底层的log Mobile Log：主要是Android log 和kernel log Netw">
-<meta property="og:updated_time" content="2017-06-30T02:49:49.616Z">
+<meta property="og:description" content="mtklog简介  mtklog是由log生成工具MTKLogger生成的一系列问题追踪文件，其主要作用就是对系统或者应用产生的异常进行快速定位，从而解决问题。 mtklog 的分类：MDLog、Mobile Log、Network Log，可能出现的aee_exp log MD log：medom 相关底层的log Mobile Log：主要是Android log 和kernel log N">
+<meta property="og:updated_time" content="2017-09-02T03:16:00.707Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MtkLog分析">
-<meta name="twitter:description" content="mtklog简介mtklog是由log生成工具MTKLogger生成的一系列问题追踪文件，其主要作用就是对系统或者应用产生的异常进行快速定位，从而解决问题。 mtklog 的分类：MDLog、Mobile Log、Network Log，可能出现的aee_exp log MD log：medom 相关底层的log Mobile Log：主要是Android log 和kernel log Netw">
+<meta name="twitter:description" content="mtklog简介  mtklog是由log生成工具MTKLogger生成的一系列问题追踪文件，其主要作用就是对系统或者应用产生的异常进行快速定位，从而解决问题。 mtklog 的分类：MDLog、Mobile Log、Network Log，可能出现的aee_exp log MD log：medom 相关底层的log Mobile Log：主要是Android log 和kernel log N">
   
     <link rel="alternative" href="/atom.xml" title="HsuJee&#39;s Blog" type="application/atom+xml">
   
@@ -183,14 +183,20 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="mtklog简介"><a href="#mtklog简介" class="headerlink" title="mtklog简介"></a>mtklog简介</h2><p>mtklog是由log生成工具MTKLogger生成的一系列问题追踪文件，其主要作用就是对系统或者应用产生的异常进行快速定位，从而解决问题。</p>
+        <blockquote>
+<p><strong>mtklog简介</strong></p>
+</blockquote>
+<p>mtklog是由log生成工具MTKLogger生成的一系列问题追踪文件，其主要作用就是对系统或者应用产生的异常进行快速定位，从而解决问题。</p>
 <p>mtklog 的分类：MDLog、Mobile Log、Network Log，可能出现的aee_exp log</p>
 <p>MD log：medom 相关底层的log</p>
 <p>Mobile Log：主要是Android log 和kernel log</p>
 <p>Network log：网络相关log</p>
 <p>aee_exp log ：crash ANR 重启相关的log输出</p>
 <a id="more"></a>
-<h2 id="mtklog-的开启和关闭"><a href="#mtklog-的开启和关闭" class="headerlink" title="mtklog 的开启和关闭"></a>mtklog 的开启和关闭</h2><p>（1）在拨号盘界面输入*#9646633# ：</p>
+<blockquote>
+<p><strong>mtklog 的开启和关闭</strong></p>
+</blockquote>
+<p>（1）在拨号盘界面输入*#9646633# ：</p>
 <p>（2）进入EngineerMode的第一个Telephony界面：</p>
 <p>（3）向左滑动进入Log and Debugging界面：</p>
 <p>（4）点击MTKLogger 菜单：</p>
@@ -200,7 +206,10 @@
 <p>（7）当我们已经发现异常时，当关闭log，并截图记录时间点，下拉进入下拉栏界面，点击MTKLogger is running：</p>
 <p>（8）点击停止按键：</p>
 <p>如图关闭成功：</p>
-<h2 id="mtklog的导出和分析"><a href="#mtklog的导出和分析" class="headerlink" title="mtklog的导出和分析"></a>mtklog的导出和分析</h2><p>（1）MTKLogger停止后，手机USB，下拉下拉栏，点击USB for charging，切换至MTP模式：</p>
+<blockquote>
+<p><strong>mtklog的导出和分析</strong></p>
+</blockquote>
+<p>（1）MTKLogger停止后，手机USB，下拉下拉栏，点击USB for charging，切换至MTP模式：</p>
 <p> Transfer files(MTP);</p>
 <p>（2）双击：便携设备：</p>
 <p>（3）在内部存储中找到mtklog文件夹复制粘贴到本地：</p>
@@ -215,7 +224,10 @@
 <p>main_log：详尽输出每一步的log</p>
 <p>分析kernel log安装可查看对应kernal_log的时间点：</p>
 <p>安装成功之后，如下操作打开kernal_log.localtime文件可查看带时间点的kernal log：</p>
-<h2 id="常见异常分析"><a href="#常见异常分析" class="headerlink" title="常见异常分析"></a>常见异常分析</h2><p>1.编译报错：</p>
+<blockquote>
+<p><strong>常见异常分析</strong></p>
+</blockquote>
+<p>1.编译报错：</p>
 <p>在build.log 中搜索unfinished 关键字，查找上文能够很快定位报错原因，或者搜索 error: 关键字能够直接定位相关报错文件（注意是搜索error和冒号）</p>
 <p>2.程序崩溃（系统提示<em>*</em>已停止运行）：</p>
 <p>（1）启动崩溃：一般情况为第三方预置缺少库文件，或者兼容性问题</p>
@@ -340,18 +352,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2017/06/26/Android/Framework/2017-06-26-Android_Framework之Init/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2017/06/20/Android/Framework/2017-06-20-Android_FrameWork之Native_Binder/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Android_Framework之Init
+          Android_FrameWork之Native_Binder
         
       </div>
     </a>
   
   
-    <a href="/2017/08/10/Guitar/2017-08-10-《战狼2》插曲(风去云不回)吴京/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">《战狼2》插曲_风去云不回_吴京</div>
+    <a href="/2017/07/11/Android/App/2017-07-11-DateUtils帮助类/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">DateUtils帮助类</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -455,11 +467,27 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">C/C++</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">C/C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">吉他谱</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">指弹</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">乐理基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -468,10 +496,6 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">应用</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -487,15 +511,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">吉他谱</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">指弹</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Android</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anr</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Trace</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -515,7 +539,19 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">utils</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Uri</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Process</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -531,11 +567,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">打包</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">

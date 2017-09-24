@@ -163,29 +163,30 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-Android/exeption/2017-02-17-解决Android65535问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Android/Contacts/ContactsProvider/2017-06-10-ContactsProvider数据库操作" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/02/17/Android/exeption/2017-02-17-解决Android65535问题/">解决Android65535问题</a>
+      <a class="article-title" href="/2017/06/10/Android/Contacts/ContactsProvider/2017-06-10-ContactsProvider数据库操作/">ContactsProvider 数据库操作</a>
     </h1>
   
 
         
-        <a href="/2017/02/17/Android/exeption/2017-02-17-解决Android65535问题/" class="archive-article-date">
-  	<time datetime="2017-02-16T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-17</time>
+        <a href="/2017/06/10/Android/Contacts/ContactsProvider/2017-06-10-ContactsProvider数据库操作/" class="archive-article-date">
+  	<time datetime="2017-06-09T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-10</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>在 Android 开发中，有一个之前很少听说，最近偶尔江湖传闻听到过的问题，就是 65k 问题。什么是65k问题呢？其实很简单，就是 Android 有个限制，你的每个 App 中函数最多只能有 65536 个。</p>
+        <p>通过之前的文章对联系人以及联系人数据做了大概的了解和梳理，这里继续深入到联系人的数据存储做出相应总结</p>
+<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>一条Contact数据是由此账户下的所有raw contacts组合起来生成的，方便手机某一用户的所有信息，用户不允许增加Contact（只能增加raw contacts）。<br>通常联系人应用中看到的联系人用的就是 contacts 表中的一条记录。<br>一个 contact 可以拥有多个 raw contacts，这时候点击这个联系人的编辑界面，就会发现可以同时编辑多个 raw contacts.这边所谓的组合，也就是 raw contacts 的 contact_id，只是让这几个 raw contacts 在界面上组合起来显示，本身的数据还是完全独立的。<br>Contacts Provider 通过 ContactsContract.RawContacts 表中的 _ID 列将 contacts 表中的数据和 raw contacts 表中的数据链接起来。</p>
         
-          <a class="article-more-a" href="/2017/02/17/Android/exeption/2017-02-17-解决Android65535问题/#more">more >></a>
+          <a class="article-more-a" href="/2017/06/10/Android/Contacts/ContactsProvider/2017-06-10-ContactsProvider数据库操作/#more">more >></a>
         
       
 
@@ -198,13 +199,17 @@
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">编程</a>
-        		</li>
-      		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
         		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Contact</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Provider</a>
+        		</li>
       		
 		</ul>
 	</div>
@@ -224,7 +229,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/02/17/Android/exeption/2017-02-17-解决Android65535问题/">展开全文 >></a>
+          <a class="article-more-a" href="/2017/06/10/Android/Contacts/ContactsProvider/2017-06-10-ContactsProvider数据库操作/">展开全文 >></a>
         </p>
       
 
@@ -242,32 +247,29 @@
 
 
   
-    <article id="post-Android/CustemView/2017-02-16-Android自定义View扫描界面" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-DesignPatterns/2017-06-06-并发控制的乐观和悲观策略" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/02/15/Android/CustemView/2017-02-16-Android自定义View扫描界面/">Android自定义View扫描界面</a>
+      <a class="article-title" href="/2017/06/06/DesignPatterns/2017-06-06-并发控制的乐观和悲观策略/">并发控制的乐观和悲观策略</a>
     </h1>
   
 
         
-        <a href="/2017/02/15/Android/CustemView/2017-02-16-Android自定义View扫描界面/" class="archive-article-date">
-  	<time datetime="2017-02-14T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-15</time>
+        <a href="/2017/06/06/DesignPatterns/2017-06-06-并发控制的乐观和悲观策略/" class="archive-article-date">
+  	<time datetime="2017-06-05T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-06</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>项目需要做一个动态扫描界面，以此为记</p>
-<p>下面是效果图</p>
-<p><img src="/assets/images/android/Android自定义View扫描界面scanview.png" alt="自定义View扫描界面"></p>
-<p>下面胃自定义代码，可放入xml布局文件中直接使用，可根据需求灵活画图：</p>
+        <h1 id="悲观并发控制"><a href="#悲观并发控制" class="headerlink" title="悲观并发控制"></a>悲观并发控制</h1><p>一个锁定系统，可以阻止用户以影响其他用户的方式修改数据。如果用户执行的操作导致应用了某个锁，只有这个锁的所有者释放该锁，其他用户才能执行与该锁冲突的操作。这种方法之所以称为悲观并发控制，是因为它主要用于数据争用激烈的环境中，以及发生并发冲突时用锁保护数据的成本低于回滚事务的成本的环境中。 </p>
         
-          <a class="article-more-a" href="/2017/02/15/Android/CustemView/2017-02-16-Android自定义View扫描界面/#more">more >></a>
+          <a class="article-more-a" href="/2017/06/06/DesignPatterns/2017-06-06-并发控制的乐观和悲观策略/#more">more >></a>
         
       
 
@@ -281,90 +283,178 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">编程</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">设计模式</a>
         		</li>
       		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">编程</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/06/06/DesignPatterns/2017-06-06-并发控制的乐观和悲观策略/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-Android/Tool/2017-05-23-AndroidStudio导入源码" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/05/23/Android/Tool/2017-05-23-AndroidStudio导入源码/">AndroidStudio导入源码</a>
+    </h1>
+  
+
+        
+        <a href="/2017/05/23/Android/Tool/2017-05-23-AndroidStudio导入源码/" class="archive-article-date">
+  	<time datetime="2017-05-22T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-05-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>一、修改AS的配置<br>因为在导入源码时需要消耗大量内存，所以先修改IDEA_HOME/bin/studio.vmoptions中-Xms和-Xmx的值。README文档中使用的是748m。</p>
+<p>较新版本的AS中自带SDK，然后第一次用的时候新的SDK会下载Build Tool 等，大约需要2.25G空间。不想下载的话可以找到android-studio/bin目录下的idea.properties文件，在最后添加一行disable.android.first.run=true，然后再启动AS就好了,然后进去手动配置SDK位置。<br>（注：每次升级后这些配置都会恢复默认。但SDK不用重新配置）</p>
+        
+          <a class="article-more-a" href="/2017/05/23/Android/Tool/2017-05-23-AndroidStudio导入源码/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">AS</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/05/23/Android/Tool/2017-05-23-AndroidStudio导入源码/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-Android/App/2017-05-12-Android联系人代码分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/05/12/Android/App/2017-05-12-Android联系人代码分析/">Android联系人代码分析</a>
+    </h1>
+  
+
+        
+        <a href="/2017/05/12/Android/App/2017-05-12-Android联系人代码分析/" class="archive-article-date">
+  	<time datetime="2017-05-11T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-05-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>项目结构</p>
+<p>PeopleActivity为项目启动后的主界面，就从此Activity开始</p>
+<ul>
+<li>特殊成员概览：</li>
+</ul>
+        
+          <a class="article-more-a" href="/2017/05/12/Android/App/2017-05-12-Android联系人代码分析/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
         		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
+      		 
         		<li class="article-tag-list-item">
-        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/02/15/Android/CustemView/2017-02-16-Android自定义View扫描界面/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-Android/App/2017-02-15-Android人脸检测汇总-Media-FaceDetector" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总-Media-FaceDetector/">Android人脸检测汇总Media-FaceDetection</a>
-    </h1>
-  
-
-        
-        <a href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总-Media-FaceDetector/" class="archive-article-date">
-  	<time datetime="2017-02-14T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="基于android-media-FaceDetector的静态人脸检测"><a href="#基于android-media-FaceDetector的静态人脸检测" class="headerlink" title="基于android.media.FaceDetector的静态人脸检测"></a>基于android.media.FaceDetector的静态人脸检测</h3><p>使用android.media.FaceDetector可以对图片中的人脸进行检测，此API的不足之处由一下使用代码可见，只能识别人脸眼睛中点Point和眼睛之间的距离，再无其他识别，请大家根据实际需求选择和使用，曾经在相机中抓取数据流，转换成bitmap试过，由于内存有限发现卡顿现象严重</p>
-        
-          <a class="article-more-a" href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总-Media-FaceDetector/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">编程</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">App</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Contact</a>
         		</li>
       		
 		</ul>
@@ -385,7 +475,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总-Media-FaceDetector/">展开全文 >></a>
+          <a class="article-more-a" href="/2017/05/12/Android/App/2017-05-12-Android联系人代码分析/">展开全文 >></a>
         </p>
       
 
@@ -403,509 +493,29 @@
 
 
   
-    <article id="post-Android/App/2017-02-15-Android人脸检测汇总PlaySvervice" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Guitar/2017-05-09-《八十年代的歌》赵雷" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总PlaySvervice/">Android人脸检测汇总PlaySvervice</a>
+      <a class="article-title" href="/2017/05/09/Guitar/2017-05-09-《八十年代的歌》赵雷/">《八十年代的歌》赵雷</a>
     </h1>
   
 
         
-        <a href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总PlaySvervice/" class="archive-article-date">
-  	<time datetime="2017-02-14T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-15</time>
+        <a href="/2017/05/09/Guitar/2017-05-09-《八十年代的歌》赵雷/" class="archive-article-date">
+  	<time datetime="2017-05-08T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-05-09</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="Play-Svervice视觉库的一个主要组件，Face-Detection"><a href="#Play-Svervice视觉库的一个主要组件，Face-Detection" class="headerlink" title="Play Svervice视觉库的一个主要组件，Face Detection"></a>Play Svervice视觉库的一个主要组件，Face Detection</h3><p>人脸检这一功能经常用到，我们可以使用android系统提供的API进行人脸检测，也可以使用OpenCv等三方库进行人脸检测</p>
-<p>Google Play服务8.1中引入了视觉库，作为一个开发者，Face Detection让你可以更容易的通过分析视频或图像来定位人脸(face)。</p>
+        <p>《八十年代的歌》赵雷 小伟版</p>
         
-          <a class="article-more-a" href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总PlaySvervice/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">编程</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总PlaySvervice/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-Android/App/2017-02-15-Android人脸检测汇总Camera-FaceDetectionListener" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总Camera-FaceDetectionListener/">Android人脸检测汇总Camera-FaceDetectionListener</a>
-    </h1>
-  
-
-        
-        <a href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总Camera-FaceDetectionListener/" class="archive-article-date">
-  	<time datetime="2017-02-14T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="基于android-hardware-Camera-FaceDetectionListener的相机人脸检测"><a href="#基于android-hardware-Camera-FaceDetectionListener的相机人脸检测" class="headerlink" title="基于android.hardware.Camera.FaceDetectionListener的相机人脸检测"></a>基于android.hardware.Camera.FaceDetectionListener的相机人脸检测</h3><p>相信大家可能遇到过相机中人脸检测的案例，那么在自定义的相机中如何使用人脸检测呢？</p>
-        
-          <a class="article-more-a" href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总Camera-FaceDetectionListener/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">编程</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/02/15/Android/App/2017-02-15-Android人脸检测汇总Camera-FaceDetectionListener/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-Android/CustemView/2017-01-25-Android自定义相机简介" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/01/25/Android/CustemView/2017-01-25-Android自定义相机简介/">Android自定义相机简介</a>
-    </h1>
-  
-
-        
-        <a href="/2017/01/25/Android/CustemView/2017-01-25-Android自定义相机简介/" class="archive-article-date">
-  	<time datetime="2017-01-24T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>使用最简单直接的方式，自定义Android相机，并有拍照，对焦功能，可以以此为基础对相机进一步开发。</p>
-<p>下面直接上代码：</p>
-<p>主文件 CameraActivity.java</p>
-        
-          <a class="article-more-a" href="/2017/01/25/Android/CustemView/2017-01-25-Android自定义相机简介/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">编程</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/01/25/Android/CustemView/2017-01-25-Android自定义相机简介/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-Android/CustemView/2017-01-23-Android图片手势缩放功能的实现" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/01/24/Android/CustemView/2017-01-23-Android图片手势缩放功能的实现/">Android图片手势缩放功能的实现</a>
-    </h1>
-  
-
-        
-        <a href="/2017/01/24/Android/CustemView/2017-01-23-Android图片手势缩放功能的实现/" class="archive-article-date">
-  	<time datetime="2017-01-23T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>android开发中常常需要对图片放大查看，要实现这一功能，在有限大小的手机屏幕上，手势缩放图片必不可少。</p>
-<p>下面为大家提供简单的实现ImageView手势缩放功能</p>
-        
-          <a class="article-more-a" href="/2017/01/24/Android/CustemView/2017-01-23-Android图片手势缩放功能的实现/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">编程</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/01/24/Android/CustemView/2017-01-23-Android图片手势缩放功能的实现/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-Android/App/2017-01-21-Android基于Tcp协议的Socket长链接封装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/01/21/Android/App/2017-01-21-Android基于Tcp协议的Socket长链接封装/">Android基于Tcp协议的Socket长链接封装</a>
-    </h1>
-  
-
-        
-        <a href="/2017/01/21/Android/App/2017-01-21-Android基于Tcp协议的Socket长链接封装/" class="archive-article-date">
-  	<time datetime="2017-01-20T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-21</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在Service中使用，注意以下规则</p>
-<figure class="highlight mk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">//startService() 启动Service</div><div class="line">其生命周期为context.startService() -&gt;onCreate()- &gt;onStart()-&gt;Service running--&gt;context.stopService() | -&gt;onDestroy() -&gt;Service stop </div><div class="line">//对于bindService()启动Service：</div><div class="line">context.bindService()-&gt;onCreate()-&gt;onBind()-&gt;Service running--&gt;onUnbind() -&gt; onDestroy() -&gt;Service stop</div></pre></td></tr></table></figure>
-<p>TcpSocketHelper封装类，使Socket保持长连接，便于手机跟服务器通讯，保持心跳实时更新数据</p>
-        
-          <a class="article-more-a" href="/2017/01/21/Android/App/2017-01-21-Android基于Tcp协议的Socket长链接封装/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">编程</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/01/21/Android/App/2017-01-21-Android基于Tcp协议的Socket长链接封装/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-C_C++/2017-01-20-基于Tcp协议的Socket-C++封装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/01/20/C_C++/2017-01-20-基于Tcp协议的Socket-C++封装/">基于Tcp协议的Socket-C++封装</a>
-    </h1>
-  
-
-        
-        <a href="/2017/01/20/C_C++/2017-01-20-基于Tcp协议的Socket-C++封装/" class="archive-article-date">
-  	<time datetime="2017-01-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-20</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>C++ Tcp封装</p>
-        
-          <a class="article-more-a" href="/2017/01/20/C_C++/2017-01-20-基于Tcp协议的Socket-C++封装/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">编程</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/01/20/C_C++/2017-01-20-基于Tcp协议的Socket-C++封装/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-Guitar/2017-01-04-《琵琶语》林海指弹吉他谱" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/01/04/Guitar/2017-01-04-《琵琶语》林海指弹吉他谱/">《琵琶语》林海指弹吉他谱</a>
-    </h1>
-  
-
-        
-        <a href="/2017/01/04/Guitar/2017-01-04-《琵琶语》林海指弹吉他谱/" class="archive-article-date">
-  	<time datetime="2017-01-03T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-04</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>《琵琶语》林海指弹吉他谱</p>
-        
-          <a class="article-more-a" href="/2017/01/04/Guitar/2017-01-04-《琵琶语》林海指弹吉他谱/#more">more >></a>
+          <a class="article-more-a" href="/2017/05/09/Guitar/2017-05-09-《八十年代的歌》赵雷/#more">more >></a>
         
       
 
@@ -921,9 +531,85 @@
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">吉他谱</a>
         		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/05/09/Guitar/2017-05-09-《八十年代的歌》赵雷/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-Android/App/2017-04-12-Android多国语言文件夹汇总" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/04/12/Android/App/2017-04-12-Android多国语言文件夹汇总/">Android多国语言文件夹汇总</a>
+    </h1>
+  
+
+        
+        <a href="/2017/04/12/Android/App/2017-04-12-Android多国语言文件夹汇总/" class="archive-article-date">
+  	<time datetime="2017-04-11T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-04-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>中文（中国）：values-zh-rCN</p>
+<p>中文（台湾）：values-zh-rTW</p>
+        
+          <a class="article-more-a" href="/2017/04/12/Android/App/2017-04-12-Android多国语言文件夹汇总/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
+        		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">指弹</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
         		</li>
       		
 		</ul>
@@ -944,7 +630,334 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/01/04/Guitar/2017-01-04-《琵琶语》林海指弹吉他谱/">展开全文 >></a>
+          <a class="article-more-a" href="/2017/04/12/Android/App/2017-04-12-Android多国语言文件夹汇总/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-Android/App/2017-04-08-resraw和assets区别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/04/08/Android/App/2017-04-08-resraw和assets区别/">res/raw和assets区别</a>
+    </h1>
+  
+
+        
+        <a href="/2017/04/08/Android/App/2017-04-08-resraw和assets区别/" class="archive-article-date">
+  	<time datetime="2017-04-07T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-04-08</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>res/raw 和 assets 的相同点: </li>
+</ul>
+<p>两者目录下的文件在打包后会原封不动的保存在 apk 包中,不会被编译成二进制。 </p>
+        
+          <a class="article-more-a" href="/2017/04/08/Android/App/2017-04-08-resraw和assets区别/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">项目结构</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/04/08/Android/App/2017-04-08-resraw和assets区别/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-Windows/2017-04-05-Xshell挂载VM中的Ubuntu解决方案" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/04/05/Windows/2017-04-05-Xshell挂载VM中的Ubuntu解决方案/">Xshell挂载VM中的Ubuntu解决方案</a>
+    </h1>
+  
+
+        
+        <a href="/2017/04/05/Windows/2017-04-05-Xshell挂载VM中的Ubuntu解决方案/" class="archive-article-date">
+  	<time datetime="2017-04-04T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-04-05</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>首先看下报错log</p>
+<pre><code>Connecting to 10.7.100.182:22...   
+Could not connect to &apos;10.7.100.182&apos; (port 22): Connection failed.   
+</code></pre><p>这是因为你的ubuntu中没有openssh-server的原因 </p>
+        
+          <a class="article-more-a" href="/2017/04/05/Windows/2017-04-05-Xshell挂载VM中的Ubuntu解决方案/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Windows</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/04/05/Windows/2017-04-05-Xshell挂载VM中的Ubuntu解决方案/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-Guitar/2017-04-01-《成都》赵雷" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/04/01/Guitar/2017-04-01-《成都》赵雷/">《成都》赵雷</a>
+    </h1>
+  
+
+        
+        <a href="/2017/04/01/Guitar/2017-04-01-《成都》赵雷/" class="archive-article-date">
+  	<time datetime="2017-03-31T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-04-01</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>《成都》赵雷 大伟版</p>
+        
+          <a class="article-more-a" href="/2017/04/01/Guitar/2017-04-01-《成都》赵雷/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">吉他谱</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/04/01/Guitar/2017-04-01-《成都》赵雷/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-Android/Telephony/2017-03-25-VoiceCall解析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/03/25/Android/Telephony/2017-03-25-VoiceCall解析/">VoiceCall解析</a>
+    </h1>
+  
+
+        
+        <a href="/2017/03/25/Android/Telephony/2017-03-25-VoiceCall解析/" class="archive-article-date">
+  	<time datetime="2017-03-24T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>1 引言</p>
+<p>Voice call就是我们通常所说的打电话，在Android中原生支持本功能。本文的目的是对Android中的voice call的框架逻辑进行介绍。</p>
+<p>1.1 目标</p>
+<p>本文旨在介绍Voice call在Android中的框架以及其是如何运行的。在本文中，会对Voice Call本身的功能以及其周边的功能进行介绍。各位在阅读本文档之后会对Voice call有一个初步的了解</p>
+<p>1.2 范围</p>
+<p>本文会以Android7.0的代码为base，从TELE APP，TELE FRAMEWORK 对voice call以及其周边功能进行系统的介绍。同时本文会对一些关键的流程以及比较复杂的逻辑进行初步的介绍。</p>
+        
+          <a class="article-more-a" href="/2017/03/25/Android/Telephony/2017-03-25-VoiceCall解析/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Tele</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/03/25/Android/Telephony/2017-03-25-VoiceCall解析/">展开全文 >></a>
         </p>
       
 
@@ -964,7 +977,7 @@
   
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
     </nav>
   
 
@@ -1055,11 +1068,27 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">C/C++</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">C/C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">吉他谱</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">指弹</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">乐理基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1068,10 +1097,6 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">应用</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1087,15 +1112,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">吉他谱</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">指弹</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Android</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anr</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Trace</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1115,7 +1140,19 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">utils</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Uri</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Process</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1131,11 +1168,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">打包</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">

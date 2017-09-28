@@ -163,19 +163,19 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-Android/Framework/2017-09-20-Android_系统进程简介" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Android/Framework/2017-09-20-Android_Init进程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/20/Android/Framework/2017-09-20-Android_系统进程简介/">Android_系统进程解析</a>
+      <a class="article-title" href="/2017/09/20/Android/Framework/2017-09-20-Android_Init进程/">Android_Init进程</a>
     </h1>
   
 
         
-        <a href="/2017/09/20/Android/Framework/2017-09-20-Android_系统进程简介/" class="archive-article-date">
+        <a href="/2017/09/20/Android/Framework/2017-09-20-Android_Init进程/" class="archive-article-date">
   	<time datetime="2017-09-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-20</time>
 </a>
         
@@ -183,11 +183,6 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Android系统启动后由一系列进程维护整个系统的运行，所有操作系统都有进程的概念，那么了解一个系统程序，就必须得先解析它所有的进程，通过这些内存中的进程就可以构建操作系统的梁柱，从进程入手则一览众山小，由此开枝散叶展开对整个系统的了解和学习。</p>
-<p>好了废话不多说，至于进程的概念，我猿类自然懂得。  ~_~  </p>
-<p>下面是Android系统启动流程简略图：</p>
-        
-          <a class="article-more-a" href="/2017/09/20/Android/Framework/2017-09-20-Android_系统进程简介/#more">more >></a>
         
       
 
@@ -206,10 +201,6 @@
       		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Process</a>
         		</li>
       		
 		</ul>
@@ -230,7 +221,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/09/20/Android/Framework/2017-09-20-Android_系统进程简介/">展开全文 >></a>
+          <a class="article-more-a" href="/2017/09/20/Android/Framework/2017-09-20-Android_Init进程/">展开全文 >></a>
         </p>
       
 
@@ -248,19 +239,19 @@
 
 
   
-    <article id="post-Android/Framework/2017-09-20-Android_Zygote进程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Android/Framework/2017-09-20-Android_InputManagerService详解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/20/Android/Framework/2017-09-20-Android_Zygote进程/">Android_Zygote进程</a>
+      <a class="article-title" href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/">Android_InputManagerService详解</a>
     </h1>
   
 
         
-        <a href="/2017/09/20/Android/Framework/2017-09-20-Android_Zygote进程/" class="archive-article-date">
+        <a href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/" class="archive-article-date">
   	<time datetime="2017-09-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-20</time>
 </a>
         
@@ -268,6 +259,13 @@
     
     <div class="article-entry" itemprop="articleBody">
       
+        <h2 id="输入系统简介"><a href="#输入系统简介" class="headerlink" title="输入系统简介"></a>输入系统简介</h2><p><strong>什么是输入系统？</strong></p>
+<p>在人类现在所使用的所有终端设备，他们都有各自的输入系统，例如电脑的键盘，鼠标，触屏，麦克，他们只是设备的硬件实施者，我们也可以称为输入设备（InputDevice）。</p>
+<p>而此问题要探讨的是输入<font color="red">系统</font>,我们上面定义了输入设备，那么接下来我们定义系统。</p>
+<p>是谁去获取，解释，传递这些多元化的信号呢？，又是谁拿到这些信号后让电脑做出相应的反馈动作？这需要一个完整的系统做去做准确，快捷的处理动作，那么这个处理所有输入设备信号的人，就是输入系统，此人任劳任怨，听起来肯定不是一个革命家，而恰好是因为他的存在，我们的操作系统才得以和人类交互，完成我们的一切命令。</p>
+<p>从上面问题是我对操作系统的理解，此般抽象，应该都很容易理解，而我们这篇文章的重点是Android系统InputManagerService，光从名字看，他是我们Android系统Service大家庭的一员，从现在开始，我们进入正题</p>
+        
+          <a class="article-more-a" href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/#more">more >></a>
         
       
 
@@ -286,6 +284,10 @@
       		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Input</a>
         		</li>
       		
 		</ul>
@@ -306,7 +308,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/09/20/Android/Framework/2017-09-20-Android_Zygote进程/">展开全文 >></a>
+          <a class="article-more-a" href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/">展开全文 >></a>
         </p>
       
 
@@ -884,6 +886,10 @@ BroadcastReceiver正在执行onReceive（）方法
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
         		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">自定义View</a>
+        		</li>
       		
 		</ul>
 	</div>
@@ -1105,10 +1111,6 @@ BroadcastReceiver正在执行onReceive（）方法
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">吉他谱</a>
               </li>
              
@@ -1118,6 +1120,10 @@ BroadcastReceiver正在执行onReceive（）方法
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">乐理基础</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1133,7 +1139,7 @@ BroadcastReceiver正在执行onReceive（）方法
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1142,6 +1148,10 @@ BroadcastReceiver正在执行onReceive（）方法
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Android</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">App</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1157,23 +1167,15 @@ BroadcastReceiver正在执行onReceive（）方法
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">App</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Contact</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">utils</a>
+                <a href="javascript:void(0)" class="js-tag color4">Uri</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Uri</a>
+                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1185,11 +1187,23 @@ BroadcastReceiver正在执行onReceive（）方法
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
+                <a href="javascript:void(0)" class="js-tag color3">自定义View</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Input</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">打包</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1201,14 +1215,6 @@ BroadcastReceiver正在执行onReceive（）方法
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">打包</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
@@ -1217,11 +1223,7 @@ BroadcastReceiver正在执行onReceive（）方法
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AS</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color5">博客收藏</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1229,7 +1231,15 @@ BroadcastReceiver正在执行onReceive（）方法
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">博客收藏</a>
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">utils</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">AS</a>
               </li>
             
             <div class="clearfix"></div>

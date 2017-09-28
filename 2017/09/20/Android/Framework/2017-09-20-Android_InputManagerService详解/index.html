@@ -8,17 +8,19 @@
   <link rel="dns-prefetch" href="https://blog.hsujee.io">
   <title>Android_InputManagerService详解 | HsuJee&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Yanjie.Xu World">
-<meta name="keywords" content="Android,FrameWork">
+  <meta name="description" content="输入系统简介什么是输入系统？ 在人类现在所使用的所有终端设备，他们都有各自的输入系统，例如电脑的键盘，鼠标，触屏，麦克，他们只是设备的硬件实施者，我们也可以称为输入设备（InputDevice）。 而此问题要探讨的是输入系统,我们上面定义了输入设备，那么接下来我们定义系统。 是谁去获取，解释，传递这些多元化的信号呢？，又是谁拿到这些信号后让电脑做出相应的反馈动作？这需要一个完整的系统做去做准确，快">
+<meta name="keywords" content="Android,FrameWork,Input">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android_InputManagerService详解">
 <meta property="og:url" content="https://blog.hsujee.io/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/index.html">
 <meta property="og:site_name" content="HsuJee's Blog">
-<meta property="og:description" content="Yanjie.Xu World">
-<meta property="og:updated_time" content="2017-09-24T04:55:39.234Z">
+<meta property="og:description" content="输入系统简介什么是输入系统？ 在人类现在所使用的所有终端设备，他们都有各自的输入系统，例如电脑的键盘，鼠标，触屏，麦克，他们只是设备的硬件实施者，我们也可以称为输入设备（InputDevice）。 而此问题要探讨的是输入系统,我们上面定义了输入设备，那么接下来我们定义系统。 是谁去获取，解释，传递这些多元化的信号呢？，又是谁拿到这些信号后让电脑做出相应的反馈动作？这需要一个完整的系统做去做准确，快">
+<meta property="og:image" content="https://blog.hsujee.io/assets/images/android/framework/input_system_work0-3.png">
+<meta property="og:updated_time" content="2017-09-28T06:20:36.283Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android_InputManagerService详解">
-<meta name="twitter:description" content="Yanjie.Xu World">
+<meta name="twitter:description" content="输入系统简介什么是输入系统？ 在人类现在所使用的所有终端设备，他们都有各自的输入系统，例如电脑的键盘，鼠标，触屏，麦克，他们只是设备的硬件实施者，我们也可以称为输入设备（InputDevice）。 而此问题要探讨的是输入系统,我们上面定义了输入设备，那么接下来我们定义系统。 是谁去获取，解释，传递这些多元化的信号呢？，又是谁拿到这些信号后让电脑做出相应的反馈动作？这需要一个完整的系统做去做准确，快">
+<meta name="twitter:image" content="https://blog.hsujee.io/assets/images/android/framework/input_system_work0-3.png">
   
     <link rel="alternative" href="/atom.xml" title="HsuJee&#39;s Blog" type="application/atom+xml">
   
@@ -183,7 +185,61 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h2 id="输入系统简介"><a href="#输入系统简介" class="headerlink" title="输入系统简介"></a>输入系统简介</h2><p><strong>什么是输入系统？</strong></p>
+<p>在人类现在所使用的所有终端设备，他们都有各自的输入系统，例如电脑的键盘，鼠标，触屏，麦克，他们只是设备的硬件实施者，我们也可以称为输入设备（InputDevice）。</p>
+<p>而此问题要探讨的是输入<font color="red">系统</font>,我们上面定义了输入设备，那么接下来我们定义系统。</p>
+<p>是谁去获取，解释，传递这些多元化的信号呢？，又是谁拿到这些信号后让电脑做出相应的反馈动作？这需要一个完整的系统做去做准确，快捷的处理动作，那么这个处理所有输入设备信号的人，就是输入系统，此人任劳任怨，听起来肯定不是一个革命家，而恰好是因为他的存在，我们的操作系统才得以和人类交互，完成我们的一切命令。</p>
+<p>从上面问题是我对操作系统的理解，此般抽象，应该都很容易理解，而我们这篇文章的重点是Android系统InputManagerService，光从名字看，他是我们Android系统Service大家庭的一员，从现在开始，我们进入正题</p>
+<a id="more"></a>
+<p><em>此文中出现的所有代码为Android7.0版本</em></p>
+<h2 id="Android输入系统原理"><a href="#Android输入系统原理" class="headerlink" title="Android输入系统原理"></a>Android输入系统原理</h2><p>当输入设备可用时，Linux内核会在/dev/input/下创建对应的名为event0~n或其他名称的设备节点。而当输入设备不可用时，则会将对应的节点删除。</p>
+<p>在用户空间可以通过ioctl的方式从这些设备节点中获取其对应的输入设备的类型、厂商、描述等信息。</p>
+<p>当用户操作输入设备时，Linux内核接收到相应的硬件中断，然后将中断加工成原始的输入事件数据并写入其对应的设备节点中，在用户空间可以通过read()函数将事件数据读出。</p>
+<p>Android输入系统的工作原理概括来说，就是监控/dev/input/下的所有设备节点，当某个节点有数据可读时，将数据读出并进行一系列的翻译加工，然后在所有的窗口中寻找合适的事件接收者，并派发给它。</p>
+<p><em>如果需要查看输入设备信息，请查看：<a href="http://null" target="_blank" rel="external">Android模拟输入操作的实现与原理</a></em></p>
+<h2 id="Android输入系统架构"><a href="#Android输入系统架构" class="headerlink" title="Android输入系统架构"></a>Android输入系统架构</h2><p>通过上面介绍我们得知，输入系统始于Linux内核/dev/input/event0~n，终于WMS管理的相应窗口。</p>
+<p>最初的事件是Linux内核捕获收集设备输入信号，生成并且保存成event0~n，而最终则是KeyEvent或者MotionEvent。</p>
+<p>因此Android输入系统的主要职责为，①读取设备节点的原始事件，②封装加工事件，分发到特定窗口</p>
+<p>此过程由InputManagerService为核心的多个参与者共同完成</p>
+<p><img src="/assets/images/android/framework/input_system_work0-3.png" alt="输入系统的总体流程与参与者"></p>
+<p>上图描述了Android输入系统的流程与参与者的关系，每一个基础参与者的详解如下：</p>
+<ul>
+<li>Linux内核</li>
+</ul>
+<p>接受输入设备的中断，并将原始事件的数据写入到设备节点中。<br>设备节点，作为内核与IMS的桥梁，它将原始事件的数据暴露给用户空间，以便IMS可以从中读取事件。</p>
+<ul>
+<li>InputManagerService</li>
+</ul>
+<p>一个Android系统服务，它分为Java层和Native层两部分。Java层负责与WMS的通信。而Native层则是InputReader和InputDispatcher两个输入系统关键组件的运行容器。</p>
+<ul>
+<li>EventHub</li>
+</ul>
+<p>直接访问所有的设备节点。并且正如其名字所描述的，它通过一个名为getEvents()的函数将所有输入系统相关的待处理的底层事件返回给使用者。这些事件包括原始输入事件、设备节点的增删等。</p>
+<ul>
+<li>InputReader</li>
+</ul>
+<p>I是IMS中的关键组件之一。它运行于一个独立的线程中，负责管理输入设备的列表与配置，以及进行输入事件的加工处理。它通过其线程循环不断地通过getEvents()函数从EventHub中将事件取出并进行处理。对于设备节点的增删事件，它会更新输入设备列表于配置。对于原始输入事件，InputReader对其进行翻译、组装、封装为包含了更多信息、更具可读性的输入事件，然后交给InputDispatcher进行派发。</p>
+<ul>
+<li>InputReaderPolicy</li>
+</ul>
+<p>它为InputReader的事件加工处理提供一些策略配置，例如键盘布局信息等。</p>
+<ul>
+<li>InputDispatcher</li>
+</ul>
+<p>是IMS中的另一个关键组件。它也运行于一个独立的线程中。InputDispatcher中保管了来自WMS的所有窗口的信息，其收到来自InputReader的输入事件后，会在其保管的窗口中寻找合适的窗口，并将事件派发给此窗口。</p>
+<ul>
+<li>InputDispatcherPolicy</li>
+</ul>
+<p>它为InputDispatcher的派发过程提供策略控制。例如截取某些特定的输入事件用作特殊用途，或者阻止将某些事件派发给目标窗口。一个典型的例子就是HOME键被InputDispatcherPolicy截取到PhoneWindowManager中进行处理，并阻止窗口收到HOME键按下的事件。</p>
+<ul>
+<li>WMS</li>
+</ul>
+<p>虽说不是输入系统中的一员，但是它却对InputDispatcher的正常工作起到了至关重要的作用。当新建窗口时，WMS为新窗口和IMS创建了事件传递所用的通道。另外，WMS还将所有窗口的信息，包括窗口的可点击区域，焦点窗口等信息，实时地更新到IMS的InputDispatcher中，使得InputDispatcher可以正确地将事件派发到指定的窗口。</p>
+<ul>
+<li>ViewRootImpl</li>
+</ul>
+<p>对于某些窗口，如壁纸窗口、SurfaceView的窗口来说，窗口即是输入事件派发的终点。而对于其他的如Activity、对话框等使用了Android控件系统的窗口来说，输入事件的终点是控件（View）。ViewRootImpl将窗口所接收到的输入事件沿着控件树将事件派发给感兴趣的控件。<br>简单来说，内核将原始事件写入到设备节点中，InputReader不断地通过EventHub将原始事件取出来并翻译加工成Android输入事件，然后交给InputDispatcher。InputDispatcher根据WMS提供的窗口信息将事件交给合适的窗口。窗口的ViewRootImpl对象再沿着控件树将事件派发给感兴趣的控件。控件对其收到的事件作出响应，更新自己的画面、执行特定的动作。所有这些参与者以IMS为核心，构建了Android庞大而复杂的输入体系。</p>
+
       
 
       
@@ -201,6 +257,10 @@
       		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Input</a>
         		</li>
       		
 		</ul>
@@ -291,8 +351,8 @@
     </a>
   
   
-    <a href="/2017/09/24/Android/Contacts/2017-09-24-Android获取联系人头像/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Android获取联系人头像</div>
+    <a href="/2017/09/20/Android/Framework/2017-09-20-Android_SystemServer进程/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Android_Init进程</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -396,7 +456,7 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color1">C/C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -404,7 +464,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">C/C++</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -428,11 +488,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -456,11 +516,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
+                <a href="javascript:void(0)" class="js-tag color4">App</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">App</a>
+                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -488,6 +548,10 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Input</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Mtk</a>
               </li>
              
@@ -496,11 +560,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
+                <a href="javascript:void(0)" class="js-tag color3">打包</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">打包</a>
+                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -520,11 +584,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">博客收藏</a>
+                <a href="javascript:void(0)" class="js-tag color3">转载</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">转载</a>
+                <a href="javascript:void(0)" class="js-tag color5">博客收藏</a>
               </li>
             
             <div class="clearfix"></div>

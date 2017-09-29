@@ -8,17 +8,17 @@
   <link rel="dns-prefetch" href="https://blog.hsujee.io">
   <title>Android实现分批加载手机中所有联系人数据 | HsuJee&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="此文记录我自己开发，并且正在完美使用的联系人数据帮助类，包括联系人数据的分批加载功能。 在Android系统中，想要获取联系人数据，我们需要做很多备课，我们需要了解联系人数据库的结构，通过系统提供的ContactProvider来操作联系人数据。 关于ContactProvider 在我学习的过程中android.provider.ContactsContract类，在我对联系人数据结构理解中提供">
+  <meta name="description" content="此文记录我自己开发，并且正在完美使用的联系人数据帮助类，包括联系人数据的分批加载功能。 在Android系统中，想要获取联系人数据，我们需要做很多备课，我们需要了解联系人数据库的结构，通过系统提供的ContactProvider来操作联系人数据。 关于ContactProvider android.provider.ContactsContract类，在我对联系人数据结构理解中提供了很大的帮助，大">
 <meta name="keywords" content="Android,Contact,Provider">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android实现分批加载手机中所有联系人数据">
 <meta property="og:url" content="https://blog.hsujee.io/2017/09/25/Android/Contacts/2017-09-25-Android实现分批加载手机中所有联系人数据/index.html">
 <meta property="og:site_name" content="HsuJee's Blog">
-<meta property="og:description" content="此文记录我自己开发，并且正在完美使用的联系人数据帮助类，包括联系人数据的分批加载功能。 在Android系统中，想要获取联系人数据，我们需要做很多备课，我们需要了解联系人数据库的结构，通过系统提供的ContactProvider来操作联系人数据。 关于ContactProvider 在我学习的过程中android.provider.ContactsContract类，在我对联系人数据结构理解中提供">
-<meta property="og:updated_time" content="2017-09-29T09:59:58.241Z">
+<meta property="og:description" content="此文记录我自己开发，并且正在完美使用的联系人数据帮助类，包括联系人数据的分批加载功能。 在Android系统中，想要获取联系人数据，我们需要做很多备课，我们需要了解联系人数据库的结构，通过系统提供的ContactProvider来操作联系人数据。 关于ContactProvider android.provider.ContactsContract类，在我对联系人数据结构理解中提供了很大的帮助，大">
+<meta property="og:updated_time" content="2017-09-29T10:07:48.824Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android实现分批加载手机中所有联系人数据">
-<meta name="twitter:description" content="此文记录我自己开发，并且正在完美使用的联系人数据帮助类，包括联系人数据的分批加载功能。 在Android系统中，想要获取联系人数据，我们需要做很多备课，我们需要了解联系人数据库的结构，通过系统提供的ContactProvider来操作联系人数据。 关于ContactProvider 在我学习的过程中android.provider.ContactsContract类，在我对联系人数据结构理解中提供">
+<meta name="twitter:description" content="此文记录我自己开发，并且正在完美使用的联系人数据帮助类，包括联系人数据的分批加载功能。 在Android系统中，想要获取联系人数据，我们需要做很多备课，我们需要了解联系人数据库的结构，通过系统提供的ContactProvider来操作联系人数据。 关于ContactProvider android.provider.ContactsContract类，在我对联系人数据结构理解中提供了很大的帮助，大">
   
     <link rel="alternative" href="/atom.xml" title="HsuJee&#39;s Blog" type="application/atom+xml">
   
@@ -186,7 +186,7 @@
         <p>此文记录我自己开发，并且正在完美使用的联系人数据帮助类，包括联系人数据的分批加载功能。</p>
 <p>在Android系统中，想要获取联系人数据，我们需要做很多备课，我们需要了解联系人数据库的结构，通过系统提供的ContactProvider来操作联系人数据。</p>
 <p><a href="http://blog.cocoper.com/2017/06/10/Android/Contacts/ContactsProvider/2017-06-10-ContactsProvider%E6%95%B0%E6%8D%AE%E5%BA%93%E6%93%8D%E4%BD%9C/" target="_blank" rel="external">关于ContactProvider</a></p>
-<p>在我学习的过程中android.provider.ContactsContract类，在我对联系人数据结构理解中提供了很大的帮助</p>
+<p>android.provider.ContactsContract类，在我对联系人数据结构理解中提供了很大的帮助，大家可参考了解</p>
 <p>其源代码路劲如下：</p>
 <a id="more"></a>
 <p>\frameworks\base\core\java\android\provider\ContactsContract.java</p>
@@ -420,19 +420,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">吉他谱</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">指弹</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">乐理基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -448,6 +440,10 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">乐理基础</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
@@ -456,11 +452,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">App</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -469,6 +465,10 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Trace</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">App</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -484,7 +484,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Uri</a>
+                <a href="javascript:void(0)" class="js-tag color1">utils</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -496,7 +496,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">utils</a>
+                <a href="javascript:void(0)" class="js-tag color4">Uri</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -509,6 +509,10 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Input</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -532,11 +536,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">博客收藏</a>
+                <a href="javascript:void(0)" class="js-tag color3">转载</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">转载</a>
+                <a href="javascript:void(0)" class="js-tag color5">博客收藏</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -545,10 +549,6 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Gat</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
               </li>
             
             <div class="clearfix"></div>

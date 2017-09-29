@@ -163,169 +163,6 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-Android/Framework/2017-09-20-Android_Init进程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/20/Android/Framework/2017-09-20-Android_Init进程/">Android_Init进程</a>
-    </h1>
-  
-
-        
-        <a href="/2017/09/20/Android/Framework/2017-09-20-Android_Init进程/" class="archive-article-date">
-  	<time datetime="2017-09-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-20</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/09/20/Android/Framework/2017-09-20-Android_Init进程/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-Android/Framework/2017-09-20-Android_InputManagerService详解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/">Android_InputManagerService详解</a>
-    </h1>
-  
-
-        
-        <a href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/" class="archive-article-date">
-  	<time datetime="2017-09-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-20</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="输入系统简介"><a href="#输入系统简介" class="headerlink" title="输入系统简介"></a>输入系统简介</h2><p><strong>什么是输入系统？</strong></p>
-<p>在人类现在所使用的所有终端设备，他们都有各自的输入系统，例如电脑的键盘，鼠标，触屏，麦克，他们只是设备的硬件实施者，我们也可以称为输入设备（InputDevice）。</p>
-<p>而此问题要探讨的是输入<font color="red">系统</font>,我们上面定义了输入设备，那么接下来我们定义系统。</p>
-<p>是谁去获取，解释，传递这些多元化的信号呢？，又是谁拿到这些信号后让电脑做出相应的反馈动作？这需要一个完整的系统做去做准确，快捷的处理动作，那么这个处理所有输入设备信号的人，就是输入系统，此人任劳任怨，听起来肯定不是一个革命家，而恰好是因为他的存在，我们的操作系统才得以和人类交互，完成我们的一切命令。</p>
-<p>从上面问题是我对操作系统的理解，此般抽象，应该都很容易理解，而我们这篇文章的重点是Android系统InputManagerService，光从名字看，他是我们Android系统Service大家庭的一员，从现在开始，我们进入正题</p>
-        
-          <a class="article-more-a" href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Input</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
     <article id="post-Android/App/2017-09-16-Android_App进程状态简介" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1010,6 +847,179 @@ BroadcastReceiver正在执行onReceive（）方法
 
 
   
+    <article id="post-Android/Mtk/2017-06-30-MtkLog解析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/30/Android/Mtk/2017-06-30-MtkLog解析/">MtkLog分析</a>
+    </h1>
+  
+
+        
+        <a href="/2017/06/30/Android/Mtk/2017-06-30-MtkLog解析/" class="archive-article-date">
+  	<time datetime="2017-06-29T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-30</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p><strong>mtklog简介</strong></p>
+</blockquote>
+<p>mtklog是由log生成工具MTKLogger生成的一系列问题追踪文件，其主要作用就是对系统或者应用产生的异常进行快速定位，从而解决问题。</p>
+<p>mtklog 的分类：MDLog、Mobile Log、Network Log，可能出现的aee_exp log</p>
+<p>MD log：medom 相关底层的log</p>
+<p>Mobile Log：主要是Android log 和kernel log</p>
+<p>Network log：网络相关log</p>
+<p>aee_exp log ：crash ANR 重启相关的log输出</p>
+        
+          <a class="article-more-a" href="/2017/06/30/Android/Mtk/2017-06-30-MtkLog解析/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Mtk</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Gat</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/06/30/Android/Mtk/2017-06-30-MtkLog解析/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-Android/Framework/2017-06-20-Android_FrameWork之Native_Binder" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/20/Android/Framework/2017-06-20-Android_FrameWork之Native_Binder/">Android_FrameWork之Native_Binder</a>
+    </h1>
+  
+
+        
+        <a href="/2017/06/20/Android/Framework/2017-06-20-Android_FrameWork之Native_Binder/" class="archive-article-date">
+  	<time datetime="2017-06-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-20</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Binder是Android系统提供的一种IPC（进程间通信）机制，除Binder还有Pipe和socket等。</p>
+<p>这片文章主要分析Android系统中的Binder机制，Binder机制有4个组件构成，它们分别是：Client，Server，ServiceManager和驱动Binder。</p>
+<p>在Android基于Binder的C/S架构中，Binder就好比大世界中的网络，在这个体系中，除C/S(client/server)端外，还有一个全局的ServiceManager来管理系统中的各种Server。</p>
+<p> Client、Server和ServiceManager三者之间的交互关系:</p>
+        
+          <a class="article-more-a" href="/2017/06/20/Android/Framework/2017-06-20-Android_FrameWork之Native_Binder/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/06/20/Android/Framework/2017-06-20-Android_FrameWork之Native_Binder/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
@@ -1111,6 +1121,10 @@ BroadcastReceiver正在执行onReceive（）方法
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">吉他谱</a>
               </li>
              
@@ -1123,10 +1137,6 @@ BroadcastReceiver正在执行onReceive（）方法
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
@@ -1135,11 +1145,11 @@ BroadcastReceiver正在执行onReceive（）方法
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1167,15 +1177,15 @@ BroadcastReceiver正在执行onReceive（）方法
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Contact</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Uri</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1187,7 +1197,15 @@ BroadcastReceiver正在执行onReceive（）方法
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">utils</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">自定义View</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1195,23 +1213,7 @@ BroadcastReceiver正在执行onReceive（）方法
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">打包</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Mtk</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Gat</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1223,6 +1225,14 @@ BroadcastReceiver正在执行onReceive（）方法
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">AS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">博客收藏</a>
               </li>
              
@@ -1231,15 +1241,15 @@ BroadcastReceiver正在执行onReceive（）方法
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color4">Mtk</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">utils</a>
+                <a href="javascript:void(0)" class="js-tag color4">Gat</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AS</a>
+                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
               </li>
             
             <div class="clearfix"></div>

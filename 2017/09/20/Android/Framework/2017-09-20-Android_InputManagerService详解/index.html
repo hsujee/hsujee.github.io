@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="https://blog.hsujee.io">
   <title>Android_InputManagerService详解 | HsuJee&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="输入系统简介什么是输入系统？ 在人类现在所使用的所有终端设备，他们都有各自的输入系统，例如电脑的键盘，鼠标，触屏，麦克，他们只是设备的硬件实施者，我们也可以称为输入设备（InputDevice）。 而此问题要探讨的是输入系统,我们上面定义了输入设备，那么接下来我们定义系统。 是谁去获取，解释，传递这些多元化的信号呢？，又是谁拿到这些信号后让电脑做出相应的反馈动作？这需要一个完整的系统做去做准确，快">
+  <meta name="description" content="Android输入系统简介什么是输入系统？ 在人类现在所使用的所有终端设备，他们都有各自的输入系统，例如电脑的键盘，鼠标，触屏，麦克，他们只是设备的硬件实施者，我们也可以称为输入设备（InputDevice）。 而此问题要探讨的是Android输入系统,我们上面定义了输入设备，那么接下来我们定义系统。 是谁去获取，解释，传递这些多元化的信号呢？ 又是谁拿到这些信号后让电脑做出相应的反馈动作？ 这需">
 <meta name="keywords" content="Android,FrameWork,Input">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android_InputManagerService详解">
 <meta property="og:url" content="https://blog.hsujee.io/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/index.html">
 <meta property="og:site_name" content="HsuJee's Blog">
-<meta property="og:description" content="输入系统简介什么是输入系统？ 在人类现在所使用的所有终端设备，他们都有各自的输入系统，例如电脑的键盘，鼠标，触屏，麦克，他们只是设备的硬件实施者，我们也可以称为输入设备（InputDevice）。 而此问题要探讨的是输入系统,我们上面定义了输入设备，那么接下来我们定义系统。 是谁去获取，解释，传递这些多元化的信号呢？，又是谁拿到这些信号后让电脑做出相应的反馈动作？这需要一个完整的系统做去做准确，快">
+<meta property="og:description" content="Android输入系统简介什么是输入系统？ 在人类现在所使用的所有终端设备，他们都有各自的输入系统，例如电脑的键盘，鼠标，触屏，麦克，他们只是设备的硬件实施者，我们也可以称为输入设备（InputDevice）。 而此问题要探讨的是Android输入系统,我们上面定义了输入设备，那么接下来我们定义系统。 是谁去获取，解释，传递这些多元化的信号呢？ 又是谁拿到这些信号后让电脑做出相应的反馈动作？ 这需">
 <meta property="og:image" content="https://blog.hsujee.io/assets/images/android/framework/input_system_work0-3.png">
-<meta property="og:updated_time" content="2017-09-28T06:20:36.283Z">
+<meta property="og:updated_time" content="2017-09-29T10:12:12.117Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android_InputManagerService详解">
-<meta name="twitter:description" content="输入系统简介什么是输入系统？ 在人类现在所使用的所有终端设备，他们都有各自的输入系统，例如电脑的键盘，鼠标，触屏，麦克，他们只是设备的硬件实施者，我们也可以称为输入设备（InputDevice）。 而此问题要探讨的是输入系统,我们上面定义了输入设备，那么接下来我们定义系统。 是谁去获取，解释，传递这些多元化的信号呢？，又是谁拿到这些信号后让电脑做出相应的反馈动作？这需要一个完整的系统做去做准确，快">
+<meta name="twitter:description" content="Android输入系统简介什么是输入系统？ 在人类现在所使用的所有终端设备，他们都有各自的输入系统，例如电脑的键盘，鼠标，触屏，麦克，他们只是设备的硬件实施者，我们也可以称为输入设备（InputDevice）。 而此问题要探讨的是Android输入系统,我们上面定义了输入设备，那么接下来我们定义系统。 是谁去获取，解释，传递这些多元化的信号呢？ 又是谁拿到这些信号后让电脑做出相应的反馈动作？ 这需">
 <meta name="twitter:image" content="https://blog.hsujee.io/assets/images/android/framework/input_system_work0-3.png">
   
     <link rel="alternative" href="/atom.xml" title="HsuJee&#39;s Blog" type="application/atom+xml">
@@ -185,10 +185,12 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="输入系统简介"><a href="#输入系统简介" class="headerlink" title="输入系统简介"></a>输入系统简介</h2><p><strong>什么是输入系统？</strong></p>
+        <h2 id="Android输入系统简介"><a href="#Android输入系统简介" class="headerlink" title="Android输入系统简介"></a>Android输入系统简介</h2><p><strong>什么是输入系统？</strong></p>
 <p>在人类现在所使用的所有终端设备，他们都有各自的输入系统，例如电脑的键盘，鼠标，触屏，麦克，他们只是设备的硬件实施者，我们也可以称为输入设备（InputDevice）。</p>
-<p>而此问题要探讨的是输入<font color="red">系统</font>,我们上面定义了输入设备，那么接下来我们定义系统。</p>
-<p>是谁去获取，解释，传递这些多元化的信号呢？，又是谁拿到这些信号后让电脑做出相应的反馈动作？这需要一个完整的系统做去做准确，快捷的处理动作，那么这个处理所有输入设备信号的人，就是输入系统，此人任劳任怨，听起来肯定不是一个革命家，而恰好是因为他的存在，我们的操作系统才得以和人类交互，完成我们的一切命令。</p>
+<p>而此问题要探讨的是Android输入<font color="red">系统</font>,我们上面定义了输入设备，那么接下来我们定义系统。</p>
+<p>是谁去获取，解释，传递这些多元化的信号呢？</p>
+<p>又是谁拿到这些信号后让电脑做出相应的反馈动作？</p>
+<p>这需要一个完整的系统做去做准确，快捷的处理动作，那么这个处理所有输入设备信号的人，就是Android输入系统，此人任劳任怨，听起来肯定不是一个革命家，而恰好是因为他的存在，我们的操作系统才得以和人类交互，完成我们的一切命令。</p>
 <p>从上面问题是我对操作系统的理解，此般抽象，应该都很容易理解，而我们这篇文章的重点是Android系统InputManagerService，光从名字看，他是我们Android系统Service大家庭的一员，从现在开始，我们进入正题</p>
 <a id="more"></a>
 <p><em>此文中出现的所有代码为Android7.0版本</em></p>
@@ -341,17 +343,17 @@
   
 <nav id="article-nav">
   
-    <a href="/2017/09/20/Android/Framework/2017-09-20-Android_进程间通讯机制/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2017/09/20/Android/Framework/2017-09-20-Android_Zygote进程/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Android_进程间通讯机制
+          Android_Zygote进程
         
       </div>
     </a>
   
   
-    <a href="/2017/09/20/Android/Framework/2017-09-20-Android_Init进程/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2017/09/20/Android/Framework/2017-09-20-Android_SystemServer进程/" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title">Android_Init进程</div>
       <i class="icon-circle-right"></i>
     </a>
@@ -464,11 +466,19 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">吉他谱</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">指弹</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">乐理基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -484,19 +494,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">乐理基础</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Windows</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -524,11 +526,15 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">utils</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Contact</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">utils</a>
+                <a href="javascript:void(0)" class="js-tag color4">Uri</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -537,10 +543,6 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Process</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Uri</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -556,7 +558,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
+                <a href="javascript:void(0)" class="js-tag color4">Mtk</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Gat</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -564,11 +570,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">Tele</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -576,11 +582,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">转载</a>
+                <a href="javascript:void(0)" class="js-tag color1">正则表达式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -588,11 +594,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Mtk</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Gat</a>
+                <a href="javascript:void(0)" class="js-tag color3">转载</a>
               </li>
             
             <div class="clearfix"></div>

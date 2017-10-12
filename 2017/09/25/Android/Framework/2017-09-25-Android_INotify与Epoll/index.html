@@ -8,14 +8,17 @@
   <link rel="dns-prefetch" href="https://blog.hsujee.io">
   <title>Android_INotify与Epoll | HsuJee&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="keywords" content="Android,FrameWork">
+  <meta name="description" content="1．INotify介绍与使用INotify是一个Linux内核所提供的一种文件系统变化通知机制。它可以为应用程序监控文件系统的变化，如文件的新建、删除、读写等。INotify机制有两个基本对象，分别为inotify对象与watch对象，都使用文件描述符表示。 inotify对象对应了一个队列，应用程序可以向inotify对象添加多个监听。当被监听的事件发生时，可以通过read()函数从inotif">
+<meta name="keywords" content="Android,FrameWork">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android_INotify与Epoll">
 <meta property="og:url" content="https://blog.hsujee.io/2017/09/25/Android/Framework/2017-09-25-Android_INotify与Epoll/index.html">
 <meta property="og:site_name" content="HsuJee's Blog">
-<meta property="og:updated_time" content="2017-09-28T06:24:32.909Z">
+<meta property="og:description" content="1．INotify介绍与使用INotify是一个Linux内核所提供的一种文件系统变化通知机制。它可以为应用程序监控文件系统的变化，如文件的新建、删除、读写等。INotify机制有两个基本对象，分别为inotify对象与watch对象，都使用文件描述符表示。 inotify对象对应了一个队列，应用程序可以向inotify对象添加多个监听。当被监听的事件发生时，可以通过read()函数从inotif">
+<meta property="og:updated_time" content="2017-10-12T06:45:39.117Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android_INotify与Epoll">
+<meta name="twitter:description" content="1．INotify介绍与使用INotify是一个Linux内核所提供的一种文件系统变化通知机制。它可以为应用程序监控文件系统的变化，如文件的新建、删除、读写等。INotify机制有两个基本对象，分别为inotify对象与watch对象，都使用文件描述符表示。 inotify对象对应了一个队列，应用程序可以向inotify对象添加多个监听。当被监听的事件发生时，可以通过read()函数从inotif">
   
     <link rel="alternative" href="/atom.xml" title="HsuJee&#39;s Blog" type="application/atom+xml">
   
@@ -180,7 +183,82 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <a id="more"></a>
+        <h2 id="1．INotify介绍与使用"><a href="#1．INotify介绍与使用" class="headerlink" title="1．INotify介绍与使用"></a>1．INotify介绍与使用</h2><p>INotify是一个Linux内核所提供的一种文件系统变化通知机制。它可以为应用程序监控文件系统的变化，如文件的新建、删除、读写等。INotify机制有两个基本对象，分别为inotify对象与watch对象，都使用文件描述符表示。</p>
+<p>inotify对象对应了一个队列，应用程序可以向inotify对象添加多个监听。当被监听的事件发生时，可以通过read()函数从inotify对象中将事件信息读取出来。Inotify对象可以通过以下方式创建：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> inotifyFd = inotify_init();</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>而watch对象则用来描述文件系统的变化事件的监听。它是一个二元组，包括监听目标和事件掩码两个元素。监听目标是文件系统的一个路径，可以是文件也可以是文件夹。而事件掩码则表示了需要需要监听的事件类型，掩码中的每一位代表一种事件。可以监听的事件种类很多，其中就包括文件的创建(IN_CREATE)与删除(IN_DELETE)。<br>读者可以参阅相关资料以了解其他可监听的事件种类。以下代码即可将一个用于监听输入设备节点的创建与删除的watch对象添加到inotify对象中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> wd = inotify_add_watch (inotifyFd, “/dev/input”,IN_CREATE | IN_DELETE);</div></pre></td></tr></table></figure>
+<p>完成上述watch对象的添加后，当/dev/input/下的设备节点发生创建与删除操作时，都会将相应的事件信息写入到inotifyFd所描述的inotify对象中，此时可以通过read()函数从inotifyFd描述符中将事件信息读取出来。<br>事件信息使用结构体inotify_event进行描述：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> inotify_event &#123;</div><div class="line">       __s32           wd;             <span class="comment">/* 事件对应的Watch对象的描述符 */</span></div><div class="line">       __u32           mask;           <span class="comment">/* 事件类型，例如文件被删除，此处值为IN_DELETE */</span></div><div class="line">       __u32           cookie;</div><div class="line">       __u32           len;            <span class="comment">/* name字段的长度 */</span></div><div class="line">       <span class="keyword">char</span>            name[<span class="number">0</span>];        <span class="comment">/* 可变长的字段，用于存储产生此事件的文件路径*/</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>当没有监听事件发生时，可以通过如下方式将一个或多个未读取的事件信息读取出来：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">size_t</span> len = read (inotifyFd, events_buf,BUF_LEN);</div></pre></td></tr></table></figure>
+<p>其中events_buf是inotify_event的数组指针，能够读取的事件数量由取决于数组的长度。成功读取事件信息后，便可根据inotify_event结构体的字段判断事件类型以及产生事件的文件路径了。</p>
+<p>总结一下INotify机制的使用过程：</p>
+<ul>
+<li>通过inotify_init()创建一个inotify对象。</li>
+<li>通过inotify_add_watch将一个或多个监听添加到inotify对象中。</li>
+<li>通过read()函数从inotify对象中读取监听事件。当没有新事件发生时，inotify对象中无任何可读数据。</li>
+</ul>
+<p>通过INotify机制避免了轮询文件系统的麻烦，但是还有一个问题，INotify机制并不是通过回调的方式通知事件，而需要使用者主动从inotify对象中进行事件读取。</p>
+<p>那么何时才是读取的最佳时机呢？这就需要借助Linux的另一个优秀的机制Epoll了。</p>
+<h2 id="2．Epoll介绍与使用"><a href="#2．Epoll介绍与使用" class="headerlink" title="2．Epoll介绍与使用"></a>2．Epoll介绍与使用</h2><p>无论是从设备节点中获取原始输入事件还是从inotify对象中读取文件系统事件，都面临一个问题，就是这些事件都是偶发的。也就是说，大部分情况下设备节点、inotify对象这些文件描述符中都是无数据可读的，同时又希望有事件到来时可以尽快地对事件作出反应。</p>
+<p>为解决这个问题，我们不希望不断地轮询这些描述符，也不希望为每个描述符创建一个单独的线程进行阻塞时的读取，因为这都将会导致资源的极大浪费。</p>
+<p>此时最佳的办法是使用Epoll机制。</p>
+<p>Epoll可以使用一次等待监听多个描述符的可读/可写状态。等待返回时携带了可读的描述符或自定义的数据，使用者可以据此读取所需的数据后可以再次进入等待。</p>
+<p>因此不需要为每个描述符创建独立的线程进行阻塞读取，避免了资源浪费的同时又可以获得较快的响应速度。</p>
+<p>Epoll机制的接口只有三个函数，十分简单。</p>
+<ul>
+<li>epoll_create(int max_fds)：创建一个epoll对象的描述符，之后对epoll的操作均使用这个描述符完成。max_fds参数表示了此epoll对象可以监听的描述符的最大数量。</li>
+<li>epoll_ctl (int epfd, int op,int fd, struct epoll_event *event)：用于管理注册事件的函数。这个函数可以增加/删除/修改事件的注册。</li>
+<li>int epoll_wait(int epfd, structepoll_event * events, int maxevents, int timeout)：用于等待事件的到来。当此函数返回时，events数组参数中将会包含产生事件的文件描述符。</li>
+</ul>
+<p>接下来以监控若干描述符可读事件为例介绍一下epoll的用法。</p>
+<p><strong>（1） 创建epoll对象</strong></p>
+<p>首先通过epoll_create()函数创建一个epoll对象：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Int epfd = epoll_create(MAX_FDS)</div></pre></td></tr></table></figure>
+<p><strong>（2） 填充epoll_event结构体</strong></p>
+<p>接着为每一个需监控的描述符填充epoll_event结构体，以描述监控事件，并通过epoll_ctl()函数将此描述符与epoll_event结构体注册进epoll对象。</p>
+<p>epoll_event结构体的定义如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> epoll_event &#123;</div><div class="line">    __uint32_tevents; <span class="comment">/* 事件掩码，指明了需要监听的事件种类*/</span></div><div class="line">   <span class="keyword">epoll_data_t</span> data; <span class="comment">/* 使用者自定义的数据，当此事件发生时该数据将原封不动地返回给使用者 */</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>epoll_data_t联合体的定义如下，当然，同一时间使用者只能使用一个字段：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">union</span> epoll_data &#123;</div><div class="line">    <span class="keyword">void</span>*ptr;</div><div class="line">    <span class="keyword">int</span> fd;</div><div class="line">   <span class="keyword">__uint32_t</span> u32;</div><div class="line">   <span class="keyword">__uint64_t</span> u64;</div><div class="line">&#125; <span class="keyword">epoll_data_t</span>;</div></pre></td></tr></table></figure>
+<p>epoll_event结构中的events字段是一个事件掩码，用以指明需要监听的事件种类，同INotify一样，掩码的每一位代表了一种事件。</p>
+<p>常用的事件有EPOLLIN（可读），EPOLLOUT（可写），EPOLLERR（描述符发生错误），EPOLLHUP（描述符被挂起）等。更多支持的事件读者可参考相关资料。</p>
+<p>data字段是一个联合体，它让使用者可以将一些自定义数据加入到事件通知中，当此事件发生时，用户设置的data字段将会返回给使用者。</p>
+<p>在实际使用中常设置epoll_event.data.fd为需要监听的文件描述符，事件发生时便可以根据epoll_event.data.fd得知引发事件的描述符。</p>
+<p>当然也可以设置epoll_event.data.fd为其他便于识别的数据。</p>
+<p>填充epoll_event的方法如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"> structepoll_event eventItem;</div><div class="line"><span class="built_in">memset</span>(&amp;eventItem, <span class="number">0</span>, <span class="keyword">sizeof</span>(eventItem));</div><div class="line">eventItem.events = EPOLLIN | EPOLLERR | EPOLLHUP; <span class="comment">// 监听描述符可读以及出错的事件</span></div><div class="line"> eventItem.data.fd= listeningFd; <span class="comment">// 填写自定义数据为需要监听的描述符</span></div></pre></td></tr></table></figure>
+<p>接下来就可以使用epoll_ctl()将事件注册进epoll对象了。</p>
+<p>epoll_ctl()的参数有四个：</p>
+<ul>
+<li>epfd是由epoll_create()函数所创建的epoll对象的描述符。</li>
+<li>op表示了何种操作，包括EPOLL_CTL_ADD/DEL/MOD三种，分别表示增加/删除/修改注册事件。</li>
+<li>fd表示了需要监听的描述符。</li>
+<li>event参数是描述了监听事件的详细信息的epoll_event结构体。</li>
+</ul>
+<p>注册方法如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 将事件监听添加到epoll对象中去</span></div><div class="line">result =epoll_ctl(epfd, EPOLL_CTL_ADD, listeningFd, &amp;eventItem);</div></pre></td></tr></table></figure>
+<p>重复这个步骤可以将多个文件描述符的多种事件监听注册到epoll对象中。</p>
+<p>完成了监听的注册之后，便可以通过epoll_wait()函数等待事件的到来了。</p>
+<p><strong>（3） 使用epoll_wait()函数等待事件</strong></p>
+<p>epoll_wait()函数将会使调用者陷入等待状态，直到其注册的事件之一发生之后才会返回，并且携带了刚刚发生的事件的详细信息。其签名如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="keyword">int</span> epfd, <span class="keyword">struct</span> epoll_event *events, <span class="keyword">int</span> maxevents, <span class="keyword">int</span> timeout)</span></span>;</div></pre></td></tr></table></figure>
+<ul>
+<li>epfd是由epoll_create()函数所创建的epoll对象描述符。</li>
+<li>events是一个epoll_event的数组，此函数返回时，事件的信息将被填充至此。</li>
+<li>maxevents表示此次调用最多可以获取多少个事件，当然，events参数必须能够足够容纳这么多事件。</li>
+<li>timeout表示等待超时的事件。epoll_wait()函数返回值表示获取了多少个事件。</li>
+<li>处理事件<br>epoll_wait返回后，便可以根据events数组中所保存的所有epoll_event结构体的events字段与data字段识别事件的类型与来源。<br>Epoll的使用步骤总结如下：</li>
+<li>通过epoll_create()创建一个epoll对象。</li>
+<li>为需要监听的描述符填充epoll_events结构体，并使用epoll_ctl()注册到epoll对象中。</li>
+<li>使用epoll_wait()等待事件的发生。</li>
+<li>根据epoll_wait()返回的epoll_events结构体数组判断事件的类型与来源并进行处理。</li>
+<li>继续使用epoll_wait()等待新事件的发生。</li>
+</ul>
+<h2 id="3．INotify与Epoll的小结"><a href="#3．INotify与Epoll的小结" class="headerlink" title="3．INotify与Epoll的小结"></a>3．INotify与Epoll的小结</h2><p>INotify与Epoll这两套由Linux提供的事件监听机制以最小的开销解决了文件系统变化以及文件描述符可读可写状态变化的监听问题。</p>
+<p>它们是Reader子系统运行的基石，了解了这两个机制的使用方法之后便为对Reader子系统的分析学习铺平了道路。</p>
 
       
 
@@ -402,10 +480,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">吉他谱</a>
               </li>
              
@@ -414,7 +488,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">乐理基础</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -426,10 +500,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
@@ -438,7 +508,35 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">乐理基础</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Android</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">App</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Build</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">utils</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -450,30 +548,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">App</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">utils</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Contact</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Uri</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
@@ -482,15 +556,23 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">自定义View</a>
+                <a href="javascript:void(0)" class="js-tag color4">Uri</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
+                <a href="javascript:void(0)" class="js-tag color3">Contact</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Input</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">自定义View</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">打包</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -502,7 +584,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">打包</a>
+                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -514,11 +596,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AS</a>
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
+                <a href="javascript:void(0)" class="js-tag color3">AS</a>
               </li>
              
               <li class="article-tag-list-item">

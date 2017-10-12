@@ -163,6 +163,160 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Android/Build/2017-10-01-Android_Build系统简介" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/10/01/Android/Build/2017-10-01-Android_Build系统简介/">Android_Build系统简介</a>
+    </h1>
+  
+
+        
+        <a href="/2017/10/01/Android/Build/2017-10-01-Android_Build系统简介/" class="archive-article-date">
+  	<time datetime="2017-09-30T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-01</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <a id="more"></a>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Build</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/10/01/Android/Build/2017-10-01-Android_Build系统简介/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-Android/Framework/2017-09-25-Android模拟输入操作的实现与原理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/09/25/Android/Framework/2017-09-25-Android模拟输入操作的实现与原理/">Android模拟输入操作的实现与原理</a>
+    </h1>
+  
+
+        
+        <a href="/2017/09/25/Android/Framework/2017-09-25-Android模拟输入操作的实现与原理/" class="archive-article-date">
+  	<time datetime="2017-09-24T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <a id="more"></a>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/25/Android/Framework/2017-09-25-Android模拟输入操作的实现与原理/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-Android/Contacts/2017-09-25-Android实现分批加载手机中所有联系人数据" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -270,8 +424,12 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <a id="more"></a>
-
+        <h2 id="1．INotify介绍与使用"><a href="#1．INotify介绍与使用" class="headerlink" title="1．INotify介绍与使用"></a>1．INotify介绍与使用</h2><p>INotify是一个Linux内核所提供的一种文件系统变化通知机制。它可以为应用程序监控文件系统的变化，如文件的新建、删除、读写等。INotify机制有两个基本对象，分别为inotify对象与watch对象，都使用文件描述符表示。</p>
+<p>inotify对象对应了一个队列，应用程序可以向inotify对象添加多个监听。当被监听的事件发生时，可以通过read()函数从inotify对象中将事件信息读取出来。Inotify对象可以通过以下方式创建：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> inotifyFd = inotify_init();</div></pre></td></tr></table></figure>
+        
+          <a class="article-more-a" href="/2017/09/25/Android/Framework/2017-09-25-Android_INotify与Epoll/#more">more >></a>
+        
       
 
       
@@ -310,83 +468,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2017/09/25/Android/Framework/2017-09-25-Android_INotify与Epoll/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-Android/Framework/2017-09-25-Android模拟输入操作的实现与原理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/25/Android/Framework/2017-09-25-Android模拟输入操作的实现与原理/">Android模拟输入操作的实现与原理</a>
-    </h1>
-  
-
-        
-        <a href="/2017/09/25/Android/Framework/2017-09-25-Android模拟输入操作的实现与原理/" class="archive-article-date">
-  	<time datetime="2017-09-24T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <a id="more"></a>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/09/25/Android/Framework/2017-09-25-Android模拟输入操作的实现与原理/">展开全文 >></a>
         </p>
       
 
@@ -570,6 +651,95 @@
 
 
   
+    <article id="post-Android/Framework/2017-09-20-Android_InputManagerService详解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/">Android_InputManagerService详解</a>
+    </h1>
+  
+
+        
+        <a href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/" class="archive-article-date">
+  	<time datetime="2017-09-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-20</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Android输入系统简介"><a href="#Android输入系统简介" class="headerlink" title="Android输入系统简介"></a>Android输入系统简介</h2><p><strong>什么是输入系统？</strong></p>
+<p>在人类现在所使用的所有终端设备，他们都有各自的输入系统，例如电脑的键盘，鼠标，触屏，麦克，他们只是设备的硬件实施者，我们也可以称为输入设备（InputDevice）。</p>
+<p>而此问题要探讨的是Android输入<font color="red">系统</font>,我们上面定义了输入设备，那么接下来我们定义系统。</p>
+<p>是谁去获取，解释，传递这些多元化的信号呢？</p>
+<p>又是谁拿到这些信号后让电脑做出相应的反馈动作？</p>
+<p>这需要一个完整的系统做去做准确，快捷的处理动作，那么这个处理所有输入设备信号的人，就是Android输入系统，此人任劳任怨，听起来肯定不是一个革命家，而恰好是因为他的存在，我们的操作系统才得以和人类交互，完成我们的一切命令。</p>
+<p>从上面问题是我对操作系统的理解，此般抽象，应该都很容易理解，而我们这篇文章的重点是Android系统InputManagerService，光从名字看，他是我们Android系统Service大家庭的一员，从现在开始，我们进入正题</p>
+        
+          <a class="article-more-a" href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Input</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-Android/Framework/2017-09-20-Android_SystemServer进程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -731,82 +901,6 @@
 
 
   
-    <article id="post-Android/Framework/2017-09-20-Android_进程间通讯机制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/20/Android/Framework/2017-09-20-Android_进程间通讯机制/">Android_进程间通讯机制</a>
-    </h1>
-  
-
-        
-        <a href="/2017/09/20/Android/Framework/2017-09-20-Android_进程间通讯机制/" class="archive-article-date">
-  	<time datetime="2017-09-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-20</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/09/20/Android/Framework/2017-09-20-Android_进程间通讯机制/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
     <article id="post-Android/Framework/2017-09-20-Android_Zygote进程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -866,95 +960,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2017/09/20/Android/Framework/2017-09-20-Android_Zygote进程/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-Android/Framework/2017-09-20-Android_InputManagerService详解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/">Android_InputManagerService详解</a>
-    </h1>
-  
-
-        
-        <a href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/" class="archive-article-date">
-  	<time datetime="2017-09-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-20</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Android输入系统简介"><a href="#Android输入系统简介" class="headerlink" title="Android输入系统简介"></a>Android输入系统简介</h2><p><strong>什么是输入系统？</strong></p>
-<p>在人类现在所使用的所有终端设备，他们都有各自的输入系统，例如电脑的键盘，鼠标，触屏，麦克，他们只是设备的硬件实施者，我们也可以称为输入设备（InputDevice）。</p>
-<p>而此问题要探讨的是Android输入<font color="red">系统</font>,我们上面定义了输入设备，那么接下来我们定义系统。</p>
-<p>是谁去获取，解释，传递这些多元化的信号呢？</p>
-<p>又是谁拿到这些信号后让电脑做出相应的反馈动作？</p>
-<p>这需要一个完整的系统做去做准确，快捷的处理动作，那么这个处理所有输入设备信号的人，就是Android输入系统，此人任劳任怨，听起来肯定不是一个革命家，而恰好是因为他的存在，我们的操作系统才得以和人类交互，完成我们的一切命令。</p>
-<p>从上面问题是我对操作系统的理解，此般抽象，应该都很容易理解，而我们这篇文章的重点是Android系统InputManagerService，光从名字看，他是我们Android系统Service大家庭的一员，从现在开始，我们进入正题</p>
-        
-          <a class="article-more-a" href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">FrameWork</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Input</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/blog/" class="article-tag-list-link color5">blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/09/20/Android/Framework/2017-09-20-Android_InputManagerService详解/">展开全文 >></a>
         </p>
       
 
@@ -1073,10 +1078,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">吉他谱</a>
               </li>
              
@@ -1085,7 +1086,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">乐理基础</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1097,10 +1098,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">版本控制</a>
               </li>
              
@@ -1109,7 +1106,35 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">乐理基础</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Android</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">App</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Build</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">utils</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1121,30 +1146,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">App</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NDK</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">utils</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Contact</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Uri</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">FrameWork</a>
               </li>
              
@@ -1153,15 +1154,23 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">自定义View</a>
+                <a href="javascript:void(0)" class="js-tag color4">Uri</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
+                <a href="javascript:void(0)" class="js-tag color3">Contact</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Input</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">自定义View</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">打包</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1173,7 +1182,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">打包</a>
+                <a href="javascript:void(0)" class="js-tag color4">Provider</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1185,11 +1194,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AS</a>
+                <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Git</a>
+                <a href="javascript:void(0)" class="js-tag color3">AS</a>
               </li>
              
               <li class="article-tag-list-item">
